@@ -1,8 +1,10 @@
 import { GuidelinesPage } from "@/components/site/GuidelinesPage";
+import { EditableText } from "@/components/cms/EditableText";
 
 export default function Page() {
   return (
     <GuidelinesPage
+      cmsKey="page.guidelines.author"
       eyebrow="Author Guidelines"
       title="Preparing and submitting your manuscript"
       lead="A clear, structured submission helps reviewers focus on your contribution."
@@ -20,8 +22,8 @@ export default function Page() {
         eyebrow: "FOR AUTHORS",
         title: "Ready to submit your manuscript?",
         description: "Review the author guidelines and submission checklist before you upload.",
-        primaryAction: <a href="/guidelines/author" className="btn-primary font-semibold py-2.5 px-5">Author Guidelines</a>,
-        secondaryAction: <a href="/contact" className="btn-outline font-semibold py-2.5 px-5">Contact Editor</a>,
+        primaryAction: <a href="/guidelines/author" className="btn-primary font-semibold py-2.5 px-5"><EditableText contentKey="page.guidelines.author.button.primary" fallback="Author Guidelines" as="span" label="Button label" /></a>,
+        secondaryAction: <a href="/contact" className="btn-outline font-semibold py-2.5 px-5"><EditableText contentKey="page.guidelines.author.button.secondary" fallback="Contact Editor" as="span" label="Button label" /></a>,
       }}
     />
   );

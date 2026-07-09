@@ -1,6 +1,8 @@
 import { Link, useSearchParams } from "react-router-dom";
 import { PageHeader } from "@/components/site/PageHeader";
 import { Search, ArrowRight } from "lucide-react";
+import { EditableText } from "@/components/cms/EditableText";
+import { useContentStore } from "@/store/useContentStore";
 
 const SEARCH_INDEX = [
   { id: "j1", type: "journals", title: "International Journal of English for Academic Excellence", desc: "Applied linguistics, academic writing, ELT, literature studies.", url: "/journals" },
@@ -17,11 +19,18 @@ const SEARCH_INDEX = [
 
 export default function SearchPage() {
   const [searchParams] = useSearchParams();
+  const getContent = useContentStore((s) => s.getContent);
   const q = searchParams.get("q") ?? "";
   const scope = searchParams.get("scope") ?? "all";
 
   const query = q.toLowerCase().trim();
-  const results = SEARCH_INDEX.filter((item) => {
+  const searchIndex = SEARCH_INDEX.map((item) => ({
+    ...item,
+    title: getContent(`search.${item.id}.title`, item.title),
+    desc: getContent(`search.${item.id}.description`, item.desc),
+  }));
+
+  const results = searchIndex.filter((item) => {
     if (scope !== "all" && item.type !== scope) return false;
     if (!query) return true;
     return item.title.toLowerCase().includes(query) || item.desc.toLowerCase().includes(query);
@@ -30,6 +39,7 @@ export default function SearchPage() {
   return (
     <>
       <PageHeader
+        cmsKey="page.search"
         eyebrow="Search"
         title={query ? `Results for "${q}"` : "Search"}
         description={query ? `Found ${results.length} matches across our publications.` : "Browse all publications, journals, and announcements."}
@@ -42,7 +52,7 @@ export default function SearchPage() {
           {/* Search bar inside page for refinement */}
           <div className="surface-card p-4 flex items-center gap-3">
             <Search className="h-5 w-5 text-[var(--primary)]" />
-            <span className="text-sm font-semibold text-[var(--ink)]">Search Scope:</span>
+            <EditableText contentKey="page.search.scopeLabel" fallback="Search Scope:" as="span" className="text-sm font-semibold text-[var(--ink)]" label="Search label" />
             <span className="text-sm text-[var(--ink-soft)] px-3 py-1 rounded-full bg-[var(--secondary)]">
               {scope === "all" ? "All Publications" : scope.charAt(0).toUpperCase() + scope.slice(1)}
             </span>
@@ -56,25 +66,23 @@ export default function SearchPage() {
                     {r.type}
                   </div>
                   <h3 className="font-serif text-xl font-bold text-[var(--ink)]">
-                    {r.title}
+                    <EditableText contentKey={`search.${r.id}.title`} fallback={r.title} as="span" label="Search result title" />
                   </h3>
                   <p className="mt-2 text-[var(--ink-soft)] text-sm">
-                    {r.desc}
+                    <EditableText contentKey={`search.${r.id}.description`} fallback={r.desc} as="span" label="Search result description" />
                   </p>
                   <Link to={r.url} className="mt-4 inline-flex items-center gap-1 font-semibold text-sm text-[var(--primary)] hover:underline">
-                    View details <ArrowRight className="h-3.5 w-3.5" />
+                    <EditableText contentKey="page.search.viewDetails" fallback="View details" as="span" label="Search button" /> <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
                 </div>
               ))
             ) : (
               <div className="py-12 text-center">
                 <Search className="h-10 w-10 text-[var(--ink-soft)] mx-auto mb-4 opacity-50" />
-                <h3 className="text-lg font-semibold text-[var(--ink)]">No results found</h3>
-                <p className="mt-2 text-sm text-[var(--ink-soft)]">
-                  We couldn't find any exact matches for "{q}". Try using different keywords or changing your search scope.
-                </p>
+                <EditableText contentKey="page.search.noResults.title" fallback="No results found" as="h3" className="text-lg font-semibold text-[var(--ink)]" label="No results title" />
+                <EditableText contentKey="page.search.noResults.description" fallback={`We couldn't find any exact matches for "${q}". Try using different keywords or changing your search scope.`} as="p" multiline className="mt-2 text-sm text-[var(--ink-soft)]" label="No results description" />
                 <Link to="/search" className="mt-6 inline-block btn-outline">
-                  Clear search
+                  <EditableText contentKey="page.search.clear" fallback="Clear search" as="span" label="Clear search" />
                 </Link>
               </div>
             )}

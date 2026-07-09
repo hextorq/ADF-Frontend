@@ -1,4 +1,5 @@
 import { BookCheck, HeartHandshake, Lightbulb, ShieldCheck, Sparkles, Users } from "lucide-react";
+import { EditableText } from "@/components/cms/EditableText";
 
 const VALUES = [
   { icon: ShieldCheck, title: "Academic Integrity", desc: "Rigorous peer review, ethical publishing, transparent processes." },
@@ -14,10 +15,8 @@ export function CoreValues() {
     <section className="py-20 bg-white">
       <div className="container-academic">
         <div className="text-center max-w-2xl mx-auto">
-          <div className="eyebrow justify-center">Core Values</div>
-          <h2 className="mt-2 text-3xl md:text-4xl font-bold text-[var(--ink)]">
-            Principles that shape every publication
-          </h2>
+          <EditableText contentKey="home.coreValues.eyebrow" fallback="Core Values" as="div" className="eyebrow justify-center" label="Section eyebrow" />
+          <EditableText contentKey="home.coreValues.title" fallback="Principles that shape every publication" as="h2" className="mt-2 text-3xl md:text-4xl font-bold text-[var(--ink)]" label="Section title" />
         </div>
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {VALUES.map(({ icon: Icon, title, desc }) => (
@@ -30,8 +29,8 @@ export function CoreValues() {
                 <div className="grid h-12 w-12 place-items-center rounded-xl bg-gradient-to-br from-[var(--primary)] to-[var(--deep)] text-white">
                   <Icon className="h-5 w-5" />
                 </div>
-                <h3 className="mt-4 font-serif text-xl font-semibold text-[var(--ink)]">{title}</h3>
-                <p className="mt-2 text-sm text-[var(--ink-soft)]">{desc}</p>
+                <EditableText contentKey={`home.coreValues.${title}.title`} fallback={title} as="h3" className="mt-4 font-serif text-xl font-semibold text-[var(--ink)]" label="Value title" />
+                <EditableText contentKey={`home.coreValues.${title}.desc`} fallback={desc} as="p" multiline className="mt-2 text-sm text-[var(--ink-soft)]" label="Value description" />
               </div>
             </div>
           ))}

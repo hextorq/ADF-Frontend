@@ -1,9 +1,12 @@
 import { Youtube, ExternalLink, PlayCircle } from "lucide-react";
+import { EditableText } from "@/components/cms/EditableText";
+import { useContentStore } from "@/store/useContentStore";
 
 export function FeaturedVideo() {
   // Client: Paste your latest YouTube video ID here. 
   // For example, if your video URL is https://www.youtube.com/watch?v=abc123xyz, the ID is "abc123xyz".
   const LATEST_VIDEO_ID = "FSzhc4Q30Hw"; // The client's latest video ID
+  const videoId = useContentStore((s) => s.getContent("home.video.youtubeId", LATEST_VIDEO_ID));
 
   return (
     <section className="py-20 bg-white relative overflow-hidden">
@@ -18,14 +21,23 @@ export function FeaturedVideo() {
           <div className="max-w-xl">
             <div className="eyebrow flex items-center gap-2 mb-4">
               <Youtube className="h-5 w-5 text-red-600" />
-              <span className="text-red-600">ADF PUBLISHER CHANNEL</span>
+              <EditableText contentKey="home.video.eyebrow" fallback="ADF PUBLISHER CHANNEL" as="span" className="text-red-600" label="Video eyebrow" />
             </div>
-            <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--ink)] leading-tight mb-6">
-              Learn with ADF
-            </h2>
-            <p className="text-lg text-[var(--ink-soft)] leading-relaxed mb-8">
-              Watch tutorials, publishing guidelines, webinars, author interviews, and research insights from the Academic Development Forum YouTube Channel.
-            </p>
+            <EditableText
+              contentKey="home.video.title"
+              fallback="Learn with ADF"
+              as="h2"
+              className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--ink)] leading-tight mb-6"
+              label="Video title"
+            />
+            <EditableText
+              contentKey="home.video.description"
+              fallback="Watch tutorials, publishing guidelines, webinars, author interviews, and research insights from the Academic Development Forum YouTube Channel."
+              as="p"
+              multiline
+              className="text-lg text-[var(--ink-soft)] leading-relaxed mb-8"
+              label="Video description"
+            />
             
             <div className="flex flex-col sm:flex-row items-center gap-4">
               <a 
@@ -52,11 +64,11 @@ export function FeaturedVideo() {
             <div className="mt-8 pt-8 border-t border-border grid grid-cols-2 gap-4">
               <div className="flex items-start gap-2 text-sm text-[var(--ink-soft)]">
                 <PlayCircle className="h-5 w-5 text-[var(--primary)] shrink-0" />
-                <span>Step-by-step submission guides</span>
+                <EditableText contentKey="home.video.feature.1" fallback="Step-by-step submission guides" as="span" label="Video feature" />
               </div>
               <div className="flex items-start gap-2 text-sm text-[var(--ink-soft)]">
                 <PlayCircle className="h-5 w-5 text-[var(--primary)] shrink-0" />
-                <span>Expert webinar recordings</span>
+                <EditableText contentKey="home.video.feature.2" fallback="Expert webinar recordings" as="span" label="Video feature" />
               </div>
             </div>
           </div>
@@ -69,13 +81,16 @@ export function FeaturedVideo() {
                 <iframe 
                   width="100%" 
                   height="100%" 
-                  src={`https://www.youtube.com/embed/${LATEST_VIDEO_ID}`} 
+                  src={`https://www.youtube.com/embed/${videoId}`}
                   title="ADF Publisher YouTube Channel" 
                   frameBorder="0" 
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
                   allowFullScreen
                   className="absolute inset-0 w-full h-full"
                 ></iframe>
+              </div>
+              <div className="mt-2 rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-500">
+                <EditableText contentKey="home.video.youtubeId" fallback={LATEST_VIDEO_ID} as="span" label="YouTube video ID" />
               </div>
             </div>
           </div>

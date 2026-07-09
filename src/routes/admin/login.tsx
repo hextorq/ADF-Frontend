@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/store/useAuthStore";
 import { ApiError } from "@/lib/api";
+import { EditableText } from "@/components/cms/EditableText";
 
 const formSchema = z.object({
   email: z.string().email("Please enter a valid email address."),
@@ -41,8 +42,8 @@ export default function AdminLogin() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
       <div className="w-full max-w-sm rounded-lg border border-slate-200 bg-white p-8 shadow-sm">
-        <h1 className="text-lg font-semibold text-slate-800">Admin Login</h1>
-        <p className="mt-1 text-sm text-slate-500">Sign in to manage site content.</p>
+        <EditableText contentKey="admin.login.title" fallback="Admin Login" as="h1" className="text-lg font-semibold text-slate-800" label="Login title" />
+        <EditableText contentKey="admin.login.description" fallback="Sign in to manage site content." as="p" className="mt-1 text-sm text-slate-500" label="Login description" />
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="mt-6 space-y-4">
@@ -51,7 +52,7 @@ export default function AdminLogin() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel><EditableText contentKey="admin.login.email" fallback="Email" as="span" label="Login label" /></FormLabel>
                   <FormControl>
                     <Input placeholder="admin@adf.local" {...field} />
                   </FormControl>
@@ -64,7 +65,7 @@ export default function AdminLogin() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel><EditableText contentKey="admin.login.password" fallback="Password" as="span" label="Login label" /></FormLabel>
                   <FormControl>
                     <Input type="password" {...field} />
                   </FormControl>

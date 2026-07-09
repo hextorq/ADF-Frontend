@@ -1,4 +1,5 @@
 import { PageHeader } from "@/components/site/PageHeader";
+import { EditableText } from "@/components/cms/EditableText";
 
 const BOARD = [
   // Editor-in-Chief & Managing Editor
@@ -181,6 +182,7 @@ export default function Page() {
   return (
     <>
       <PageHeader
+        cmsKey="page.editorial-board"
         eyebrow="Editorial Board"
         title="A global editorial leadership"
         description="Scholars shaping the editorial direction of ADF journals and volumes."
@@ -193,7 +195,7 @@ export default function Page() {
             if (members.length === 0) return null;
             return (
               <div key={g}>
-                <h2 className="font-serif text-2xl font-bold text-[var(--ink)] border-b pb-3 mb-6">{g}</h2>
+                <EditableText contentKey={`page.editorial-board.group.${g}`} fallback={g} as="h2" className="font-serif text-2xl font-bold text-[var(--ink)] border-b pb-3 mb-6" label="Board group" />
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {members.map((b) => (
                     <div key={b.name} className="surface-card p-6 flex flex-col gap-4">
@@ -202,17 +204,17 @@ export default function Page() {
                           {b.initials}
                         </div>
                         <div>
-                          <div className="font-bold text-[var(--ink)] text-lg">{b.name}</div>
-                          <div className="text-sm font-medium text-[var(--primary)]">{b.role}</div>
+                          <EditableText contentKey={`board.${b.name}.name`} fallback={b.name} as="div" className="font-bold text-[var(--ink)] text-lg" label="Board member name" />
+                          <EditableText contentKey={`board.${b.name}.role`} fallback={b.role} as="div" className="text-sm font-medium text-[var(--primary)]" label="Board member role" />
                         </div>
                       </div>
                       <div className="mt-2 text-sm text-[var(--ink-soft)] leading-relaxed">
-                        {b.aff}
+                        <EditableText contentKey={`board.${b.name}.affiliation`} fallback={b.aff} as="span" multiline label="Board member affiliation" />
                       </div>
                       {b.email && (
                         <div className="mt-auto pt-4 border-t border-black/5">
                           <a href={`mailto:${b.email}`} className="text-sm text-[var(--mint)] hover:underline break-all">
-                            {b.email}
+                            <EditableText contentKey={`board.${b.name}.email`} fallback={b.email} as="span" label="Board member email" />
                           </a>
                         </div>
                       )}

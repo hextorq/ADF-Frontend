@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { PageHeader } from "@/components/site/PageHeader";
 import { ArrowRight, BookOpen, CheckCircle2, FileText, Globe2 } from "lucide-react";
+import { EditableText } from "@/components/cms/EditableText";
 
 const JOURNALS = [
   {
@@ -33,6 +34,7 @@ export default function Journals() {
   return (
     <>
       <PageHeader
+        cmsKey="page.journals"
         eyebrow="Journals"
         title="Peer-reviewed, open-access journals"
         description="Discoverable, citable, and globally accessible. Authors retain copyright."
@@ -62,8 +64,8 @@ export default function Journals() {
       <section className="py-12 bg-[var(--secondary)]">
         <div className="container-academic">
           <div className="flex items-end justify-between">
-            <h2 className="font-serif text-2xl md:text-3xl font-bold text-[var(--ink)]">Browse Journals</h2>
-            <Link to="/guidelines/author" className="btn-outline">Author Guidelines <ArrowRight className="h-4 w-4" /></Link>
+            <EditableText contentKey="page.journals.browse.title" fallback="Browse Journals" as="h2" className="font-serif text-2xl md:text-3xl font-bold text-[var(--ink)]" label="Section title" />
+            <Link to="/guidelines/author" className="btn-outline"><EditableText contentKey="page.journals.browse.authorGuidelines" fallback="Author Guidelines" as="span" label="Button label" /> <ArrowRight className="h-4 w-4" /></Link>
           </div>
 
           <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
@@ -71,7 +73,7 @@ export default function Journals() {
               <article key={j.abbr} className="surface-card overflow-hidden group">
                 <div className="hero-gradient p-5 text-white">
                   <div className="text-xs uppercase tracking-widest text-white/70">{j.abbr}</div>
-                  <h3 className="mt-1 font-serif text-lg font-semibold leading-snug">{j.title}</h3>
+                  <EditableText contentKey={`journal.${j.abbr}.title`} fallback={j.title} as="h3" className="mt-1 font-serif text-lg font-semibold leading-snug" label="Journal title" />
                 </div>
                 <div className="p-5 space-y-3">
                   <Row k="ISSN" v={j.issn} />
@@ -79,8 +81,8 @@ export default function Journals() {
                   <Row k="Frequency" v={j.frequency} />
                   <Row k="Access" v={j.access} />
                   <div className="flex items-center gap-2 pt-3">
-                    <Link to="/guidelines/author" className="btn-primary !py-2 !text-sm">Submit</Link>
-                    <Link to="/editorial-board" className="btn-outline !py-2 !text-sm">Editorial Board</Link>
+                    <Link to="/guidelines/author" className="btn-primary !py-2 !text-sm"><EditableText contentKey="page.journals.card.submit" fallback="Submit" as="span" label="Button label" /></Link>
+                    <Link to="/editorial-board" className="btn-outline !py-2 !text-sm"><EditableText contentKey="page.journals.card.editorialBoard" fallback="Editorial Board" as="span" label="Button label" /></Link>
                   </div>
                 </div>
               </article>
@@ -92,17 +94,13 @@ export default function Journals() {
       <section className="py-16 bg-white">
         <div className="container-academic surface-card p-8 md:p-12 grid md:grid-cols-3 gap-6 items-center">
           <div className="md:col-span-2">
-            <div className="eyebrow"><BookOpen className="h-3.5 w-3.5" /> For Authors</div>
-            <h3 className="mt-2 font-serif text-2xl font-bold text-[var(--ink)]">
-              Ready to submit your manuscript?
-            </h3>
-            <p className="mt-2 text-[var(--ink-soft)]">
-              Review the author guidelines and submission checklist before you upload.
-            </p>
+            <div className="eyebrow"><BookOpen className="h-3.5 w-3.5" /> <EditableText contentKey="page.journals.authorCta.eyebrow" fallback="For Authors" as="span" label="CTA eyebrow" /></div>
+            <EditableText contentKey="page.journals.authorCta.title" fallback="Ready to submit your manuscript?" as="h3" className="mt-2 font-serif text-2xl font-bold text-[var(--ink)]" label="CTA title" />
+            <EditableText contentKey="page.journals.authorCta.description" fallback="Review the author guidelines and submission checklist before you upload." as="p" multiline className="mt-2 text-[var(--ink-soft)]" label="CTA description" />
           </div>
           <div className="flex md:justify-end gap-2 flex-wrap">
-            <Link to="/guidelines/author" className="btn-primary">Author Guidelines</Link>
-            <Link to="/contact" className="btn-outline">Contact Editor</Link>
+            <Link to="/guidelines/author" className="btn-primary"><EditableText contentKey="page.journals.cta.authorGuidelines" fallback="Author Guidelines" as="span" label="Button label" /></Link>
+            <Link to="/contact" className="btn-outline"><EditableText contentKey="page.journals.cta.contactEditor" fallback="Contact Editor" as="span" label="Button label" /></Link>
           </div>
         </div>
       </section>
@@ -114,7 +112,7 @@ function Row({ k, v }: { k: string; v: string }) {
   return (
     <div className="grid grid-cols-3 gap-3 text-sm">
       <div className="text-[var(--ink-soft)] uppercase text-xs tracking-wider">{k}</div>
-      <div className="col-span-2 text-[var(--ink)]">{v}</div>
+      <EditableText contentKey={`page.journals.row.${k}.${v}`} fallback={v} as="div" className="col-span-2 text-[var(--ink)]" label={k} />
     </div>
   );
 }

@@ -21,6 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { submitBoardApplication } from "@/actions";
+import { EditableText } from "@/components/cms/EditableText";
 
 const formSchema = z.object({
   fullName: z.string().min(2, "Name must be at least 2 characters."),
@@ -71,15 +72,21 @@ export function BoardApplicationForm({ boardType, buttonText }: BoardApplication
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="btn-primary font-semibold py-3 px-6 text-lg">{buttonText}</button>
+        <button className="btn-primary font-semibold py-3 px-6 text-lg">
+          <EditableText contentKey={`boardApplication.${boardType}.button`} fallback={buttonText} as="span" label="Application button" />
+        </button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Join the {boardType}</DialogTitle>
+          <DialogTitle>
+            <EditableText contentKey={`boardApplication.${boardType}.title`} fallback={`Join the ${boardType}`} as="span" label="Dialog title" />
+          </DialogTitle>
           <DialogDescription>
-            {isSuccess
-              ? "Thank you! Your application has been received. We will be in touch shortly."
-              : "Fill out the form below to apply. Your information will be sent to the editorial office."}
+            {isSuccess ? (
+              <EditableText contentKey={`boardApplication.${boardType}.success`} fallback="Thank you! Your application has been received. We will be in touch shortly." as="span" label="Success message" />
+            ) : (
+              <EditableText contentKey={`boardApplication.${boardType}.description`} fallback="Fill out the form below to apply. Your information will be sent to the editorial office." as="span" label="Dialog description" />
+            )}
           </DialogDescription>
         </DialogHeader>
 
@@ -91,7 +98,7 @@ export function BoardApplicationForm({ boardType, buttonText }: BoardApplication
                 name="fullName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Full Name *</FormLabel>
+                    <FormLabel><EditableText contentKey="boardApplication.form.fullName" fallback="Full Name *" as="span" label="Form label" /></FormLabel>
                     <FormControl>
                       <Input placeholder="Dr. Jane Doe" {...field} />
                     </FormControl>
@@ -104,7 +111,7 @@ export function BoardApplicationForm({ boardType, buttonText }: BoardApplication
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email Address *</FormLabel>
+                    <FormLabel><EditableText contentKey="boardApplication.form.email" fallback="Email Address *" as="span" label="Form label" /></FormLabel>
                     <FormControl>
                       <Input placeholder="jane.doe@university.edu" {...field} />
                     </FormControl>
@@ -117,7 +124,7 @@ export function BoardApplicationForm({ boardType, buttonText }: BoardApplication
                 name="affiliation"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Institutional Affiliation *</FormLabel>
+                    <FormLabel><EditableText contentKey="boardApplication.form.affiliation" fallback="Institutional Affiliation *" as="span" label="Form label" /></FormLabel>
                     <FormControl>
                       <Input placeholder="University of..." {...field} />
                     </FormControl>
@@ -130,7 +137,7 @@ export function BoardApplicationForm({ boardType, buttonText }: BoardApplication
                 name="profileLink"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Academic Profile or CV Link</FormLabel>
+                    <FormLabel><EditableText contentKey="boardApplication.form.profile" fallback="Academic Profile or CV Link" as="span" label="Form label" /></FormLabel>
                     <FormControl>
                       <Input placeholder="https://..." {...field} />
                     </FormControl>
@@ -143,7 +150,7 @@ export function BoardApplicationForm({ boardType, buttonText }: BoardApplication
                 name="message"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Additional Comments (Optional)</FormLabel>
+                    <FormLabel><EditableText contentKey="boardApplication.form.comments" fallback="Additional Comments (Optional)" as="span" label="Form label" /></FormLabel>
                     <FormControl>
                       <Textarea placeholder="Any specific areas of expertise..." {...field} />
                     </FormControl>
@@ -153,7 +160,11 @@ export function BoardApplicationForm({ boardType, buttonText }: BoardApplication
               />
               <div className="flex justify-end pt-2">
                 <button type="submit" disabled={isSubmitting} className="btn-primary">
-                  {isSubmitting ? "Submitting..." : "Submit Application"}
+                  {isSubmitting ? (
+                    <EditableText contentKey="boardApplication.form.submitting" fallback="Submitting..." as="span" label="Submitting label" />
+                  ) : (
+                    <EditableText contentKey="boardApplication.form.submit" fallback="Submit Application" as="span" label="Submit label" />
+                  )}
                 </button>
               </div>
             </form>

@@ -1,4 +1,5 @@
 import { BookOpen, Compass, Feather, GraduationCap, Globe2, Sparkles } from "lucide-react";
+import { EditableText } from "@/components/cms/EditableText";
 
 const ITEMS = [
   { year: "2025", title: "ADF Founded", desc: "Academic Development Forum established as an international publication initiative.", icon: Sparkles },
@@ -14,13 +15,9 @@ export function JourneyTimeline() {
     <section className="py-20 bg-white">
       <div className="container-academic">
         <div className="max-w-2xl">
-          <div className="eyebrow">Our Journey</div>
-          <h2 className="mt-2 text-3xl md:text-4xl font-bold text-[var(--ink)]">
-            A new publishing house, built with intent
-          </h2>
-          <p className="mt-3 text-[var(--ink-soft)]">
-            From foundation to a connected global network — milestones across research, literature, and academic development.
-          </p>
+          <EditableText contentKey="about.journey.eyebrow" fallback="Our Journey" as="div" className="eyebrow" label="Journey eyebrow" />
+          <EditableText contentKey="about.journey.title" fallback="A new publishing house, built with intent" as="h2" className="mt-2 text-3xl md:text-4xl font-bold text-[var(--ink)]" label="Journey title" />
+          <EditableText contentKey="about.journey.description" fallback="From foundation to a connected global network - milestones across research, literature, and academic development." as="p" multiline className="mt-3 text-[var(--ink-soft)]" label="Journey description" />
         </div>
 
         <div className="relative mt-12">
@@ -36,8 +33,8 @@ export function JourneyTimeline() {
                 >
                   <div className={`pl-12 md:pl-0 ${right ? "md:order-2 md:pl-12" : "md:text-right md:pr-12"}`}>
                     <div className="text-xs font-semibold tracking-widest text-[var(--primary)]">{it.year}</div>
-                    <h3 className="mt-1 font-serif text-xl font-semibold text-[var(--ink)]">{it.title}</h3>
-                    <p className="mt-2 text-sm text-[var(--ink-soft)] leading-relaxed">{it.desc}</p>
+                    <EditableText contentKey={`about.journey.${i}.title`} fallback={it.title} as="h3" className="mt-1 font-serif text-xl font-semibold text-[var(--ink)]" label="Milestone title" />
+                    <EditableText contentKey={`about.journey.${i}.desc`} fallback={it.desc} as="p" multiline className="mt-2 text-sm text-[var(--ink-soft)] leading-relaxed" label="Milestone description" />
                   </div>
                   <div className={`absolute left-4 md:left-1/2 -translate-x-1/2 grid h-9 w-9 place-items-center rounded-full bg-white border-2 border-[var(--primary)] text-[var(--primary)] shadow-sm`}>
                     <Icon className="h-4 w-4" />

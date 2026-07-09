@@ -5,6 +5,7 @@ export default function Page() {
   return (
     <>
       <PageHeader
+        cmsKey="page.announcements"
         eyebrow="Announcements"
         title="Latest from the Academic Development Forum"
         description="Calls for papers, calls for chapters, programme schedules, and editorial openings."

@@ -1,6 +1,7 @@
 import { PageHeader } from "@/components/site/PageHeader";
 import { useMemo, useState } from "react";
 import { CalendarDays, Clock, MapPin, User, Users, X } from "lucide-react";
+import { EditableText } from "@/components/cms/EditableText";
 
 type Event = {
   date: string; // YYYY-MM-DD
@@ -24,6 +25,7 @@ export default function Page() {
   return (
     <>
       <PageHeader
+        cmsKey="page.academic-programmes"
         eyebrow="Academic Programmes"
         title="Nurture your academic mind"
         description="FDPs, workshops, training, and webinars on research methodology, academic writing, and publication ethics."
@@ -72,11 +74,11 @@ function UpcomingCalendar() {
               <button
                 onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))}
                 className="btn-outline !py-1.5 !px-3 !text-xs"
-              >Previous</button>
+              ><EditableText contentKey="page.academic-programmes.calendar.previous" fallback="Previous" as="span" label="Calendar button" /></button>
               <button
                 onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))}
                 className="btn-outline !py-1.5 !px-3 !text-xs"
-              >Next</button>
+              ><EditableText contentKey="page.academic-programmes.calendar.next" fallback="Next" as="span" label="Calendar button" /></button>
             </div>
           </div>
 
@@ -98,7 +100,7 @@ function UpcomingCalendar() {
                         onClick={() => setOpen(e)}
                         className="text-left text-[11px] rounded bg-[var(--primary)]/10 text-[var(--primary)] px-1.5 py-1 hover:bg-[var(--primary)] hover:text-white truncate"
                       >
-                        {e.title}
+                        <EditableText contentKey={`event.${e.date}.calendarTitle`} fallback={e.title} as="span" label="Calendar event" />
                       </button>
                     ))}
                   </div>
@@ -109,19 +111,19 @@ function UpcomingCalendar() {
         </div>
 
         <aside className="space-y-3">
-          <h3 className="font-serif text-xl font-semibold text-[var(--ink)]">Upcoming Events</h3>
+          <EditableText contentKey="page.academic-programmes.events.title" fallback="Upcoming Events" as="h3" className="font-serif text-xl font-semibold text-[var(--ink)]" label="Events section title" />
           {EVENTS.map((e) => (
             <button key={e.title} onClick={() => setOpen(e)} className="w-full text-left surface-card p-4 hover:border-[var(--primary)] transition">
               <div className="flex items-center justify-between text-xs">
                 <span className="rounded-full bg-[var(--accent)]/15 text-[var(--accent)] px-2 py-0.5 font-semibold">{e.type}</span>
                 <span className="text-[var(--ink-soft)]">{e.date}</span>
               </div>
-              <div className="mt-2 font-semibold text-[var(--ink)]">{e.title}</div>
+              <EditableText contentKey={`event.${e.date}.title`} fallback={e.title} as="div" className="mt-2 font-semibold text-[var(--ink)]" label="Event title" />
               <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--ink-soft)]">
-                <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" /> {e.duration}</span>
-                <span className="inline-flex items-center gap-1"><User className="h-3 w-3" /> {e.speaker}</span>
-                <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" /> {e.mode}</span>
-                <span className="inline-flex items-center gap-1"><Users className="h-3 w-3" /> {e.seats} seats</span>
+                <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" /> <EditableText contentKey={`event.${e.date}.duration`} fallback={e.duration} as="span" label="Event duration" /></span>
+                <span className="inline-flex items-center gap-1"><User className="h-3 w-3" /> <EditableText contentKey={`event.${e.date}.speaker`} fallback={e.speaker} as="span" label="Event speaker" /></span>
+                <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" /> <EditableText contentKey={`event.${e.date}.mode`} fallback={e.mode} as="span" label="Event mode" /></span>
+                <span className="inline-flex items-center gap-1"><Users className="h-3 w-3" /> <EditableText contentKey={`event.${e.date}.seats`} fallback={`${e.seats} seats`} as="span" label="Event seats" /></span>
               </div>
             </button>
           ))}
@@ -141,11 +143,11 @@ function RegisterModal({ event, onClose }: { event: Event; onClose: () => void }
           <X className="h-5 w-5" />
         </button>
         <div className="text-xs uppercase tracking-wider text-[var(--primary)] font-semibold">{event.type}</div>
-        <h3 className="mt-1 font-serif text-2xl font-bold text-[var(--ink)]">{event.title}</h3>
+        <EditableText contentKey={`event.${event.date}.title`} fallback={event.title} as="h3" className="mt-1 font-serif text-2xl font-bold text-[var(--ink)]" label="Event title" />
         <div className="mt-3 flex flex-wrap gap-3 text-xs text-[var(--ink-soft)]">
-          <span className="inline-flex items-center gap-1"><CalendarDays className="h-3.5 w-3.5" /> {event.date}</span>
-          <span className="inline-flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {event.duration}</span>
-          <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> {event.mode}</span>
+          <span className="inline-flex items-center gap-1"><CalendarDays className="h-3.5 w-3.5" /> <EditableText contentKey={`event.${event.date}.date`} fallback={event.date} as="span" label="Event date" /></span>
+          <span className="inline-flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> <EditableText contentKey={`event.${event.date}.duration`} fallback={event.duration} as="span" label="Event duration" /></span>
+          <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> <EditableText contentKey={`event.${event.date}.mode`} fallback={event.mode} as="span" label="Event mode" /></span>
         </div>
         <div className="mt-6">
           <a
@@ -155,7 +157,7 @@ function RegisterModal({ event, onClose }: { event: Event; onClose: () => void }
             className="btn-primary w-full justify-center flex"
             onClick={onClose}
           >
-            Register via Google Form
+            <EditableText contentKey="page.academic-programmes.register" fallback="Register via Google Form" as="span" label="Register label" />
           </a>
         </div>
       </div>

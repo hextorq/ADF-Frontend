@@ -1,5 +1,5 @@
-import { useState, type ElementType } from "react";
-import { Pencil } from "lucide-react";
+import { useState, type ElementType, type ImgHTMLAttributes } from "react";
+import { ImageIcon, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useContentStore } from "@/store/useContentStore";
@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { uploadImage } from "@/lib/api";
 
 interface EditableTextProps {
   contentKey: string;
@@ -118,6 +119,132 @@ export function EditableText({
                   {saving ? "Saving…" : "Save"}
                 </Button>
               </div>
+            </div>
+          </div>
+        </PopoverContent>
+      </Popover>
+    </span>
+  );
+}
+
+interface EditableImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, "src"> {
+  contentKey: string;
+  fallbackSrc: string;
+  label?: string;
+}
+
+export function EditableImage({
+  contentKey,
+  fallbackSrc,
+  label,
+  className,
+  alt = "",
+  ...props
+}: EditableImageProps) {
+  const isAdmin = useAuthStore((s) => s.isAdmin);
+  const src = useContentStore((s) => s.getContent(contentKey, fallbackSrc));
+  const saveContent = useContentStore((s) => s.saveContent);
+
+  const [open, setOpen] = useState(false);
+  const [draft, setDraft] = useState(src);
+  const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+
+  if (!isAdmin) {
+    return <img src={src} alt={alt} className={className} {...props} />;
+  }
+
+  const handleOpenChange = (next: boolean) => {
+    if (next) setDraft(src);
+    setOpen(next);
+  };
+
+  const handleSave = async () => {
+    const trimmed = draft.trim();
+    if (!trimmed) {
+      toast.error("Image URL cannot be empty");
+      return;
+    }
+    setSaving(true);
+    try {
+      await saveContent(contentKey, trimmed);
+      setOpen(false);
+    } catch {
+      toast.error("Failed to save image - please try again");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleFileUpload = async (file: File | undefined) => {
+    if (!file) return;
+    setUploading(true);
+    try {
+      const { url } = await uploadImage(file);
+      setDraft(url);
+      toast.success("Image uploaded");
+    } catch {
+      toast.error("Failed to upload image");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <span className="group/editable-image relative inline-block">
+      <img src={src} alt={alt} className={className} {...props} />
+      <Popover open={open} onOpenChange={handleOpenChange}>
+        <PopoverTrigger asChild>
+          <button
+            type="button"
+            aria-label={label ? `Edit ${label}` : "Edit image"}
+            className="absolute right-1 top-1 hidden h-7 w-7 items-center justify-center rounded-full bg-[var(--primary)] text-white opacity-0 shadow-md transition-opacity group-hover/editable-image:opacity-100 group-focus-within/editable-image:opacity-100 lg:inline-flex"
+          >
+            <ImageIcon className="h-3.5 w-3.5" />
+          </button>
+        </PopoverTrigger>
+        <PopoverContent className="w-96" align="start">
+          <div className="flex flex-col gap-3">
+            <div>
+              <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {label ?? "Image URL"}
+              </div>
+              <Input
+                autoFocus
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                placeholder="/logo.png or https://..."
+                className="mt-2"
+              />
+            </div>
+            <div>
+              <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Upload image
+              </div>
+              <Input
+                type="file"
+                accept="image/*"
+                disabled={uploading}
+                onChange={(e) => handleFileUpload(e.target.files?.[0])}
+                className="mt-2"
+              />
+            </div>
+            <div className="overflow-hidden rounded-md border bg-muted">
+              <img src={draft || fallbackSrc} alt="" className="max-h-40 w-full object-contain" />
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setOpen(false)}
+                disabled={saving}
+              >
+                Cancel
+              </Button>
+              <Button type="button" size="sm" onClick={handleSave} disabled={saving || uploading}>
+                {saving ? "Saving..." : "Save"}
+              </Button>
             </div>
           </div>
         </PopoverContent>

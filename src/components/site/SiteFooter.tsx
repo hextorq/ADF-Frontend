@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Globe2, Mail, Send, Youtube, Linkedin, Instagram } from "lucide-react";
+import { EditableImage, EditableText } from "@/components/cms/EditableText";
 
 const COLUMNS = [
   {
@@ -66,34 +67,41 @@ export function SiteFooter() {
           <div className="lg:col-span-4">
             <div className="flex items-center gap-3">
               <div className="bg-white p-1 rounded-xl shadow-sm">
-                <img 
-                  src="/logo.png" 
+                <EditableImage
+                  contentKey="site.logo.src"
+                  fallbackSrc="/logo.png"
                   alt="ADF Logo" 
                   className="h-10 w-auto shrink-0 object-contain"
+                  label="Footer logo"
                 />
               </div>
               <div>
-                <div className="font-serif text-lg font-semibold text-white">
-                  Academic Development Forum
-                </div>
-                <div className="text-xs uppercase tracking-[0.18em] text-white/60">
-                  Attitude Defines Future
-                </div>
+                <EditableText contentKey="footer.brand.name" fallback="Academic Development Forum" as="div" className="font-serif text-lg font-semibold text-white" label="Footer brand" />
+                <EditableText contentKey="footer.brand.tagline" fallback="Attitude Defines Future" as="div" className="text-xs uppercase tracking-[0.18em] text-white/60" label="Footer tagline" />
               </div>
             </div>
-            <p className="mt-5 text-sm leading-relaxed text-white/70">
-              An international publication house for peer-reviewed journals, edited
-              volumes, literary works, and academic development programmes —
-              committed to open access and global research dissemination.
-            </p>
+            <EditableText
+              contentKey="footer.brand.description"
+              fallback="An international publication house for peer-reviewed journals, edited volumes, literary works, and academic development programmes - committed to open access and global research dissemination."
+              as="p"
+              multiline
+              className="mt-5 text-sm leading-relaxed text-white/70"
+              label="Footer description"
+            />
 
             <div className="mt-6 surface-card !bg-white/[0.06] !border-white/15 !text-white p-5">
               <div className="flex items-center gap-2 text-sm font-semibold text-white">
-                <Send className="h-4 w-4" /> Keep Up To Date
+                <Send className="h-4 w-4" />
+                <EditableText contentKey="footer.newsletter.title" fallback="Keep Up To Date" as="span" label="Newsletter title" />
               </div>
-              <p className="mt-2 text-xs text-white/70">
-                Get journal CFPs, programme alerts, and open-access updates.
-              </p>
+              <EditableText
+                contentKey="footer.newsletter.description"
+                fallback="Get journal CFPs, programme alerts, and open-access updates."
+                as="p"
+                multiline
+                className="mt-2 text-xs text-white/70"
+                label="Newsletter description"
+              />
               <form className="mt-4 flex items-center gap-2">
                 <input
                   type="email"
@@ -113,14 +121,23 @@ export function SiteFooter() {
           <div className="lg:col-span-8 grid gap-8 sm:grid-cols-2 md:grid-cols-4">
             {COLUMNS.map((col) => (
               <div key={col.title}>
-                <h4 className="text-sm font-semibold uppercase tracking-wider text-white">
-                  {col.title}
-                </h4>
+                <EditableText
+                  contentKey={`footer.column.${col.title}.title`}
+                  fallback={col.title}
+                  as="h4"
+                  className="text-sm font-semibold uppercase tracking-wider text-white"
+                  label="Footer column title"
+                />
                 <ul className="mt-4 space-y-2.5 text-sm text-white/70">
                   {col.links.map((l) => (
                     <li key={l.label}>
                       <Link to={l.to} className="hover:text-[var(--mint)] transition">
-                        {l.label}
+                        <EditableText
+                          contentKey={`footer.link.${col.title}.${l.label}`}
+                          fallback={l.label}
+                          as="span"
+                          label="Footer link"
+                        />
                       </Link>
                     </li>
                   ))}
@@ -151,8 +168,8 @@ export function SiteFooter() {
                 <Instagram className="h-4 w-4" /> 
               </a>
             </div>
-            <Link to="/policies" className="hover:text-white">Policies & Ethics</Link>
-            <Link to="/policies" className="hover:text-white">Open Access</Link>
+            <Link to="/policies" className="hover:text-white"><EditableText contentKey="footer.bottom.policies" fallback="Policies & Ethics" as="span" label="Footer bottom link" /></Link>
+            <Link to="/policies" className="hover:text-white"><EditableText contentKey="footer.bottom.openAccess" fallback="Open Access" as="span" label="Footer bottom link" /></Link>
           </div>
         </div>
       </div>

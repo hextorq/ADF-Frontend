@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { BookOpen, FileText, Bookmark, GraduationCap, Users, Globe2, PenTool, CheckCircle, Eye } from "lucide-react";
+import { EditableText } from "@/components/cms/EditableText";
 
 const stats = [
   { label: "Research Journals", value: 3, plus: true, icon: BookOpen },
@@ -53,12 +54,15 @@ export function Statistics() {
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] text-xs font-semibold tracking-wide uppercase mb-4">
             <Globe2 className="h-4 w-4" /> Global Impact
           </div>
-          <h2 className="text-3xl md:text-5xl font-bold text-[var(--ink)] mb-4 tracking-tight font-serif">
-            Our Growing Community
-          </h2>
-          <p className="text-[var(--ink-soft)] max-w-2xl mx-auto text-lg leading-relaxed">
-            Academic Development Forum is rapidly expanding its reach, bringing together scholars, researchers, and readers worldwide.
-          </p>
+          <EditableText contentKey="home.statistics.title" fallback="Our Growing Community" as="h2" className="text-3xl md:text-5xl font-bold text-[var(--ink)] mb-4 tracking-tight font-serif" label="Statistics title" />
+          <EditableText
+            contentKey="home.statistics.description"
+            fallback="Academic Development Forum is rapidly expanding its reach, bringing together scholars, researchers, and readers worldwide."
+            as="p"
+            multiline
+            className="text-[var(--ink-soft)] max-w-2xl mx-auto text-lg leading-relaxed"
+            label="Statistics description"
+          />
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
@@ -81,9 +85,7 @@ export function Statistics() {
                   )}
                   {stat.plus && <span className="text-[var(--primary)] ml-0.5">+</span>}
                 </div>
-                <div className="text-sm text-[var(--ink-soft)] mt-2 font-medium">
-                  {stat.label}
-                </div>
+                <EditableText contentKey={`home.statistics.${stat.label}.label`} fallback={stat.label} as="div" className="text-sm text-[var(--ink-soft)] mt-2 font-medium" label="Statistic label" />
               </div>
             );
           })}

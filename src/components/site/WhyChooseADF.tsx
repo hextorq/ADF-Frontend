@@ -1,4 +1,5 @@
 import { Award, BookOpen, GraduationCap, Globe2, HandCoins, Layers, Pencil, Users } from "lucide-react";
+import { EditableText } from "@/components/cms/EditableText";
 
 const ITEMS = [
   { icon: Award, title: "DOI & ISBN Support", desc: "Every publication receives standard identifiers for discoverability and citation." },
@@ -17,10 +18,8 @@ export function WhyChooseADF() {
       <div className="container-academic">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <div>
-            <div className="eyebrow">Why Choose ADF</div>
-            <h2 className="mt-2 text-3xl md:text-4xl font-bold text-[var(--ink)]">
-              Built around authors, readers, and rigor
-            </h2>
+            <EditableText contentKey="home.why.eyebrow" fallback="Why Choose ADF" as="div" className="eyebrow" label="Section eyebrow" />
+            <EditableText contentKey="home.why.title" fallback="Built around authors, readers, and rigor" as="h2" className="mt-2 text-3xl md:text-4xl font-bold text-[var(--ink)]" label="Section title" />
           </div>
         </div>
 
@@ -33,8 +32,8 @@ export function WhyChooseADF() {
               <div className="grid h-11 w-11 place-items-center rounded-lg bg-[var(--primary)]/8 text-[var(--primary)] group-hover:bg-[var(--primary)] group-hover:text-white transition">
                 <Icon className="h-5 w-5" />
               </div>
-              <h3 className="mt-4 font-serif text-lg font-semibold text-[var(--ink)]">{title}</h3>
-              <p className="mt-1.5 text-sm text-[var(--ink-soft)] leading-relaxed">{desc}</p>
+              <EditableText contentKey={`home.why.${title}.title`} fallback={title} as="h3" className="mt-4 font-serif text-lg font-semibold text-[var(--ink)]" label="Card title" />
+              <EditableText contentKey={`home.why.${title}.desc`} fallback={desc} as="p" multiline className="mt-1.5 text-sm text-[var(--ink-soft)] leading-relaxed" label="Card description" />
             </div>
           ))}
         </div>

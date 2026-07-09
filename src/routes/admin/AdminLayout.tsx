@@ -1,18 +1,11 @@
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Megaphone, FileText, Activity, BookOpen, Settings, Layers, Calendar, Users, BarChart3, Star } from "lucide-react";
+import { Eye, LayoutDashboard } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
+import { EditableText } from "@/components/cms/EditableText";
 
 const NAV_LINKS = [
   { to: "/admin", icon: LayoutDashboard, label: "Dashboard" },
-  { to: "/admin/announcements", icon: Megaphone, label: "Announcements" },
-  { to: "/admin/publications", icon: FileText, label: "Publications" },
-  { to: "/admin/chapters", icon: Layers, label: "Chapters" },
-  { to: "/admin/journals", icon: BookOpen, label: "Journals" },
-  { to: "/admin/activities", icon: Activity, label: "Recent Activity" },
-  { to: "/admin/events", icon: Calendar, label: "Events" },
-  { to: "/admin/editorial", icon: Users, label: "Editorial Updates" },
-  { to: "/admin/statistics", icon: BarChart3, label: "Statistics" },
-  { to: "/admin/featured", icon: Star, label: "Featured Content" },
+  { to: "/", icon: Eye, label: "Edit Live Site" },
 ];
 
 export default function AdminLayout() {
@@ -33,7 +26,7 @@ export default function AdminLayout() {
         <div className="flex h-14 items-center border-b border-slate-200 px-4">
           <Link to="/" className="flex items-center gap-2 font-bold text-[var(--primary)]">
             <span className="bg-[var(--primary)] text-white p-1 rounded">ADF</span>
-            Admin Panel
+            <EditableText contentKey="admin.layout.brand" fallback="Inline CMS" as="span" label="Admin brand" />
           </Link>
         </div>
         <nav className="p-4 space-y-1">
@@ -50,7 +43,7 @@ export default function AdminLayout() {
                 }`}
               >
                 <link.icon className="h-4 w-4" />
-                {link.label}
+                <EditableText contentKey={`admin.nav.${link.label}`} fallback={link.label} as="span" label="Admin nav" />
               </Link>
             );
           })}
@@ -61,11 +54,11 @@ export default function AdminLayout() {
       <main className="flex-1 flex flex-col">
         {/* Topbar */}
         <header className="flex h-14 items-center justify-between border-b border-slate-200 bg-white px-6">
-          <h1 className="text-sm font-semibold text-slate-800">Content Management System</h1>
+          <EditableText contentKey="admin.layout.title" fallback="Inline editing mode" as="h1" className="text-sm font-semibold text-slate-800" label="Admin title" />
           <div className="flex items-center gap-4 text-sm text-slate-500">
             <span>{email ?? "Admin"}</span>
-            <Link to="/" className="text-[var(--primary)] hover:underline">View Site</Link>
-            <button onClick={handleLogout} className="text-[var(--primary)] hover:underline">Log Out</button>
+            <Link to="/" className="text-[var(--primary)] hover:underline"><EditableText contentKey="admin.layout.viewSite" fallback="View Site" as="span" label="Admin link" /></Link>
+            <button onClick={handleLogout} className="text-[var(--primary)] hover:underline"><EditableText contentKey="admin.layout.logout" fallback="Log Out" as="span" label="Admin button" /></button>
           </div>
         </header>
         

@@ -55,3 +55,53 @@ export function updateContent(key: string, value: string) {
     { method: "PATCH", body: JSON.stringify({ value }) }
   );
 }
+
+export function submitContact(data: {
+  fullName: string;
+  email: string;
+  affiliation?: string;
+  subject: string;
+  message: string;
+}) {
+  return apiFetch<{ id: string; success: boolean }>("/forms/contact", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export function submitBoardApplication(data: {
+  fullName: string;
+  email: string;
+  affiliation: string;
+  profileLink?: string;
+  boardType: "Editorial Board" | "Reviewer Network";
+  message?: string;
+}) {
+  return apiFetch<{ id: string; success: boolean }>("/forms/board-application", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export async function uploadImage(file: File) {
+  const body = new FormData();
+  body.append("image", file);
+  const res = await fetch("/api/uploads/image", {
+    method: "POST",
+    credentials: "include",
+    body,
+  });
+
+  if (!res.ok) {
+    let message = res.statusText;
+    try {
+      const parsed = await res.json();
+      if (parsed?.error) message = parsed.error;
+    } catch {
+      // ignore non-JSON error bodies
+    }
+    throw new ApiError(res.status, message);
+  }
+
+  return res.json() as Promise<{ url: string }>;
+}

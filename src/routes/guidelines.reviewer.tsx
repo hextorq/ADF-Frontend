@@ -1,9 +1,11 @@
 import { GuidelinesPage } from "@/components/site/GuidelinesPage";
 import { BoardApplicationForm } from "@/components/site/BoardApplicationForm";
+import { EditableText } from "@/components/cms/EditableText";
 
 export default function Page() {
   return (
     <GuidelinesPage
+      cmsKey="page.guidelines.reviewer"
       eyebrow="Reviewer Guidelines"
       title="Writing a fair, useful, double-blind review"
       lead="Reviewers protect the integrity of the record and help authors improve their work."
@@ -21,7 +23,7 @@ export default function Page() {
         title: "Ready to join the Reviewer Network?",
         description: "Review the guidelines above and submit your application to become a reviewer.",
         primaryAction: <BoardApplicationForm boardType="Reviewer Network" buttonText="Join the Reviewer Network" />,
-        secondaryAction: <a href="/contact" className="btn-outline">Contact Us</a>,
+        secondaryAction: <a href="/contact" className="btn-outline"><EditableText contentKey="page.guidelines.reviewer.button.secondary" fallback="Contact Us" as="span" label="Button label" /></a>,
       }}
     />
   );

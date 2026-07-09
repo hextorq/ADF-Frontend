@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ArrowRight, Calendar, Tag, Activity, BookOpen, FileText, CheckCircle, Video } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useCMSStore, Announcement, Publication, Activity as ActivityType } from "@/store/useCMSStore";
+import { EditableText } from "@/components/cms/EditableText";
 
 const TABS = [
   "Announcements",
@@ -33,16 +34,19 @@ export function AnnouncementHub() {
       <div className="container-academic">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <div>
-            <div className="eyebrow text-[var(--primary)] font-semibold tracking-wider uppercase text-xs">Dynamic Content Hub</div>
-            <h2 className="mt-2 text-3xl md:text-4xl font-bold text-[var(--ink)]">
-              Interactive Announcement Hub
-            </h2>
-            <p className="mt-2 text-[var(--ink-soft)] max-w-2xl">
-              Real-time updates on calls for papers, recent publications, and editorial activities.
-            </p>
+            <EditableText contentKey="home.hub.eyebrow" fallback="Dynamic Content Hub" as="div" className="eyebrow text-[var(--primary)] font-semibold tracking-wider uppercase text-xs" label="Hub eyebrow" />
+            <EditableText contentKey="home.hub.title" fallback="Interactive Announcement Hub" as="h2" className="mt-2 text-3xl md:text-4xl font-bold text-[var(--ink)]" label="Hub title" />
+            <EditableText
+              contentKey="home.hub.description"
+              fallback="Real-time updates on calls for papers, recent publications, and editorial activities."
+              as="p"
+              multiline
+              className="mt-2 text-[var(--ink-soft)] max-w-2xl"
+              label="Hub description"
+            />
           </div>
           <Link to="/announcements" className="btn-outline">
-            View all updates <ArrowRight className="h-4 w-4" />
+            <EditableText contentKey="home.hub.viewAll" fallback="View all updates" as="span" label="View all updates" /> <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
 
@@ -58,7 +62,7 @@ export function AnnouncementHub() {
                     : "border-transparent text-[var(--ink-soft)] hover:text-[var(--ink)] hover:bg-slate-100/50"
                 }`}
               >
-                {t}
+                <EditableText contentKey={`home.hub.tab.${t}`} fallback={t} as="span" label="Hub tab" />
               </button>
             ))}
           </div>
@@ -70,7 +74,7 @@ export function AnnouncementHub() {
               {displayAnnouncements.map(it => (
                 <AnnouncementCard key={it.id} item={it} />
               ))}
-              {displayAnnouncements.length === 0 && <p className="text-slate-500 col-span-full">No active announcements.</p>}
+              {displayAnnouncements.length === 0 && <EditableText contentKey="home.hub.empty.announcements" fallback="No active announcements." as="p" className="text-slate-500 col-span-full" label="Empty state" />}
             </div>
           )}
 
@@ -79,7 +83,7 @@ export function AnnouncementHub() {
                {recentPubs.map(it => (
                 <PublicationCard key={it.id} item={it} />
                ))}
-               {recentPubs.length === 0 && <p className="text-slate-500 col-span-full">No recent publications.</p>}
+               {recentPubs.length === 0 && <EditableText contentKey="home.hub.empty.publications" fallback="No recent publications." as="p" className="text-slate-500 col-span-full" label="Empty state" />}
             </div>
           )}
 
@@ -88,7 +92,7 @@ export function AnnouncementHub() {
                {chapters.map(it => (
                 <PublicationCard key={it.id} item={it} />
                ))}
-               {chapters.length === 0 && <p className="text-slate-500 col-span-full">No latest chapters.</p>}
+               {chapters.length === 0 && <EditableText contentKey="home.hub.empty.chapters" fallback="No latest chapters." as="p" className="text-slate-500 col-span-full" label="Empty state" />}
             </div>
           )}
 
@@ -97,15 +101,15 @@ export function AnnouncementHub() {
                {activities.map(it => (
                 <ActivityRow key={it.id} item={it} />
                ))}
-               {activities.length === 0 && <p className="text-slate-500">No recent activities.</p>}
+               {activities.length === 0 && <EditableText contentKey="home.hub.empty.activities" fallback="No recent activities." as="p" className="text-slate-500" label="Empty state" />}
              </div>
           )}
           
           {/* Placeholders for others */}
           {["Journal Releases", "Programmes & Events"].includes(tab) && (
             <div className="flex flex-col items-center justify-center h-48 text-slate-400">
-              <p>Content for {tab} will appear here.</p>
-              <p className="text-xs mt-2">Manageable via Admin Panel</p>
+              <EditableText contentKey={`home.hub.placeholder.${tab}`} fallback={`Content for ${tab} will appear here.`} as="p" label="Placeholder" />
+              <EditableText contentKey="home.hub.placeholder.note" fallback="Manageable via Admin Panel" as="p" className="text-xs mt-2" label="Placeholder note" />
             </div>
           )}
         </div>
@@ -124,20 +128,21 @@ function AnnouncementCard({ item }: { item: Announcement }) {
             : "bg-slate-100 text-slate-700"
         }`}>{item.priority}</span>
         <span className="inline-flex items-center gap-1 text-[var(--ink-soft)]">
-          <Tag className="h-3 w-3" /> {item.category}
+          <Tag className="h-3 w-3" /> <EditableText contentKey={`announcement.${item.id}.category`} fallback={item.category} as="span" label="Announcement category" />
         </span>
-        {item.pinned && <span className="ml-auto text-[var(--primary)] text-xs font-bold uppercase tracking-wider">Pinned</span>}
+        {item.pinned && <EditableText contentKey="home.hub.pinned" fallback="Pinned" as="span" className="ml-auto text-[var(--primary)] text-xs font-bold uppercase tracking-wider" label="Pinned label" />}
       </div>
       <h3 className="mt-3 font-serif text-lg font-semibold text-[var(--ink)] leading-snug">
-        {item.title}
+        <EditableText contentKey={`announcement.${item.id}.title`} fallback={item.title} as="span" label="Announcement title" />
       </h3>
-      <p className="mt-2 text-sm text-[var(--ink-soft)] flex-1">{item.excerpt}</p>
+      <EditableText contentKey={`announcement.${item.id}.excerpt`} fallback={item.excerpt} as="p" multiline className="mt-2 text-sm text-[var(--ink-soft)] flex-1" label="Announcement excerpt" />
       <div className="mt-4 flex items-center justify-between text-sm">
         <span className="inline-flex items-center gap-1.5 text-[var(--ink-soft)]">
-          <Calendar className="h-3.5 w-3.5" /> {item.date}
+          <Calendar className="h-3.5 w-3.5" />
+          <EditableText contentKey={`announcement.${item.id}.date`} fallback={item.date} as="span" label="Announcement date" />
         </span>
         <Link to={item.to} className="inline-flex items-center gap-1 font-semibold text-[var(--primary)] hover:underline">
-          Read more <ArrowRight className="h-3.5 w-3.5" />
+          <EditableText contentKey="home.hub.readMore" fallback="Read more" as="span" label="Read more" /> <ArrowRight className="h-3.5 w-3.5" />
         </Link>
       </div>
     </article>
@@ -151,16 +156,20 @@ function PublicationCard({ item }: { item: Publication }) {
         <span className="bg-[var(--primary)]/10 text-[var(--primary)] rounded-full px-2 py-0.5 font-semibold">
           {item.pubType}
         </span>
-        <span className="text-slate-500">{item.category}</span>
+        <EditableText contentKey={`publication.${item.id}.category`} fallback={item.category} as="span" className="text-slate-500" label="Publication category" />
       </div>
       <h3 className="font-serif text-lg font-semibold text-[var(--ink)] leading-snug">
-        {item.title}
+        <EditableText contentKey={`publication.${item.id}.title`} fallback={item.title} as="span" label="Publication title" />
       </h3>
-      {item.authors && <p className="mt-1 text-sm text-slate-600">By {item.authors}</p>}
+      {item.authors && (
+        <p className="mt-1 text-sm text-slate-600">
+          <EditableText contentKey="home.hub.by" fallback="By" as="span" label="By label" /> <EditableText contentKey={`publication.${item.id}.authors`} fallback={item.authors} as="span" label="Publication authors" />
+        </p>
+      )}
       <div className="mt-auto pt-4 flex items-center justify-between text-sm">
-        <span className="text-slate-500">{item.date}</span>
+        <EditableText contentKey={`publication.${item.id}.date`} fallback={item.date} as="span" className="text-slate-500" label="Publication date" />
         <Link to={item.to} className="text-[var(--primary)] font-medium hover:underline">
-          View details
+          <EditableText contentKey="home.hub.viewDetails" fallback="View details" as="span" label="View details" />
         </Link>
       </div>
     </article>
@@ -183,12 +192,12 @@ function ActivityRow({ item }: { item: ActivityType }) {
       </div>
       <div className="flex-1">
         <div className="flex items-center justify-between">
-          <h4 className="font-semibold text-slate-900">{item.title}</h4>
-          <span className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">{item.time}</span>
+          <EditableText contentKey={`activity.${item.id}.title`} fallback={item.title} as="h4" className="font-semibold text-slate-900" label="Activity title" />
+          <EditableText contentKey={`activity.${item.id}.time`} fallback={item.time} as="span" className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded" label="Activity time" />
         </div>
-        <p className="text-sm text-slate-600 mt-1">{item.description}</p>
+        <EditableText contentKey={`activity.${item.id}.description`} fallback={item.description} as="p" multiline className="text-sm text-slate-600 mt-1" label="Activity description" />
         <div className="mt-2 text-xs font-medium text-slate-400 uppercase tracking-wider">
-          {item.category}
+          <EditableText contentKey={`activity.${item.id}.category`} fallback={item.category} as="span" label="Activity category" />
         </div>
       </div>
     </div>

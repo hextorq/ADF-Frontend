@@ -1,7 +1,7 @@
 import { Link, NavLink as RouterNavLink, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Menu, Search, X, Youtube, Linkedin, Instagram } from "lucide-react";
-import { EditableText } from "@/components/cms/EditableText";
+import { EditableImage, EditableText } from "@/components/cms/EditableText";
 
 type NavChild = { key: string; label: string; to: string };
 type NavItem = {
@@ -53,13 +53,11 @@ export function SiteHeader() {
       {/* Top utility strip */}
       <div className="hidden md:block bg-[var(--deep)] text-white/80 text-xs">
         <div className="container-academic flex items-center justify-between py-2">
-          <span className="tracking-wide">
-            International Academic Publication House · ISSN · ISBN · DOI
-          </span>
+          <EditableText contentKey="header.utility.tagline" fallback="International Academic Publication House - ISSN - ISBN - DOI" as="span" className="tracking-wide" label="Header tagline" />
           <div className="flex items-center gap-5">
-            <Link to="/guidelines/author" className="hover:text-white">For Authors</Link>
-            <Link to="/guidelines/reviewer" className="hover:text-white">For Reviewers</Link>
-            <Link to="/editorial-board" className="hover:text-white">Editorial Board</Link>
+            <Link to="/guidelines/author" className="hover:text-white"><EditableText contentKey="header.utility.authors" fallback="For Authors" as="span" label="Header link" /></Link>
+            <Link to="/guidelines/reviewer" className="hover:text-white"><EditableText contentKey="header.utility.reviewers" fallback="For Reviewers" as="span" label="Header link" /></Link>
+            <Link to="/editorial-board" className="hover:text-white"><EditableText contentKey="header.utility.board" fallback="Editorial Board" as="span" label="Header link" /></Link>
             <div className="h-3 w-px bg-white/20" />
             <div className="flex items-center gap-4">
               <a href="https://www.youtube.com/@adf_publisher" target="_blank" rel="noopener noreferrer" className="hover:text-[#ff0000] transition-colors" aria-label="ADF Publisher YouTube Channel">
@@ -86,10 +84,10 @@ export function SiteHeader() {
             <Logo />
             <div className="leading-tight">
               <div className="font-serif text-[1.05rem] font-bold text-[var(--primary)]">
-                Academic Development Forum
+                <EditableText contentKey="header.brand.name" fallback="Academic Development Forum" as="span" label="Header brand" />
               </div>
               <div className="text-[0.7rem] uppercase tracking-[0.18em] text-[var(--ink-soft)]">
-                Attitude Defines Future
+                <EditableText contentKey="header.brand.tagline" fallback="Attitude Defines Future" as="span" label="Header tagline" />
               </div>
             </div>
           </Link>
@@ -101,7 +99,7 @@ export function SiteHeader() {
               aria-label="Search publications"
             >
               <Search className="h-4 w-4" />
-              Search Publications
+              <EditableText contentKey="header.search.button" fallback="Search Publications" as="span" label="Search button" />
             </button>
             <button
               className="lg:hidden inline-flex items-center justify-center rounded-md border border-border p-2"
@@ -258,7 +256,7 @@ function SearchPanel({ onClose }: { onClose: () => void }) {
                     : "bg-white text-[var(--ink)] border-border hover:border-[var(--primary)]"
                 }`}
               >
-                {s === "all" ? "All Publications" : s.charAt(0).toUpperCase() + s.slice(1)}
+                <EditableText contentKey={`header.search.scope.${s}`} fallback={s === "all" ? "All Publications" : s.charAt(0).toUpperCase() + s.slice(1)} as="span" label="Search scope" />
               </button>
             ))}
           </div>
@@ -270,10 +268,12 @@ function SearchPanel({ onClose }: { onClose: () => void }) {
 
 function Logo() {
   return (
-    <img 
-      src="/logo.png" 
+    <EditableImage
+      contentKey="site.logo.src"
+      fallbackSrc="/logo.png"
       alt="ADF Logo" 
       className="h-12 w-auto shrink-0 object-contain mix-blend-multiply"
+      label="Site logo"
     />
   );
 }

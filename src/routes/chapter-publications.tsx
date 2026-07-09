@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { PageHeader } from "@/components/site/PageHeader";
 import { CheckCircle2 } from "lucide-react";
+import { EditableText } from "@/components/cms/EditableText";
 
 const STEPS = [
   { n: "01", t: "Call announced", d: "Theme published with submission window and editor contacts." },
@@ -15,6 +16,7 @@ export default function Page() {
   return (
     <>
       <PageHeader
+        cmsKey="page.chapter-publications"
         eyebrow="Convergence Series"
         title="Chapter Publications — Multidisciplinary Perspectives in Contemporary Research"
         description="A bi-monthly edited volume series. ISBN assigned, double-blind peer review, open access."
@@ -30,8 +32,8 @@ export default function Page() {
           ].map((it) => (
             <div key={it.t} className="surface-card p-6">
               <CheckCircle2 className="h-6 w-6 text-[var(--accent)]" />
-              <h3 className="mt-3 font-serif text-lg font-semibold text-[var(--ink)]">{it.t}</h3>
-              <p className="mt-1 text-sm text-[var(--ink-soft)]">{it.d}</p>
+              <EditableText contentKey={`page.chapter-publications.feature.${it.t}.title`} fallback={it.t} as="h3" className="mt-3 font-serif text-lg font-semibold text-[var(--ink)]" label="Feature title" />
+              <EditableText contentKey={`page.chapter-publications.feature.${it.t}.desc`} fallback={it.d} as="p" multiline className="mt-1 text-sm text-[var(--ink-soft)]" label="Feature description" />
             </div>
           ))}
         </div>
@@ -39,13 +41,13 @@ export default function Page() {
 
       <section className="py-16 bg-[var(--secondary)]">
         <div className="container-academic">
-          <h2 className="font-serif text-2xl md:text-3xl font-bold text-[var(--ink)]">Submission Workflow</h2>
+          <EditableText contentKey="page.chapter-publications.workflow.title" fallback="Submission Workflow" as="h2" className="font-serif text-2xl md:text-3xl font-bold text-[var(--ink)]" label="Workflow title" />
           <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {STEPS.map((s) => (
               <div key={s.n} className="surface-card p-5">
                 <div className="font-serif text-3xl font-bold text-[var(--primary)]">{s.n}</div>
-                <div className="mt-2 font-semibold text-[var(--ink)]">{s.t}</div>
-                <div className="mt-1 text-sm text-[var(--ink-soft)]">{s.d}</div>
+                <EditableText contentKey={`page.chapter-publications.workflow.${s.n}.title`} fallback={s.t} as="div" className="mt-2 font-semibold text-[var(--ink)]" label="Workflow step title" />
+                <EditableText contentKey={`page.chapter-publications.workflow.${s.n}.desc`} fallback={s.d} as="div" multiline className="mt-1 text-sm text-[var(--ink-soft)]" label="Workflow step description" />
               </div>
             ))}
           </div>
@@ -54,10 +56,8 @@ export default function Page() {
 
       <section className="py-16 bg-white">
         <div className="container-academic surface-card p-8 md:p-12 hero-gradient text-white border-transparent">
-          <h3 className="font-serif text-2xl font-bold">Submit a Chapter to Convergence Vol. IV</h3>
-          <p className="mt-2 text-white/80 max-w-2xl">
-            Open call · Closes 15 Sep 2026. Themes across sciences, humanities, social sciences, education, and management.
-          </p>
+          <EditableText contentKey="page.chapter-publications.cta.title" fallback="Submit a Chapter to Convergence Vol. IV" as="h3" className="font-serif text-2xl font-bold" label="CTA title" />
+          <EditableText contentKey="page.chapter-publications.cta.description" fallback="Open call - Closes 15 Sep 2026. Themes across sciences, humanities, social sciences, education, and management." as="p" multiline className="mt-2 text-white/80 max-w-2xl" label="CTA description" />
           <div className="mt-5 flex flex-wrap gap-3">
             <Link to="/guidelines/author" className="inline-flex items-center gap-2 rounded-md bg-[var(--mint)] px-5 py-3 text-sm font-semibold text-[var(--deep)] hover:bg-white">
               Submit your chapter

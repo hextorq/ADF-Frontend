@@ -1,9 +1,11 @@
 import { GuidelinesPage } from "@/components/site/GuidelinesPage";
 import { BoardApplicationForm } from "@/components/site/BoardApplicationForm";
+import { EditableText } from "@/components/cms/EditableText";
 
 export default function Page() {
   return (
     <GuidelinesPage
+      cmsKey="page.guidelines.editor"
       eyebrow="Editor Guidelines"
       title="Editor responsibilities and decision workflow"
       lead="Editors uphold scientific integrity, fairness, and the editorial scope of each title."
@@ -21,7 +23,7 @@ export default function Page() {
         title: "Ready to join the Editorial Board?",
         description: "Review the guidelines above and submit your application to become an editor.",
         primaryAction: <BoardApplicationForm boardType="Editorial Board" buttonText="Join the Editorial Board" />,
-        secondaryAction: <a href="/contact" className="btn-outline">Contact Us</a>,
+        secondaryAction: <a href="/contact" className="btn-outline"><EditableText contentKey="page.guidelines.editor.button.secondary" fallback="Contact Us" as="span" label="Button label" /></a>,
       }}
     />
   );

@@ -20,7 +20,6 @@ import Search from "@/routes/search";
 // Admin
 import AdminLayout from "@/routes/admin/AdminLayout";
 import AdminDashboard from "@/routes/admin/index";
-import AnnouncementsAdmin from "@/routes/admin/announcements";
 import AdminLogin from "@/routes/admin/login";
 import RequireAdmin from "@/routes/admin/RequireAdmin";
 import { Toaster } from "@/components/ui/sonner";
@@ -98,10 +97,9 @@ export default function App() {
       {/* Admin routes */}
       <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="/admin" element={<RequireAdmin />}>
-        <Route element={<AdminLayout />}>
-          <Route index element={<AdminDashboard />} />
-          <Route path="announcements" element={<AnnouncementsAdmin />} />
-        </Route>
+          <Route element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+          </Route>
       </Route>
 
       <Route path="*" element={<><SiteHeader /><main className="flex-1"><NotFound /></main><SiteFooter /></>} />

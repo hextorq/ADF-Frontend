@@ -13,6 +13,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { EditableText } from "@/components/cms/EditableText";
 
 const PIE = [
   { name: "Research Journals", value: 28 },
@@ -46,14 +47,9 @@ export function EcosystemCharts() {
     <section className="py-20 bg-[var(--secondary)]">
       <div className="container-academic">
         <div className="text-center max-w-2xl mx-auto">
-          <div className="eyebrow justify-center">ADF Ecosystem</div>
-          <h2 className="mt-2 text-3xl md:text-4xl font-bold text-[var(--ink)]">
-            A connected publishing ecosystem
-          </h2>
-          <p className="mt-3 text-[var(--ink-soft)]">
-            Journals, edited volumes, literary works, and academic programmes —
-            woven into one open-access scholarly network.
-          </p>
+          <EditableText contentKey="ecosystem.eyebrow" fallback="ADF Ecosystem" as="div" className="eyebrow justify-center" label="Section eyebrow" />
+          <EditableText contentKey="ecosystem.title" fallback="A connected publishing ecosystem" as="h2" className="mt-2 text-3xl md:text-4xl font-bold text-[var(--ink)]" label="Section title" />
+          <EditableText contentKey="ecosystem.description" fallback="Journals, edited volumes, literary works, and academic programmes - woven into one open-access scholarly network." as="p" multiline className="mt-3 text-[var(--ink-soft)]" label="Section description" />
         </div>
 
         <div className="mt-12 grid gap-6 lg:grid-cols-3">
@@ -142,8 +138,8 @@ function ChartCard({
     <div className="surface-card p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="font-serif text-lg font-semibold text-[var(--ink)]">{title}</h3>
-          <p className="text-xs text-[var(--ink-soft)] mt-0.5">{subtitle}</p>
+          <EditableText contentKey={`ecosystem.chart.${title}.title`} fallback={title} as="h3" className="font-serif text-lg font-semibold text-[var(--ink)]" label="Chart title" />
+          <EditableText contentKey={`ecosystem.chart.${title}.subtitle`} fallback={subtitle} as="p" className="text-xs text-[var(--ink-soft)] mt-0.5" label="Chart subtitle" />
         </div>
       </div>
       <div className="mt-4">{children}</div>

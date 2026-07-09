@@ -105,7 +105,12 @@ export function HeroSlider() {
               <div key={i} className="min-w-0 flex-[0_0_100%] pr-6">
                 <div className="max-w-3xl">
                   <div className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/20 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider">
-                    {s.eyebrow}
+                    <EditableText
+                      contentKey={`home.hero.slide.${s.key}.eyebrow`}
+                      fallback={s.eyebrow}
+                      as="span"
+                      label="Slide eyebrow"
+                    />
                   </div>
                   <EditableText
                     contentKey={`home.hero.slide.${s.key}.title`}
@@ -116,7 +121,12 @@ export function HeroSlider() {
                   />
                   {s.highlight && (
                     <div className="mt-4 text-lg text-[var(--mint)] font-medium">
-                      {s.highlight}
+                      <EditableText
+                        contentKey={`home.hero.slide.${s.key}.highlight`}
+                        fallback={s.highlight}
+                        as="span"
+                        label="Slide highlight"
+                      />
                     </div>
                   )}
                   <EditableText
@@ -133,7 +143,12 @@ export function HeroSlider() {
                         key={f}
                         className="rounded-full bg-white/10 border border-white/15 px-3 py-1.5 text-xs font-medium"
                       >
-                        {f}
+                        <EditableText
+                          contentKey={`home.hero.slide.${s.key}.feature.${f}`}
+                          fallback={f}
+                          as="span"
+                          label="Slide feature"
+                        />
                       </span>
                     ))}
                   </div>
@@ -142,7 +157,13 @@ export function HeroSlider() {
                       to={s.to}
                       className="inline-flex items-center gap-2 rounded-md bg-[var(--mint)] px-5 py-3 text-sm font-semibold text-[var(--deep)] hover:bg-white transition"
                     >
-                      {s.cta} <ArrowRight className="h-4 w-4" />
+                      <EditableText
+                        contentKey={`home.hero.slide.${s.key}.cta`}
+                        fallback={s.cta}
+                        as="span"
+                        label="Slide CTA"
+                      />
+                      <ArrowRight className="h-4 w-4" />
                     </Link>
                     <Link
                       to="/about"
@@ -169,8 +190,8 @@ export function HeroSlider() {
               key={it.k}
               className="rounded-lg border border-white/15 bg-white/[0.06] backdrop-blur px-4 py-3 flex items-center justify-between"
             >
-              <span className="text-xs uppercase tracking-wider text-white/60">{it.k}</span>
-              <span className="text-sm font-semibold">{it.v}</span>
+              <EditableText contentKey={`home.hero.fact.${it.k}.label`} fallback={it.k} as="span" className="text-xs uppercase tracking-wider text-white/60" label="Hero fact label" />
+              <EditableText contentKey={`home.hero.fact.${it.k}.value`} fallback={it.v} as="span" className="text-sm font-semibold" label="Hero fact value" />
             </div>
           ))}
         </aside>
