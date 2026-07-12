@@ -1,7 +1,9 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowRight,
   CheckCircle2,
+  Clock3,
   Database,
   Eye,
   FileText,
@@ -12,6 +14,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
+import { fetchRecentContentEdits, type ContentAuditLog } from "@/lib/api";
 
 const QUICK_ACTIONS = [
   {
@@ -43,9 +46,41 @@ const COVERAGE = [
   { icon: ShieldCheck, label: "Access", value: "Admin only" },
 ];
 
+function formatEditTime(value: string) {
+  return new Intl.DateTimeFormat(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(new Date(value));
+}
+
+function previewValue(value: string | null) {
+  if (!value) return "Empty";
+  return value.length > 90 ? `${value.slice(0, 90)}...` : value;
+}
+
 export default function AdminDashboard() {
   const email = useAuthStore((s) => s.email);
   const logout = useAuthStore((s) => s.logout);
+  const [recentEdits, setRecentEdits] = useState<ContentAuditLog[]>([]);
+  const [recentEditsStatus, setRecentEditsStatus] = useState<"loading" | "ready" | "error">("loading");
+
+  useEffect(() => {
+    let isMounted = true;
+    fetchRecentContentEdits()
+      .then(({ edits }) => {
+        if (!isMounted) return;
+        setRecentEdits(edits);
+        setRecentEditsStatus("ready");
+      })
+      .catch(() => {
+        if (!isMounted) return;
+        setRecentEditsStatus("error");
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-6">
@@ -165,6 +200,75 @@ export default function AdminDashboard() {
             })}
           </div>
         </div>
+      </section>
+
+      <section className="rounded-lg border border-slate-200 bg-white">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-5 py-4">
+          <div>
+            <h3 className="text-base font-semibold text-slate-950">Recent edits</h3>
+            <p className="mt-1 text-sm text-slate-500">Latest saved CMS changes with value history.</p>
+          </div>
+          <div className="inline-flex items-center gap-2 rounded-md bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600">
+            <Clock3 className="h-4 w-4" />
+            Last 20 changes
+          </div>
+        </div>
+
+        {recentEditsStatus === "loading" && (
+          <div className="p-5">
+            <div className="space-y-3">
+              {[1, 2, 3].map((item) => (
+                <div key={item} className="h-20 animate-pulse rounded-md bg-slate-100" />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {recentEditsStatus === "error" && (
+          <div className="p-5">
+            <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              Recent edits could not be loaded. Check that the backend is updated and migrations are applied.
+            </div>
+          </div>
+        )}
+
+        {recentEditsStatus === "ready" && recentEdits.length === 0 && (
+          <div className="p-8 text-center">
+            <div className="mx-auto grid h-12 w-12 place-items-center rounded-md bg-slate-100 text-slate-500">
+              <Clock3 className="h-5 w-5" />
+            </div>
+            <h4 className="mt-4 text-sm font-semibold text-slate-950">No edits recorded yet</h4>
+            <p className="mt-1 text-sm text-slate-500">Saved changes will appear here after admins edit live content.</p>
+          </div>
+        )}
+
+        {recentEditsStatus === "ready" && recentEdits.length > 0 && (
+          <div className="divide-y divide-slate-200">
+            {recentEdits.map((edit) => (
+              <article key={edit.id} className="grid gap-4 px-5 py-4 lg:grid-cols-[220px_1fr]">
+                <div>
+                  <div className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                    {formatEditTime(edit.created_at)}
+                  </div>
+                  <div className="mt-1 truncate text-sm font-medium text-slate-700">{edit.admin_email}</div>
+                  <div className="mt-2 inline-flex rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600">
+                    {edit.content_key}
+                  </div>
+                </div>
+                <div className="grid gap-3 md:grid-cols-2">
+                  <div className="rounded-md border border-slate-200 bg-slate-50 p-3">
+                    <div className="text-xs font-semibold uppercase tracking-wider text-slate-400">Before</div>
+                    <p className="mt-2 break-words text-sm leading-5 text-slate-600">{previewValue(edit.old_value)}</p>
+                  </div>
+                  <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3">
+                    <div className="text-xs font-semibold uppercase tracking-wider text-emerald-700">After</div>
+                    <p className="mt-2 break-words text-sm leading-5 text-emerald-950">{previewValue(edit.new_value)}</p>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );

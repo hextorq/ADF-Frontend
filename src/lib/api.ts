@@ -41,6 +41,14 @@ async function apiFetch<T>(path: string, opts: RequestInit = {}): Promise<T> {
 }
 
 export type AdminUser = { email: string; role: string };
+export type ContentAuditLog = {
+  id: string;
+  content_key: string;
+  old_value: string | null;
+  new_value: string;
+  admin_email: string;
+  created_at: string;
+};
 
 export function login(email: string, password: string) {
   return apiFetch<{ user: AdminUser }>("/auth/login", {
@@ -66,6 +74,10 @@ export function updateContent(key: string, value: string) {
     `/content/${encodeURIComponent(key)}`,
     { method: "PATCH", body: JSON.stringify({ value }) }
   );
+}
+
+export function fetchRecentContentEdits() {
+  return apiFetch<{ edits: ContentAuditLog[] }>("/content/audit/recent");
 }
 
 export function submitContact(data: {
