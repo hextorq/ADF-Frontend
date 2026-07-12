@@ -24,7 +24,21 @@ export const useContentStore = create<ContentState>()((set, get) => ({
   },
 
   saveContent: async (key, value) => {
-    await api.updateContent(key, value);
+    const previous = get().items[key];
     set((state) => ({ items: { ...state.items, [key]: value } }));
+    try {
+      await api.updateContent(key, value);
+    } catch (err) {
+      set((state) => {
+        const nextItems = { ...state.items };
+        if (previous === undefined) {
+          delete nextItems[key];
+        } else {
+          nextItems[key] = previous;
+        }
+        return { items: nextItems };
+      });
+      throw err;
+    }
   },
 }));
