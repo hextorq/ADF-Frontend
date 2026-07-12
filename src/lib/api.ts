@@ -8,6 +8,7 @@ export class ApiError extends Error {
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/+$/, "");
 const API_PREFIX = API_BASE_URL ? `${API_BASE_URL}/api` : "/api";
+const AUTH_TOKEN_KEY = "adf_admin_token";
 
 function apiUrl(path: string) {
   return `${API_PREFIX}${path}`;
@@ -18,10 +19,30 @@ export function assetUrl(url: string) {
   return `${API_BASE_URL}${url}`;
 }
 
+export function getAuthToken() {
+  return localStorage.getItem(AUTH_TOKEN_KEY);
+}
+
+export function setAuthToken(token: string) {
+  localStorage.setItem(AUTH_TOKEN_KEY, token);
+}
+
+export function clearAuthToken() {
+  localStorage.removeItem(AUTH_TOKEN_KEY);
+}
+
+function authHeaders(headers?: HeadersInit): HeadersInit {
+  const token = getAuthToken();
+  return {
+    ...headers,
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+}
+
 async function apiFetch<T>(path: string, opts: RequestInit = {}): Promise<T> {
   const res = await fetch(apiUrl(path), {
     credentials: "include",
-    headers: { "Content-Type": "application/json" },
+    headers: authHeaders({ "Content-Type": "application/json" }),
     ...opts,
   });
 
@@ -41,6 +62,7 @@ async function apiFetch<T>(path: string, opts: RequestInit = {}): Promise<T> {
 }
 
 export type AdminUser = { email: string; role: string };
+export type LoginResponse = { token: string; user: AdminUser };
 export type ContentAuditLog = {
   id: string;
   content_key: string;
@@ -51,7 +73,7 @@ export type ContentAuditLog = {
 };
 
 export function login(email: string, password: string) {
-  return apiFetch<{ user: AdminUser }>("/auth/login", {
+  return apiFetch<LoginResponse>("/auth/login", {
     method: "POST",
     body: JSON.stringify({ email, password }),
   });
@@ -113,6 +135,7 @@ export async function uploadImage(file: File) {
   const res = await fetch(apiUrl("/uploads/image"), {
     method: "POST",
     credentials: "include",
+    headers: authHeaders(),
     body,
   });
 

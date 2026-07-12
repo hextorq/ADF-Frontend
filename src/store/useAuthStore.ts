@@ -28,12 +28,17 @@ export const useAuthStore = create<AuthState>()((set) => ({
   },
 
   login: async (email, password) => {
-    const { user } = await api.login(email, password);
+    const { token, user } = await api.login(email, password);
+    api.setAuthToken(token);
     set({ isAdmin: true, email: user.email, status: "authenticated" });
   },
 
   logout: async () => {
-    await api.logout();
+    try {
+      await api.logout();
+    } finally {
+      api.clearAuthToken();
+    }
     set({ isAdmin: false, email: null, status: "unauthenticated" });
   },
 }));
