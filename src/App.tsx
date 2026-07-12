@@ -25,6 +25,7 @@ import RequireAdmin from "@/routes/admin/RequireAdmin";
 import { Toaster } from "@/components/ui/sonner";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useContentStore } from "@/store/useContentStore";
+import { AdminLiveToolbar } from "@/components/cms/AdminLiveToolbar";
 
 
 const TITLES: Record<string, string> = {
@@ -76,7 +77,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | 
 }
 
 export default function App() {
-  return <ErrorBoundary><div className="flex min-h-screen flex-col bg-background text-foreground"><PageEffects /><AppBootstrap /><Toaster />
+  return <ErrorBoundary><div className="flex min-h-screen flex-col bg-background text-foreground"><PageEffects /><AppBootstrap /><Toaster /><AdminLiveToolbar />
     <Routes>
       {/* Public routes */}
       <Route path="/" element={<><SiteHeader /><main className="flex-1"><Home /></main><SiteFooter /></>} />

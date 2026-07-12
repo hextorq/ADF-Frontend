@@ -58,6 +58,7 @@ export function EditableText({
     try {
       await saveContent(contentKey, trimmed);
       setOpen(false);
+      toast.success("Text updated");
     } catch {
       toast.error("Failed to save — please try again");
     } finally {
@@ -169,6 +170,7 @@ export function EditableImage({
     try {
       await saveContent(contentKey, trimmed);
       setOpen(false);
+      toast.success("Image updated");
     } catch {
       toast.error("Failed to save image - please try again");
     } finally {
