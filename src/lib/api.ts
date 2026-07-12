@@ -6,8 +6,20 @@ export class ApiError extends Error {
   }
 }
 
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/+$/, "");
+const API_PREFIX = API_BASE_URL ? `${API_BASE_URL}/api` : "/api";
+
+function apiUrl(path: string) {
+  return `${API_PREFIX}${path}`;
+}
+
+export function assetUrl(url: string) {
+  if (!API_BASE_URL || !url.startsWith("/uploads/")) return url;
+  return `${API_BASE_URL}${url}`;
+}
+
 async function apiFetch<T>(path: string, opts: RequestInit = {}): Promise<T> {
-  const res = await fetch(`/api${path}`, {
+  const res = await fetch(apiUrl(path), {
     credentials: "include",
     headers: { "Content-Type": "application/json" },
     ...opts,
@@ -86,7 +98,7 @@ export function submitBoardApplication(data: {
 export async function uploadImage(file: File) {
   const body = new FormData();
   body.append("image", file);
-  const res = await fetch("/api/uploads/image", {
+  const res = await fetch(apiUrl("/uploads/image"), {
     method: "POST",
     credentials: "include",
     body,
@@ -103,5 +115,6 @@ export async function uploadImage(file: File) {
     throw new ApiError(res.status, message);
   }
 
-  return res.json() as Promise<{ url: string }>;
+  const parsed = (await res.json()) as { url: string };
+  return { url: assetUrl(parsed.url) };
 }
