@@ -14,6 +14,7 @@ import EditorGuidelines from "@/routes/guidelines.editor";
 import ReviewerGuidelines from "@/routes/guidelines.reviewer";
 import Journals from "@/routes/journals";
 import LiteraryPublications from "@/routes/literary-publications";
+import LiterarySubmissionPortal from "@/routes/literary-publications/submit";
 import Policies from "@/routes/policies";
 import Search from "@/routes/search";
 
@@ -92,6 +93,7 @@ export default function App() {
       <Route path="/guidelines/reviewer" element={<><SiteHeader /><main className="flex-1"><ReviewerGuidelines /></main><SiteFooter /></>} />
       <Route path="/journals" element={<><SiteHeader /><main className="flex-1"><Journals /></main><SiteFooter /></>} />
       <Route path="/literary-publications" element={<><SiteHeader /><main className="flex-1"><LiteraryPublications /></main><SiteFooter /></>} />
+      <Route path="/literary-publications/submit" element={<><SiteHeader /><main className="flex-1"><LiterarySubmissionPortal /></main><SiteFooter /></>} />
       <Route path="/policies" element={<><SiteHeader /><main className="flex-1"><Policies /></main><SiteFooter /></>} />
       <Route path="/search" element={<><SiteHeader /><main className="flex-1"><Search /></main><SiteFooter /></>} />
       
