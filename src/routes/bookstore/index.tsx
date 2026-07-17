@@ -1,4 +1,4 @@
-import { Search, ChevronRight, BookOpen, Star, Filter, Heart, ShoppingCart, ArrowRight, CheckCircle, ShieldCheck, Truck, Globe, Download, PlayCircle } from "lucide-react";
+import { Search, ChevronRight, Star, Filter, Heart, ShoppingCart, ArrowRight, CheckCircle, ShieldCheck, Truck, Globe, Download, PlayCircle } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { QuickViewModal } from "@/components/store/QuickViewModal";
 import { MOCK_BOOKS, CATEGORIES, type Book } from "@/components/store/store-mock-data";
 import { cn } from "@/lib/utils";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { PageHeader } from "@/components/site/PageHeader";
 
 export default function BookStore() {
   const [quickViewBook, setQuickViewBook] = useState<Book | null>(null);
@@ -23,71 +24,15 @@ export default function BookStore() {
         <QuickViewModal isOpen={true} book={quickViewBook} onClose={() => setQuickViewBook(null)} />
       )}
 
-      {/* Hero Banner */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#071A8C] via-[#0A24A6] to-[#0477BF] text-white py-24 lg:py-32">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 animate-pulse"></div>
-        <div className="absolute top-10 left-10 w-32 h-32 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob"></div>
-        <div className="absolute top-10 right-10 w-32 h-32 bg-emerald-400 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-8 left-20 w-32 h-32 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-4000"></div>
+      {/* Page Header */}
+      <PageHeader
+        cmsKey="page.bookstore"
+        eyebrow="ADF Marketplace"
+        title="Book Store"
+        description="Discover Knowledge That Shapes the Future. Explore our collection of premium academic and literary publications."
+        crumbs={[{ label: "Book Store" }]}
+      />
 
-        <div className="container-academic relative z-10 flex flex-col lg:flex-row items-center gap-12">
-          <div className="flex-1 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-sm font-semibold mb-6">
-              <span className="flex h-2 w-2 rounded-full bg-green-400 animate-ping"></span>
-              Welcome to the ADF Marketplace
-            </div>
-            <h1 className="text-5xl lg:text-7xl font-bold font-serif mb-6 leading-tight drop-shadow-lg">
-              📚 ADF <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-cyan-300">BOOK STORE</span>
-            </h1>
-            <p className="text-xl lg:text-2xl text-blue-100 mb-8 max-w-2xl font-light">
-              Discover Knowledge That Shapes the Future. Explore our collection of premium academic and literary publications.
-            </p>
-            <div className="flex flex-wrap gap-4 justify-center lg:justify-start mb-10 text-sm font-medium tracking-wide uppercase text-blue-200">
-              <span className="flex items-center gap-1"><CheckCircle className="h-4 w-4"/> Academic</span>
-              <span className="flex items-center gap-1"><CheckCircle className="h-4 w-4"/> Literary</span>
-              <span className="flex items-center gap-1"><CheckCircle className="h-4 w-4"/> Research</span>
-              <span className="flex items-center gap-1"><CheckCircle className="h-4 w-4"/> Open Access</span>
-            </div>
-            <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
-              <Button size="lg" className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-8 py-6 text-lg rounded-full shadow-lg shadow-emerald-500/30 transition-transform hover:scale-105">
-                Browse Books <ArrowRight className="ml-2 h-5 w-5"/>
-              </Button>
-              <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-[#071A8C] font-bold px-8 py-6 text-lg rounded-full transition-transform hover:scale-105">
-                New Releases
-              </Button>
-            </div>
-          </div>
-          
-          <div className="flex-1 hidden lg:flex justify-center relative perspective-1000">
-            {/* 3D Floating Book Effect */}
-            <div className="relative w-72 h-96 animate-float transform rotate-y-[-20deg] rotate-x-[10deg]">
-              <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=800&auto=format&fit=crop" className="absolute inset-0 w-full h-full object-cover rounded-r-2xl shadow-2xl z-20 border-l-8 border-gray-300" alt="Featured Book" />
-              <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent z-30 rounded-r-2xl"></div>
-              {/* Pages */}
-              <div className="absolute top-2 -right-4 w-4 h-[96%] bg-white rounded-r-md border-y border-r border-gray-200 shadow-inner z-10 transform translate-z-[-10px]"></div>
-              <div className="absolute top-4 -right-8 w-4 h-[92%] bg-gray-100 rounded-r-md border-y border-r border-gray-300 shadow-inner z-0 transform translate-z-[-20px]"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Quick Categories */}
-      <section className="container-academic -mt-8 relative z-20 mb-16">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          {[
-            { icon: BookOpen, label: "Academic Books", color: "bg-blue-50 text-blue-600 border-blue-200 hover:border-blue-500" },
-            { icon: Search, label: "Research Books", color: "bg-emerald-50 text-emerald-600 border-emerald-200 hover:border-emerald-500" },
-            { icon: Star, label: "Literary Books", color: "bg-purple-50 text-purple-600 border-purple-200 hover:border-purple-500" },
-            { icon: Download, label: "Open Access", color: "bg-amber-50 text-amber-600 border-amber-200 hover:border-amber-500" },
-            { icon: BookOpen, label: "Book Chapters", color: "bg-rose-50 text-rose-600 border-rose-200 hover:border-rose-500" },
-          ].map((cat, i) => (
-            <Link to={`/bookstore/search?category=${cat.label}`} key={i} className={cn("flex flex-col items-center justify-center p-6 rounded-2xl border transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-white", cat.color)}>
-              <cat.icon className="h-8 w-8 mb-3" />
-              <span className="font-semibold text-center text-sm">{cat.label}</span>
-            </Link>
-          ))}
-        </div>
-      </section>
 
       {/* Featured Collections */}
       <section className="py-16 bg-white">
@@ -182,18 +127,18 @@ export default function BookStore() {
       </section>
 
       {/* Become an Author CTA */}
-      <section className="py-20 relative overflow-hidden bg-[var(--ink)] text-white">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1456324504439-367cee3b3c32?q=80&w=2000&auto=format&fit=crop')] opacity-20 object-cover mix-blend-overlay"></div>
-        <div className="container-academic relative z-10 text-center">
-          <h2 className="text-4xl md:text-5xl font-serif font-bold mb-6">Have a manuscript?</h2>
-          <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto font-light">
+      <section className="py-16 bg-[var(--secondary)]">
+        <div className="container-academic text-center max-w-3xl mx-auto">
+          <div className="eyebrow justify-center mb-4">Publishing Services</div>
+          <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--ink)] mb-4">Have a manuscript?</h2>
+          <p className="text-lg text-[var(--ink-soft)] mb-8">
             Join hundreds of authors who have successfully published their research, literature, and academic books with ADF.
           </p>
-          <Link to="/literary-publications">
-            <Button size="lg" className="bg-[var(--primary)] hover:bg-blue-700 text-white font-bold px-10 py-6 text-lg rounded-full shadow-xl">
+          <div className="flex justify-center gap-4">
+            <Link to="/literary-publications" className="btn-primary">
               Publish with ADF
-            </Button>
-          </Link>
+            </Link>
+          </div>
         </div>
       </section>
 

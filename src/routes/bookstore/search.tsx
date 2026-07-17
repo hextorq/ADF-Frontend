@@ -4,6 +4,7 @@ import { Search, Filter, BookOpen } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { BookCard } from "@/components/store/BookCard";
 import { QuickViewModal } from "@/components/store/QuickViewModal";
+import { PageHeader } from "@/components/site/PageHeader";
 import { MOCK_BOOKS, CATEGORIES, type Book } from "@/components/store/store-mock-data";
 import { cn } from "@/lib/utils";
 
@@ -28,20 +29,20 @@ export default function BookSearch() {
   }, [searchQuery, activeCategory]);
 
   return (
-    <div className="bg-slate-50 min-h-screen py-12">
+    <div className="bg-slate-50 min-h-screen pb-12">
       {quickViewBook && (
         <QuickViewModal isOpen={true} book={quickViewBook} onClose={() => setQuickViewBook(null)} />
       )}
       
-      <div className="container-academic">
-        {/* Header */}
-        <div className="mb-10 text-center">
-          <h1 className="text-4xl font-serif font-bold text-[var(--ink)] mb-4">Browse Books</h1>
-          <p className="text-gray-500 max-w-2xl mx-auto">
-            Explore our extensive catalog of academic research, literary fiction, poetry, and educational resources.
-          </p>
-        </div>
+      <PageHeader
+        cmsKey="page.bookstore.search"
+        eyebrow="Browse Catalog"
+        title="Browse Books"
+        description="Explore our extensive catalog of academic research, literary fiction, poetry, and educational resources."
+        crumbs={[{ label: "Book Store", to: "/bookstore" }, { label: "Search" }]}
+      />
 
+      <div className="container-academic mt-12">
         <div className="flex flex-col lg:flex-row gap-10">
           
           {/* Sidebar Filters */}

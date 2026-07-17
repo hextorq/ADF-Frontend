@@ -17,7 +17,7 @@ const NAV: NavItem[] = [
   { key: "journals", label: "Journals", to: "/journals" },
   { key: "chapter-publications", label: "Chapter Publications", to: "/chapter-publications" },
   { key: "literary-publications", label: "Literary Publications", to: "/literary-publications" },
-  { key: "bookstore", label: "📚 Book Store", to: "/bookstore" },
+  { key: "bookstore", label: "Book Store", to: "/bookstore" },
   { key: "academic-programmes", label: "Academic Programmes", to: "/academic-programmes" },
   {
     key: "guidelines",
