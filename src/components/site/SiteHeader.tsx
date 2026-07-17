@@ -17,6 +17,7 @@ const NAV: NavItem[] = [
   { key: "journals", label: "Journals", to: "/journals" },
   { key: "chapter-publications", label: "Chapter Publications", to: "/chapter-publications" },
   { key: "literary-publications", label: "Literary Publications", to: "/literary-publications" },
+  { key: "bookstore", label: "📚 Book Store", to: "/bookstore" },
   { key: "academic-programmes", label: "Academic Programmes", to: "/academic-programmes" },
   {
     key: "guidelines",
@@ -29,7 +30,7 @@ const NAV: NavItem[] = [
   },
   { key: "editorial-board", label: "Editorial Board", to: "/editorial-board" },
   { key: "policies", label: "Policies", to: "/policies" },
-  { key: "contact", label: "Contact", to: "/contact" },
+  { key: "contact", label: "Contact Us", to: "/contact" },
 ];
 
 function navLabelKey(key: string) {

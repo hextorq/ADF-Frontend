@@ -14,7 +14,8 @@ import EditorGuidelines from "@/routes/guidelines.editor";
 import ReviewerGuidelines from "@/routes/guidelines.reviewer";
 import Journals from "@/routes/journals";
 import LiteraryPublications from "@/routes/literary-publications";
-import LiterarySubmissionPortal from "@/routes/literary-publications/submit";
+import BookStore from "@/routes/bookstore";
+import BookSearch from "@/routes/bookstore/search";
 import Policies from "@/routes/policies";
 import Search from "@/routes/search";
 
@@ -23,6 +24,9 @@ import AdminLayout from "@/routes/admin/AdminLayout";
 import AdminDashboard from "@/routes/admin/index";
 import AdminLogin from "@/routes/admin/login";
 import RequireAdmin from "@/routes/admin/RequireAdmin";
+import AdminBookManagement from "@/routes/admin/bookstore/books";
+import AdminAuthorManagement from "@/routes/admin/bookstore/authors";
+import AdminOrderManagement from "@/routes/admin/bookstore/orders";
 import { Toaster } from "@/components/ui/sonner";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useContentStore } from "@/store/useContentStore";
@@ -93,7 +97,8 @@ export default function App() {
       <Route path="/guidelines/reviewer" element={<><SiteHeader /><main className="flex-1"><ReviewerGuidelines /></main><SiteFooter /></>} />
       <Route path="/journals" element={<><SiteHeader /><main className="flex-1"><Journals /></main><SiteFooter /></>} />
       <Route path="/literary-publications" element={<><SiteHeader /><main className="flex-1"><LiteraryPublications /></main><SiteFooter /></>} />
-      <Route path="/literary-publications/submit" element={<><SiteHeader /><main className="flex-1"><LiterarySubmissionPortal /></main><SiteFooter /></>} />
+      <Route path="/bookstore" element={<><SiteHeader /><main className="flex-1"><BookStore /></main><SiteFooter /></>} />
+      <Route path="/bookstore/search" element={<><SiteHeader /><main className="flex-1"><BookSearch /></main><SiteFooter /></>} />
       <Route path="/policies" element={<><SiteHeader /><main className="flex-1"><Policies /></main><SiteFooter /></>} />
       <Route path="/search" element={<><SiteHeader /><main className="flex-1"><Search /></main><SiteFooter /></>} />
       
@@ -102,6 +107,9 @@ export default function App() {
       <Route path="/admin" element={<RequireAdmin />}>
           <Route element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
+            <Route path="books" element={<AdminBookManagement />} />
+            <Route path="authors" element={<AdminAuthorManagement />} />
+            <Route path="orders" element={<AdminOrderManagement />} />
           </Route>
       </Route>
 

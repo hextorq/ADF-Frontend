@@ -1,9 +1,12 @@
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
-import { ArrowUpRight, Eye, LayoutDashboard, LogOut, ShieldCheck } from "lucide-react";
+import { ArrowUpRight, Eye, LayoutDashboard, LogOut, ShieldCheck, BookOpen, Users, ShoppingCart } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 
 const NAV_LINKS = [
   { to: "/admin", icon: LayoutDashboard, label: "Dashboard", exact: true },
+  { to: "/admin/books", icon: BookOpen, label: "Book Management", exact: false },
+  { to: "/admin/authors", icon: Users, label: "Author Management", exact: false },
+  { to: "/admin/orders", icon: ShoppingCart, label: "Order Management", exact: false },
   { to: "/", icon: Eye, label: "Edit Live Site", exact: true },
 ];
 
