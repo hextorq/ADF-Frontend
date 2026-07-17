@@ -7,13 +7,15 @@ import About from "@/routes/about";
 import AcademicProgrammes from "@/routes/academic-programmes";
 import Announcements from "@/routes/announcements";
 import ChapterPublications from "@/routes/chapter-publications";
+import ChapterSubmit from "@/routes/chapter-publications/submit";
+import LiteraryPublications from "@/routes/literary-publications";
+import LiterarySubmit from "@/routes/literary-publications/submit";
 import Contact from "@/routes/contact";
 import EditorialBoard from "@/routes/editorial-board";
 import AuthorGuidelines from "@/routes/guidelines.author";
 import EditorGuidelines from "@/routes/guidelines.editor";
 import ReviewerGuidelines from "@/routes/guidelines.reviewer";
 import Journals from "@/routes/journals";
-import LiteraryPublications from "@/routes/literary-publications";
 import BookStore from "@/routes/bookstore";
 import BookSearch from "@/routes/bookstore/search";
 import Policies from "@/routes/policies";
@@ -27,6 +29,8 @@ import RequireAdmin from "@/routes/admin/RequireAdmin";
 import AdminBookManagement from "@/routes/admin/bookstore/books";
 import AdminAuthorManagement from "@/routes/admin/bookstore/authors";
 import AdminOrderManagement from "@/routes/admin/bookstore/orders";
+import AdminChapterPublications from "@/routes/admin/publications/chapters";
+import AdminLiteraryPublications from "@/routes/admin/publications/literary";
 import { Toaster } from "@/components/ui/sonner";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useContentStore } from "@/store/useContentStore";
@@ -90,13 +94,15 @@ export default function App() {
       <Route path="/academic-programmes" element={<><SiteHeader /><main className="flex-1"><AcademicProgrammes /></main><SiteFooter /></>} />
       <Route path="/announcements" element={<><SiteHeader /><main className="flex-1"><Announcements /></main><SiteFooter /></>} />
       <Route path="/chapter-publications" element={<><SiteHeader /><main className="flex-1"><ChapterPublications /></main><SiteFooter /></>} />
+      <Route path="/chapter-publications/submit" element={<><SiteHeader /><main className="flex-1"><ChapterSubmit /></main><SiteFooter /></>} />
+      <Route path="/literary-publications" element={<><SiteHeader /><main className="flex-1"><LiteraryPublications /></main><SiteFooter /></>} />
+      <Route path="/literary-publications/submit" element={<><SiteHeader /><main className="flex-1"><LiterarySubmit /></main><SiteFooter /></>} />
       <Route path="/contact" element={<><SiteHeader /><main className="flex-1"><Contact /></main><SiteFooter /></>} />
       <Route path="/editorial-board" element={<><SiteHeader /><main className="flex-1"><EditorialBoard /></main><SiteFooter /></>} />
       <Route path="/guidelines/author" element={<><SiteHeader /><main className="flex-1"><AuthorGuidelines /></main><SiteFooter /></>} />
       <Route path="/guidelines/editor" element={<><SiteHeader /><main className="flex-1"><EditorGuidelines /></main><SiteFooter /></>} />
       <Route path="/guidelines/reviewer" element={<><SiteHeader /><main className="flex-1"><ReviewerGuidelines /></main><SiteFooter /></>} />
       <Route path="/journals" element={<><SiteHeader /><main className="flex-1"><Journals /></main><SiteFooter /></>} />
-      <Route path="/literary-publications" element={<><SiteHeader /><main className="flex-1"><LiteraryPublications /></main><SiteFooter /></>} />
       <Route path="/bookstore" element={<><SiteHeader /><main className="flex-1"><BookStore /></main><SiteFooter /></>} />
       <Route path="/bookstore/search" element={<><SiteHeader /><main className="flex-1"><BookSearch /></main><SiteFooter /></>} />
       <Route path="/policies" element={<><SiteHeader /><main className="flex-1"><Policies /></main><SiteFooter /></>} />
@@ -110,6 +116,8 @@ export default function App() {
             <Route path="books" element={<AdminBookManagement />} />
             <Route path="authors" element={<AdminAuthorManagement />} />
             <Route path="orders" element={<AdminOrderManagement />} />
+            <Route path="publications/chapters" element={<AdminChapterPublications />} />
+            <Route path="publications/literary" element={<AdminLiteraryPublications />} />
           </Route>
       </Route>
 

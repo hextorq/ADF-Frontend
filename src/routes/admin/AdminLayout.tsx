@@ -7,6 +7,8 @@ const NAV_LINKS = [
   { to: "/admin/books", icon: BookOpen, label: "Book Management", exact: false },
   { to: "/admin/authors", icon: Users, label: "Author Management", exact: false },
   { to: "/admin/orders", icon: ShoppingCart, label: "Order Management", exact: false },
+  { to: "/admin/publications/chapters", icon: BookOpen, label: "Chapter Publications", exact: false },
+  { to: "/admin/publications/literary", icon: BookOpen, label: "Literary Publications", exact: false },
   { to: "/", icon: Eye, label: "Edit Live Site", exact: true },
 ];
 

@@ -56,7 +56,7 @@ export default function Page() {
               ))}
             </ul>
             <div className="mt-6 flex gap-3">
-              <Link to="/contact" className="btn-primary"><EditableText contentKey="page.literary-publications.cta.publish" fallback="Publish your book" as="span" label="CTA label" /></Link>
+              <Link to="/literary-publications/submit" className="btn-primary"><EditableText contentKey="page.literary-publications.cta.publish" fallback="Publish your book" as="span" label="CTA label" /></Link>
               <Link to="/guidelines/author" className="btn-outline"><EditableText contentKey="page.literary-publications.cta.guidelines" fallback="Submission guidelines" as="span" label="CTA label" /></Link>
             </div>
           </div>
