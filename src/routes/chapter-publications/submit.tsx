@@ -36,7 +36,7 @@ export default function ChapterSubmit() {
   const [agreed, setAgreed] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/publications/chapters/volumes")
+    fetch("/api/publications/chapters/volumes")
       .then(res => res.json())
       .then(data => setVolumes(data))
       .catch(console.error);
@@ -72,7 +72,7 @@ export default function ChapterSubmit() {
 
     try {
       // Step 1: Submit Form
-      const res = await fetch("http://localhost:5000/api/publications/chapters/submit", {
+      const res = await fetch("/api/publications/chapters/submit", {
         method: "POST",
         body: formData
       });
@@ -116,10 +116,14 @@ export default function ChapterSubmit() {
                       <SelectValue placeholder="Choose an open call..." />
                     </SelectTrigger>
                     <SelectContent>
-                      {volumes.map(v => (
+                    {volumes.length === 0 ? (
+                      <div className="p-2 text-sm text-slate-500 text-center">Loading volumes...</div>
+                    ) : (
+                      volumes.map(v => (
                         <SelectItem key={v.id} value={v.id.toString()}>{v.title}</SelectItem>
-                      ))}
-                    </SelectContent>
+                      ))
+                    )}
+                  </SelectContent>
                   </Select>
                 </div>
 
@@ -183,10 +187,12 @@ export default function ChapterSubmit() {
               <div className="pt-6 border-t space-y-4">
                 <div>
                   <label className="text-sm font-medium mb-2 block">Upload Manuscript (Word/PDF)</label>
-                  <div className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-slate-500">
+                  <label className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-slate-500 cursor-pointer hover:bg-slate-50 relative transition-colors">
                     <UploadCloud className="w-8 h-8 mb-2" />
-                    <input type="file" required onChange={e => setManuscript(e.target.files?.[0] || null)} className="text-sm" accept=".doc,.docx,.pdf" />
-                  </div>
+                    <span className="text-sm font-medium">Choose file</span>
+                    <span className="text-xs mt-1">{manuscript ? manuscript.name : 'No file chosen'}</span>
+                    <input type="file" required onChange={e => setManuscript(e.target.files?.[0] || null)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept=".doc,.docx,.pdf" />
+                  </label>
                 </div>
 
                 <div className="flex items-start gap-2 pt-4">

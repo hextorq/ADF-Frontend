@@ -10,7 +10,7 @@ export default function AdminChapterPublications() {
 
   const fetchSubmissions = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/publications/chapters/admin");
+      const res = await fetch("/api/publications/chapters/admin");
       const data = await res.json();
       setSubmissions(data);
     } catch (e) {
@@ -24,7 +24,7 @@ export default function AdminChapterPublications() {
 
   const updateStage = async (id: string, stage: string) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/publications/chapters/admin/${id}/stage`, {
+      const res = await fetch(`/api/publications/chapters/admin/${id}/stage`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ stage })

@@ -11,7 +11,7 @@ export default function AdminLiteraryPublications() {
 
   const fetchSubmissions = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/publications/literary/admin");
+      const res = await fetch("/api/publications/literary/admin");
       const data = await res.json();
       setSubmissions(data);
     } catch (e) {
@@ -25,7 +25,7 @@ export default function AdminLiteraryPublications() {
 
   const updateStage = async (id: string, stage: string) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/publications/literary/admin/${id}/stage`, {
+      const res = await fetch(`/api/publications/literary/admin/${id}/stage`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ stage })
@@ -44,7 +44,7 @@ export default function AdminLiteraryPublications() {
   const publishToStore = async (id: string) => {
     setIsPublishing(id);
     try {
-      const res = await fetch(`http://localhost:5000/api/publications/literary/admin/${id}/publish`, {
+      const res = await fetch(`/api/publications/literary/admin/${id}/publish`, {
         method: 'POST'
       });
       const data = await res.json();

@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { PageHeader } from "@/components/site/PageHeader";
 import { toast } from "sonner";
-import { UploadCloud } from "lucide-react";
+import { UploadCloud, CheckCircle2, Check } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 
@@ -12,7 +12,7 @@ interface Package {
   id: number;
   name: string;
   price: string;
-  features: string;
+  features: string[];
 }
 
 export default function LiterarySubmit() {
@@ -47,7 +47,7 @@ export default function LiterarySubmit() {
   });
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/literary-submissions/packages")
+    fetch("/api/literary-submissions/packages")
       .then(res => res.json())
       .then(data => setPackages(data))
       .catch(console.error);
@@ -85,7 +85,7 @@ export default function LiterarySubmit() {
     if (cover) formData.append("coverImage", cover);
 
     try {
-      const res = await fetch("http://localhost:5000/api/literary-submissions", {
+      const res = await fetch("/api/literary-submissions", {
         method: "POST",
         body: formData
       });
@@ -158,32 +158,68 @@ export default function LiterarySubmit() {
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label className="text-sm font-medium mb-2 block">Upload Manuscript (Required)</label>
-                  <div className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-slate-500">
+                  <label className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-slate-500 cursor-pointer hover:bg-slate-50 relative transition-colors">
                     <UploadCloud className="w-8 h-8 mb-2" />
-                    <input type="file" required onChange={e => setManuscript(e.target.files?.[0] || null)} className="text-sm w-full max-w-[200px]" accept=".doc,.docx,.pdf" />
-                  </div>
+                    <span className="text-sm font-medium">Choose file</span>
+                    <span className="text-xs mt-1">{manuscript ? manuscript.name : 'No file chosen'}</span>
+                    <input type="file" required onChange={e => setManuscript(e.target.files?.[0] || null)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept=".doc,.docx,.pdf" />
+                  </label>
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-2 block">Upload Cover (Optional)</label>
-                  <div className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-slate-500">
+                  <label className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-slate-500 cursor-pointer hover:bg-slate-50 relative transition-colors">
                     <UploadCloud className="w-8 h-8 mb-2" />
-                    <input type="file" onChange={e => setCover(e.target.files?.[0] || null)} className="text-sm w-full max-w-[200px]" accept="image/*" />
-                  </div>
+                    <span className="text-sm font-medium">Choose file</span>
+                    <span className="text-xs mt-1">{cover ? cover.name : 'No file chosen'}</span>
+                    <input type="file" onChange={e => setCover(e.target.files?.[0] || null)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*" />
+                  </label>
                 </div>
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2 block">Select Publishing Package</label>
-                <Select value={packageId} onValueChange={setPackageId} required>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Choose a package..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {packages.map(p => (
-                      <SelectItem key={p.id} value={p.id.toString()}>{p.name} - ₹{p.price}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <label className="text-xl font-serif font-bold mb-4 block">Select Publishing Package</label>
+                {packages.length === 0 ? (
+                  <div className="p-6 border-2 border-dashed rounded-xl text-center text-slate-500">
+                    Loading packages...
+                  </div>
+                ) : (
+                  <div className="grid md:grid-cols-3 gap-6">
+                    {packages.map(p => {
+                      const isSelected = packageId === p.id.toString();
+                      return (
+                        <div 
+                          key={p.id} 
+                          onClick={() => setPackageId(p.id.toString())}
+                          className={`relative rounded-xl border-2 p-6 cursor-pointer transition-all duration-200 ${
+                            isSelected 
+                              ? 'border-[var(--primary)] bg-[var(--primary)]/5 shadow-md transform -translate-y-1' 
+                              : 'border-border hover:border-slate-300 hover:bg-slate-50'
+                          }`}
+                        >
+                          {isSelected && (
+                            <div className="absolute top-4 right-4 text-[var(--primary)]">
+                              <CheckCircle2 className="w-6 h-6" />
+                            </div>
+                          )}
+                          <h3 className="text-xl font-bold text-[var(--ink)] mb-2">{p.name}</h3>
+                          <div className="text-2xl font-bold text-[var(--primary)] mb-6">
+                            ₹{p.price}
+                          </div>
+                          <ul className="space-y-3">
+                            {p.features.map((f, i) => (
+                              <li key={i} className="flex items-start gap-2 text-sm text-slate-600">
+                                <Check className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
+                                <span>{f}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+                {/* Hidden input to retain required validation */}
+                <input type="text" className="sr-only" required value={packageId} onChange={() => {}} tabIndex={-1} />
               </div>
 
               <div className="space-y-3 pt-4 border-t">
