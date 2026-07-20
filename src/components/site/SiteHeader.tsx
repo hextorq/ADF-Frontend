@@ -1,7 +1,9 @@
 import { Link, NavLink as RouterNavLink, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Menu, Search, X, Youtube, Linkedin, Instagram } from "lucide-react";
+import { ChevronDown, Menu, Search, X, Youtube, Linkedin, Instagram, ShoppingCart, Heart, Trash2 } from "lucide-react";
 import { EditableImage, EditableText } from "@/components/cms/EditableText";
+import { useStoreStore } from "@/store/useStoreStore";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 type NavChild = { key: string; label: string; to: string };
 type NavItem = {
@@ -41,6 +43,7 @@ export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { cart, wishlist, removeFromCart, toggleWishlist, updateQuantity } = useStoreStore();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -96,12 +99,96 @@ export function SiteHeader() {
           <div className="ml-auto flex items-center gap-2">
             <button
               onClick={() => setSearchOpen((v) => !v)}
-              className="btn-primary !py-2 !px-4 !text-sm"
+              className="btn-primary !py-2 !px-4 !text-sm mr-2"
               aria-label="Search publications"
             >
               <Search className="h-4 w-4" />
               <EditableText contentKey="header.search.button" fallback="Search Publications" as="span" label="Search button" />
             </button>
+            
+            {/* Global Favourites & Cart Buttons */}
+            <Sheet>
+              <SheetTrigger asChild>
+                <button className="p-2 text-[var(--ink-soft)] hover:text-[var(--primary)] transition-colors relative cursor-pointer" aria-label="Favourites">
+                  <Heart className="h-5 w-5" />
+                  <span className="absolute top-1 right-0 h-4 w-4 bg-[var(--mint)] text-white text-[10px] font-bold rounded-full flex items-center justify-center transform translate-x-1 -translate-y-1 shadow-sm">{wishlist.length}</span>
+                </button>
+              </SheetTrigger>
+              <SheetContent className="w-full sm:max-w-md">
+                <SheetHeader>
+                  <SheetTitle>Your Favourites ({wishlist.length})</SheetTitle>
+                </SheetHeader>
+                <div className="mt-8 flex flex-col gap-4 overflow-y-auto max-h-[80vh]">
+                  {wishlist.length === 0 ? (
+                    <div className="text-center text-gray-500 py-10">Your wishlist is empty.</div>
+                  ) : (
+                    wishlist.map((book) => (
+                      <div key={book.id} className="flex gap-4 border-b border-border pb-4">
+                        <img src={book.coverImage} alt={book.title} className="w-16 h-24 object-cover rounded shadow-sm" />
+                        <div className="flex-1">
+                          <h4 className="font-bold text-sm line-clamp-1">{book.title}</h4>
+                          <p className="text-xs text-gray-500 mb-2">{book.author}</p>
+                          <div className="font-bold text-[var(--primary)]">₹{book.price}</div>
+                        </div>
+                        <button onClick={() => toggleWishlist(book)} className="text-gray-400 hover:text-red-500 p-2">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
+
+            <Sheet>
+              <SheetTrigger asChild>
+                <button className="p-2 text-[var(--ink-soft)] hover:text-[var(--primary)] transition-colors relative mr-1 cursor-pointer" aria-label="Cart">
+                  <ShoppingCart className="h-5 w-5" />
+                  <span className="absolute top-1 right-0 h-4 w-4 bg-[var(--primary)] text-white text-[10px] font-bold rounded-full flex items-center justify-center transform translate-x-1 -translate-y-1 shadow-sm">{cart.length}</span>
+                </button>
+              </SheetTrigger>
+              <SheetContent className="w-full sm:max-w-md flex flex-col">
+                <SheetHeader>
+                  <SheetTitle>Your Cart ({cart.length})</SheetTitle>
+                </SheetHeader>
+                <div className="mt-8 flex flex-col gap-4 overflow-y-auto flex-1">
+                  {cart.length === 0 ? (
+                    <div className="text-center text-gray-500 py-10">Your cart is empty.</div>
+                  ) : (
+                    cart.map((item) => (
+                      <div key={item.id} className="flex gap-4 border-b border-border pb-4">
+                        <img src={item.coverImage} alt={item.title} className="w-16 h-24 object-cover rounded shadow-sm" />
+                        <div className="flex-1 flex flex-col">
+                          <h4 className="font-bold text-sm line-clamp-1">{item.title}</h4>
+                          <p className="text-xs text-gray-500 mb-2">{item.author}</p>
+                          <div className="flex items-center justify-between mt-auto">
+                            <div className="flex items-center border border-border rounded">
+                              <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="px-2 py-1 hover:bg-slate-100">-</button>
+                              <span className="px-2 text-sm font-medium">{item.quantity}</span>
+                              <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="px-2 py-1 hover:bg-slate-100">+</button>
+                            </div>
+                            <div className="font-bold text-[var(--mint)]">₹{item.price * item.quantity}</div>
+                          </div>
+                        </div>
+                        <button onClick={() => removeFromCart(item.id)} className="text-gray-400 hover:text-red-500 p-2 self-start">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+                {cart.length > 0 && (
+                  <div className="border-t border-border pt-4 mt-4">
+                    <div className="flex justify-between font-bold text-lg mb-4">
+                      <span>Total:</span>
+                      <span>₹{cart.reduce((acc, item) => acc + item.price * item.quantity, 0)}</span>
+                    </div>
+                    <button className="w-full btn-primary py-3 cursor-pointer">Proceed to Checkout</button>
+                  </div>
+                )}
+              </SheetContent>
+            </Sheet>
+
             <button
               className="lg:hidden inline-flex items-center justify-center rounded-md border border-border p-2"
               onClick={() => setMobileOpen((v) => !v)}

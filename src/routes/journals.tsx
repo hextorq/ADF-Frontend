@@ -11,6 +11,7 @@ const JOURNALS = [
     scope: "Applied linguistics, academic writing, ELT, literature studies.",
     frequency: "Quarterly",
     access: "Open Access · CC BY 4.0",
+    submitUrl: "https://ijeae.com/index.php/ijeae"
   },
   {
     title: "ADF Journal of Multidisciplinary Research",
@@ -81,7 +82,13 @@ export default function Journals() {
                   <Row k="Frequency" v={j.frequency} />
                   <Row k="Access" v={j.access} />
                   <div className="flex items-center gap-2 pt-3">
-                    <Link to="/guidelines/author" className="btn-primary !py-2 !text-sm"><EditableText contentKey="page.journals.card.submit" fallback="Submit" as="span" label="Button label" /></Link>
+                    {j.submitUrl ? (
+                      <a href={j.submitUrl} target="_blank" rel="noopener noreferrer" className="btn-primary !py-2 !text-sm">
+                        <EditableText contentKey="page.journals.card.submit" fallback="Submit" as="span" label="Button label" />
+                      </a>
+                    ) : (
+                      <Link to="/guidelines/author" className="btn-primary !py-2 !text-sm"><EditableText contentKey="page.journals.card.submit" fallback="Submit" as="span" label="Button label" /></Link>
+                    )}
                     <Link to="/editorial-board" className="btn-outline !py-2 !text-sm"><EditableText contentKey="page.journals.card.editorialBoard" fallback="Editorial Board" as="span" label="Button label" /></Link>
                   </div>
                 </div>

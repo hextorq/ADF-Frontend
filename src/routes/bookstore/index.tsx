@@ -1,21 +1,33 @@
-import { Search, ChevronRight, Star, Filter, Heart, ShoppingCart, ArrowRight, CheckCircle, ShieldCheck, Truck, Globe, Download, PlayCircle } from "lucide-react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Search, ChevronRight, Star, Filter, Heart, ShoppingCart, ArrowRight, CheckCircle, ShieldCheck, Truck, Globe, Download, PlayCircle, BookOpen } from "lucide-react";
+import { useState, useMemo } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BookCard } from "@/components/store/BookCard";
 import { QuickViewModal } from "@/components/store/QuickViewModal";
 import { MOCK_BOOKS, CATEGORIES, type Book } from "@/components/store/store-mock-data";
 import { cn } from "@/lib/utils";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { PageHeader } from "@/components/site/PageHeader";
 
 export default function BookStore() {
-  const [quickViewBook, setQuickViewBook] = useState<Book | null>(null);
-  const [activeTab, setActiveTab] = useState("Editor's Picks");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialCategory = searchParams.get("category") || "All Books";
 
-  const bestSellers = MOCK_BOOKS.filter(b => b.badge === "BESTSELLER" || b.rating >= 4.8);
-  const newReleases = MOCK_BOOKS.filter(b => b.badge === "NEW");
+  const [quickViewBook, setQuickViewBook] = useState<Book | null>(null);
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
+  const [activeCategory, setActiveCategory] = useState(initialCategory);
+
+  const filteredBooks = useMemo(() => {
+    return MOCK_BOOKS.filter(book => {
+      const matchesSearch = book.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                            book.author.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCategory = activeCategory === "All Books" || 
+                              book.genre === activeCategory || 
+                              (activeCategory === "Coming Soon" && book.badge === "COMING SOON");
+      
+      return matchesSearch && matchesCategory;
+    });
+  }, [searchQuery, activeCategory]);
 
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
@@ -34,72 +46,102 @@ export default function BookStore() {
       />
 
 
-      {/* Featured Collections */}
-      <section className="py-16 bg-white">
+
+
+      {/* Browse Catalog */}
+      <section id="browse-catalog" className="py-20 bg-slate-50">
         <div className="container-academic">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-10">
-            <div>
-              <h2 className="text-3xl font-serif font-bold text-[var(--ink)] mb-2">Featured Collections</h2>
-              <p className="text-gray-500">Handpicked selections by our editorial team</p>
-            </div>
-            <div className="flex gap-2 mt-4 md:mt-0 overflow-x-auto pb-2 scrollbar-hide">
-              {["Editor's Picks", "Award Winning", "Trending This Month", "Faculty Recommendations"].map(tab => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={cn(
-                    "px-5 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-colors",
-                    activeTab === tab ? "bg-[var(--primary)] text-white" : "bg-slate-100 text-gray-600 hover:bg-slate-200"
-                  )}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-          </div>
-          
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {MOCK_BOOKS.slice(0, 4).map(book => (
-              <div key={book.id}>
-                <BookCard book={book} onQuickView={setQuickViewBook} />
+          <div className="flex flex-col lg:flex-row gap-10">
+            {/* Sidebar Filters */}
+            <div className="w-full lg:w-72 flex-shrink-0 space-y-8">
+              <div className="bg-white p-6 rounded-2xl border border-border shadow-sm">
+                <h3 className="font-serif text-lg font-bold text-[var(--ink)] mb-4 flex items-center gap-2">
+                  <Search className="h-4 w-4" /> Search
+                </h3>
+                <Input 
+                  placeholder="Title, author, or ISBN..."
+                  className="bg-slate-50 border-slate-200 focus-visible:ring-[var(--primary)]"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* Best Sellers Carousel */}
-      <section className="py-16 bg-slate-50 border-y border-border">
-        <div className="container-academic">
-          <div className="flex items-center justify-between mb-10">
-            <div>
-              <h2 className="text-3xl font-serif font-bold text-[var(--ink)] mb-2">Best Sellers</h2>
-              <p className="text-gray-500">Our most popular publications this year</p>
+              <div className="bg-white p-6 rounded-2xl border border-border shadow-sm">
+                <h3 className="font-serif text-lg font-bold text-[var(--ink)] mb-4 flex items-center gap-2">
+                  <Filter className="h-4 w-4" /> Categories
+                </h3>
+                <div className="flex flex-col gap-1.5">
+                  {CATEGORIES.map(category => (
+                    <button
+                      key={category}
+                      onClick={() => setActiveCategory(category)}
+                      className={cn(
+                        "text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-all group flex justify-between items-center cursor-pointer",
+                        activeCategory === category 
+                          ? "bg-[var(--primary)] text-white shadow-md"
+                          : "text-gray-600 hover:bg-slate-100 hover:text-[var(--ink)]"
+                      )}
+                    >
+                      {category}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
-            <Link to="/bookstore/search?sort=bestsellers" className="text-[var(--primary)] font-bold hover:underline flex items-center gap-1">
-              View All <ChevronRight className="h-4 w-4" />
-            </Link>
-          </div>
 
-          <Carousel className="w-full">
-            <CarouselContent className="-ml-4 md:-ml-6">
-              {bestSellers.map((book) => (
-                <CarouselItem key={`bestseller-${book.id}`} className="pl-4 md:pl-6 md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
-                  <div className="h-full py-2">
-                    <BookCard book={book} onQuickView={setQuickViewBook} />
+            {/* Books Grid */}
+            <div className="flex-1">
+              <div className="flex items-center justify-between mb-8 bg-white p-4 rounded-2xl border border-border shadow-sm">
+                <h2 className="font-serif text-xl font-bold text-[var(--ink)]">
+                  {searchQuery ? `Results for "${searchQuery}"` : activeCategory}
+                </h2>
+                <div className="flex items-center gap-4">
+                  <span className="text-sm text-gray-500 font-medium">
+                    Showing <span className="text-[var(--ink)] font-bold">{filteredBooks.length}</span> results
+                  </span>
+                  <select className="text-sm border-gray-200 rounded-lg bg-slate-50 px-3 py-2 outline-none focus:ring-2 focus:ring-[var(--primary)]">
+                    <option>Sort by: Featured</option>
+                    <option>Price: Low to High</option>
+                    <option>Price: High to Low</option>
+                    <option>Newest Arrivals</option>
+                    <option>Best Sellers</option>
+                  </select>
+                </div>
+              </div>
+
+              {filteredBooks.length > 0 ? (
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredBooks.map(book => (
+                    <div key={book.id}>
+                      <BookCard book={book} onQuickView={setQuickViewBook} />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="bg-white rounded-2xl p-16 text-center border border-border shadow-sm">
+                  <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <BookOpen className="h-10 w-10 text-gray-300" />
                   </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <div className="flex justify-end gap-2 mt-6">
-              <CarouselPrevious className="static transform-none bg-white hover:bg-[var(--primary)] hover:text-white transition-colors" />
-              <CarouselNext className="static transform-none bg-white hover:bg-[var(--primary)] hover:text-white transition-colors" />
+                  <h3 className="text-2xl font-bold text-[var(--ink)] mb-3">No books found</h3>
+                  <p className="text-gray-500 max-w-md mx-auto">
+                    We couldn't find any books matching your current filters. Try adjusting your search or category selection.
+                  </p>
+                  <button 
+                    onClick={() => {setSearchQuery(""); setActiveCategory("All Books");}}
+                    className="mt-8 bg-[var(--primary)] text-white px-6 py-2.5 rounded-full font-semibold hover:bg-[var(--deep)] transition-colors shadow-md cursor-pointer"
+                  >
+                    Clear all filters
+                  </button>
+                </div>
+              )}
             </div>
-          </Carousel>
+
+          </div>
         </div>
       </section>
 
       {/* Why Buy From ADF */}
+
       <section className="py-20 bg-white">
         <div className="container-academic">
           <div className="text-center mb-16">

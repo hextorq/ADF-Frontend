@@ -98,7 +98,7 @@ export function HeroSlider() {
         <div className="absolute -bottom-40 -left-20 h-[460px] w-[460px] rounded-full border border-white/10 spin-slow" />
       </div>
 
-      <div className="container-academic relative grid lg:grid-cols-12 gap-8 py-12 lg:py-16">
+      <div className="container-academic relative grid lg:grid-cols-12 gap-8 py-8 lg:py-10">
         <div className="lg:col-span-9 overflow-hidden" ref={emblaRef}>
           <div className="flex">
             {SLIDES.map((s, i) => (
@@ -116,7 +116,7 @@ export function HeroSlider() {
                     contentKey={`home.hero.slide.${s.key}.title`}
                     fallback={s.title}
                     as="h1"
-                    className="mt-6 font-serif text-4xl md:text-6xl font-bold leading-[1.05]"
+                    className="mt-4 font-serif text-4xl md:text-6xl font-bold leading-[1.05]"
                     label="Slide Title"
                   />
                   {s.highlight && (
@@ -134,10 +134,10 @@ export function HeroSlider() {
                     fallback={s.description}
                     as="p"
                     multiline
-                    className="mt-5 max-w-2xl text-lg text-white/80 leading-relaxed"
+                    className="mt-3 max-w-2xl text-lg text-white/80 leading-relaxed"
                     label="Slide Subtitle"
                   />
-                  <div className="mt-7 flex flex-wrap gap-2">
+                  <div className="mt-5 flex flex-wrap gap-2">
                     {s.features.map((f) => (
                       <span
                         key={f}
@@ -152,7 +152,7 @@ export function HeroSlider() {
                       </span>
                     ))}
                   </div>
-                  <div className="mt-8 flex flex-wrap items-center gap-3">
+                  <div className="mt-6 flex flex-wrap items-center gap-3">
                     <Link
                       to={s.to}
                       className="inline-flex items-center gap-2 rounded-md bg-[var(--mint)] px-5 py-3 text-sm font-semibold text-[var(--deep)] hover:bg-white transition"
@@ -179,7 +179,7 @@ export function HeroSlider() {
         </div>
 
         {/* Sidebar quick facts */}
-        <aside className="lg:col-span-3 self-end space-y-3">
+        <aside className="lg:col-span-3 self-end space-y-2">
           {[
             { k: "ISSN", v: "Online" },
             { k: "ISBN", v: "Assigned" },
@@ -198,7 +198,7 @@ export function HeroSlider() {
       </div>
 
       {/* Controls */}
-      <div className="container-academic relative pb-8 flex items-center justify-between">
+      <div className="container-academic relative pb-6 flex items-center justify-between">
         <div className="flex items-center gap-2">
           {SLIDES.map((_, i) => (
             <button

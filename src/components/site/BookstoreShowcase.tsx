@@ -1,10 +1,12 @@
-import { ArrowRight, BookOpen, Sparkles, Star } from "lucide-react";
+import { ArrowRight, BookOpen, Sparkles, Star, Heart, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { MOCK_BOOKS } from "@/components/store/store-mock-data";
+import { useStoreStore } from "@/store/useStoreStore";
 
 export function BookstoreShowcase() {
   // Select top 3 books to feature in the interactive stack
   const featuredBooks = MOCK_BOOKS.slice(0, 3);
+  const { addToCart, toggleWishlist, isInWishlist } = useStoreStore();
 
   return (
     <section className="py-16 relative overflow-hidden bg-white border-y border-border">
@@ -86,12 +88,26 @@ export function BookstoreShowcase() {
                         <div className="translate-y-4 group-hover/book:translate-y-0 transition-transform duration-300">
                           <h4 className="text-white font-bold text-lg mb-1 line-clamp-1">{book.title}</h4>
                           <p className="text-slate-200 text-sm mb-3 line-clamp-1">{book.author}</p>
-                          <div className="flex items-center justify-between">
+                          <div className="flex items-center justify-between mb-3">
                             <span className="text-[var(--mint)] font-bold">₹{book.price}</span>
                             <div className="flex items-center text-yellow-400 text-sm font-medium">
                               <Star className="w-4 h-4 fill-current mr-1" />
                               {book.rating}
                             </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <button 
+                              className="flex-1 bg-[var(--primary)] text-white py-2 rounded-md font-medium text-sm hover:bg-[var(--deep)] transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); addToCart(book); }}
+                            >
+                              <ShoppingCart className="w-4 h-4" /> Add to Cart
+                            </button>
+                            <button 
+                              className={`w-9 h-9 text-white rounded-md flex items-center justify-center transition-colors cursor-pointer ${isInWishlist(book.id) ? 'bg-red-500 hover:bg-red-600' : 'bg-white/20 hover:bg-white/40'}`}
+                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleWishlist(book); }}
+                            >
+                              <Heart className={`w-4 h-4 ${isInWishlist(book.id) ? 'fill-white' : ''}`} />
+                            </button>
                           </div>
                         </div>
                       </div>

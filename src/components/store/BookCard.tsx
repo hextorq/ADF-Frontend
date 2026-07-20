@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Heart, Star, ShoppingCart, Eye, BookOpen } from "lucide-react";
 import { type Book } from "./store-mock-data";
 import { cn } from "@/lib/utils";
-import { toast } from "sonner";
+import { useStoreStore } from "@/store/useStoreStore";
 
 interface BookCardProps {
   book: Book;
@@ -11,13 +11,14 @@ interface BookCardProps {
 
 export function BookCard({ book, onQuickView }: BookCardProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const { addToCart, toggleWishlist, isInWishlist } = useStoreStore();
 
   const handleAddToCart = () => {
-    toast.success(`${book.title} added to cart`);
+    addToCart(book);
   };
 
   const handleWishlist = () => {
-    toast.success(`Added to wishlist`);
+    toggleWishlist(book);
   };
 
   return (
@@ -48,10 +49,10 @@ export function BookCard({ book, onQuickView }: BookCardProps) {
           e.stopPropagation();
           handleWishlist();
         }}
-        className="absolute top-4 right-4 z-50 h-8 w-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-gray-500 hover:text-red-500 hover:bg-white shadow-sm transition-colors"
+        className={cn("absolute top-4 right-4 z-50 h-8 w-8 backdrop-blur rounded-full flex items-center justify-center hover:bg-white shadow-sm transition-colors cursor-pointer", isInWishlist(book.id) ? "bg-white text-red-500" : "bg-white/90 text-gray-500 hover:text-red-500")}
         aria-label="Add to wishlist"
       >
-        <Heart className="h-4 w-4" />
+        <Heart className={cn("h-4 w-4", isInWishlist(book.id) ? "fill-current" : "")} />
       </button>
 
       {/* Book Cover Area */}
@@ -131,7 +132,7 @@ export function BookCard({ book, onQuickView }: BookCardProps) {
               e.stopPropagation();
               handleAddToCart();
             }}
-            className="h-10 w-10 rounded-full bg-[var(--secondary)] flex items-center justify-center text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white transition-colors shadow-sm z-50 relative"
+            className="h-10 w-10 rounded-full bg-[var(--secondary)] flex items-center justify-center text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white transition-colors shadow-sm z-50 relative cursor-pointer"
             aria-label="Add to cart"
           >
             <ShoppingCart className="h-5 w-5" />
