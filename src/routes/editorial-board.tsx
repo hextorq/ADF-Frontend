@@ -1,7 +1,10 @@
+import { useState } from "react";
 import { PageHeader } from "@/components/site/PageHeader";
 import { EditableText } from "@/components/cms/EditableText";
+import { useAuthStore } from "@/store/useAuthStore";
+import { Trash2 } from "lucide-react";
 
-const BOARD = [
+const INITIAL_BOARD = [
   // Editor-in-Chief & Managing Editor
   {
     name: "Dr. Attrait Dovin Fedrick",
@@ -178,6 +181,8 @@ const BOARD = [
 ];
 
 export default function Page() {
+  const isAdmin = useAuthStore(s => s.isAdmin);
+  const [board, setBoard] = useState(INITIAL_BOARD);
   const groups = ["Editor-in-Chief & Managing Editor", "Technical & Ethics Editor", "Associate Editor", "Advisory Board"];
   return (
     <>
@@ -191,14 +196,41 @@ export default function Page() {
       <section className="py-16 bg-white">
         <div className="container-academic space-y-16">
           {groups.map((g) => {
-            const members = BOARD.filter((b) => b.role === g);
-            if (members.length === 0) return null;
+            const members = board.filter((b) => b.role === g);
+            if (members.length === 0 && !isAdmin) return null;
             return (
               <div key={g}>
                 <EditableText contentKey={`page.editorial-board.group.${g}`} fallback={g} as="h2" className="font-serif text-2xl font-bold text-[var(--ink)] border-b pb-3 mb-6" label="Board group" />
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {members.map((b) => (
-                    <div key={b.name} className="surface-card p-6 flex flex-col gap-4">
+                  {isAdmin && (
+                    <button
+                      onClick={() => {
+                        const newMember = {
+                          name: "New Member " + Date.now().toString().slice(-4),
+                          role: g,
+                          aff: "New Affiliation",
+                          email: "email@example.com",
+                          initials: "NM"
+                        };
+                        setBoard([newMember, ...board]);
+                      }}
+                      className="surface-card flex min-h-[220px] flex-col items-center justify-center gap-2 border-2 border-dashed border-slate-300 bg-slate-50 text-slate-500 hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors rounded-xl"
+                    >
+                      <span className="text-4xl font-light">+</span>
+                      <span className="font-semibold">Add New Member</span>
+                    </button>
+                  )}
+                  {members.map((b, idx) => (
+                    <div key={`${b.name}-${idx}`} className="relative surface-card p-6 flex flex-col gap-4">
+                      {isAdmin && (
+                        <button
+                          onClick={() => setBoard(board.filter(member => member !== b))}
+                          className="absolute -top-3 -right-3 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-red-100 text-red-600 shadow-sm hover:bg-red-200 transition-colors"
+                          title="Delete Member"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      )}
                       <div className="flex items-center gap-4">
                         <div className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-gradient-to-br from-[var(--primary)] to-[var(--deep)] text-white font-semibold text-lg shadow-inner">
                           {b.initials}

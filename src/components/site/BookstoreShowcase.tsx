@@ -2,11 +2,26 @@ import { ArrowRight, BookOpen, Sparkles, Star, Heart, ShoppingCart } from "lucid
 import { Link } from "react-router-dom";
 import { MOCK_BOOKS } from "@/components/store/store-mock-data";
 import { useStoreStore } from "@/store/useStoreStore";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useContentStore } from "@/store/useContentStore";
+import { EditableText } from "@/components/cms/EditableText";
 
 export function BookstoreShowcase() {
-  // Select top 3 books to feature in the interactive stack
-  const featuredBooks = MOCK_BOOKS.slice(0, 3);
+  const isAdmin = useAuthStore((s) => s.isAdmin);
+  
+  // Get book IDs from CMS, fallback to 1, 2, 3
+  const book1Id = useContentStore((s) => s.getContent("home.bookstore.featured.1", "1"));
+  const book2Id = useContentStore((s) => s.getContent("home.bookstore.featured.2", "2"));
+  const book3Id = useContentStore((s) => s.getContent("home.bookstore.featured.3", "3"));
+  
   const { addToCart, toggleWishlist, isInWishlist } = useStoreStore();
+
+  // Select the 3 books to feature
+  const featuredBooks = [
+    MOCK_BOOKS.find((b) => b.id === book1Id) || MOCK_BOOKS[0],
+    MOCK_BOOKS.find((b) => b.id === book2Id) || MOCK_BOOKS[1],
+    MOCK_BOOKS.find((b) => b.id === book3Id) || MOCK_BOOKS[2],
+  ];
 
   return (
     <section className="py-16 relative overflow-hidden bg-white border-y border-border">
@@ -49,7 +64,25 @@ export function BookstoreShowcase() {
               </Link>
             </div>
             
-
+            {isAdmin && (
+              <div className="mt-8 p-4 bg-slate-50 border border-slate-200 rounded-lg max-w-sm">
+                <h4 className="text-sm font-semibold text-slate-800 mb-3">Featured Books (Admin)</h4>
+                <div className="space-y-3 text-sm text-slate-600">
+                  <div className="flex items-center gap-2">
+                    <span className="w-16 font-medium">Book 1:</span>
+                    <EditableText contentKey="home.bookstore.featured.1" fallback="1" as="span" label="Book 1 ID" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-16 font-medium">Book 2:</span>
+                    <EditableText contentKey="home.bookstore.featured.2" fallback="2" as="span" label="Book 2 ID" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-16 font-medium">Book 3:</span>
+                    <EditableText contentKey="home.bookstore.featured.3" fallback="3" as="span" label="Book 3 ID" />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Right Interactive Pane - Pseudo 3D Book Stack */}

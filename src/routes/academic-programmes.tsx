@@ -1,7 +1,8 @@
 import { PageHeader } from "@/components/site/PageHeader";
 import { useMemo, useState } from "react";
-import { CalendarDays, Clock, MapPin, User, Users, X } from "lucide-react";
+import { CalendarDays, Clock, MapPin, User, Users, X, Trash2 } from "lucide-react";
 import { EditableText } from "@/components/cms/EditableText";
+import { useAuthStore } from "@/store/useAuthStore";
 
 type Event = {
   date: string; // YYYY-MM-DD
@@ -37,6 +38,8 @@ export default function Page() {
 }
 
 function UpcomingCalendar() {
+  const isAdmin = useAuthStore(s => s.isAdmin);
+  const [localEvents, setLocalEvents] = useState(EVENTS);
   const [month, setMonth] = useState(() => new Date(2026, 6, 1)); // July 2026
   const [open, setOpen] = useState<Event | null>(null);
 
@@ -52,7 +55,7 @@ function UpcomingCalendar() {
     for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
 
     const map: Record<number, Event[]> = {};
-    for (const e of EVENTS) {
+    for (const e of localEvents) {
       const d = new Date(e.date);
       if (d.getFullYear() === month.getFullYear() && d.getMonth() === month.getMonth()) {
         const k = d.getDate();
@@ -60,7 +63,7 @@ function UpcomingCalendar() {
       }
     }
     return { weeks, eventsByDay: map };
-  }, [month]);
+  }, [month, localEvents]);
 
   const monthLabel = month.toLocaleString("en-US", { month: "long", year: "numeric" });
 
@@ -94,9 +97,9 @@ function UpcomingCalendar() {
                 <div key={i} className="bg-white min-h-[92px] p-2 flex flex-col">
                   <span className="text-xs font-medium text-[var(--ink-soft)]">{d ?? ""}</span>
                   <div className="mt-1 flex flex-col gap-1">
-                    {evs.map((e) => (
+                    {evs.map((e, evId) => (
                       <button
-                        key={e.title}
+                        key={`${e.title}-${evId}`}
                         onClick={() => setOpen(e)}
                         className="text-left text-[11px] rounded bg-[var(--primary)]/10 text-[var(--primary)] px-1.5 py-1 hover:bg-[var(--primary)] hover:text-white truncate"
                       >
@@ -111,9 +114,43 @@ function UpcomingCalendar() {
         </div>
 
         <aside className="space-y-3">
-          <EditableText contentKey="page.academic-programmes.events.title" fallback="Upcoming Events" as="h3" className="font-serif text-xl font-semibold text-[var(--ink)]" label="Events section title" />
-          {EVENTS.map((e) => (
-            <button key={e.title} onClick={() => setOpen(e)} className="w-full text-left surface-card p-4 hover:border-[var(--primary)] transition">
+          <div className="flex items-center justify-between">
+            <EditableText contentKey="page.academic-programmes.events.title" fallback="Upcoming Events" as="h3" className="font-serif text-xl font-semibold text-[var(--ink)]" label="Events section title" />
+            {isAdmin && (
+              <button
+                onClick={() => {
+                  const newEvent: Event = {
+                    date: "2026-07-01",
+                    title: "New Academic Programme",
+                    type: "Workshop",
+                    duration: "1 day",
+                    speaker: "New Speaker",
+                    mode: "Online",
+                    seats: 100
+                  };
+                  setLocalEvents([newEvent, ...localEvents]);
+                }}
+                className="btn-primary !py-1 !px-2 text-xs"
+              >
+                + Add New
+              </button>
+            )}
+          </div>
+          {localEvents.map((e, idx) => (
+            <div key={`${e.title}-${idx}`} className="relative">
+              {isAdmin && (
+                <button
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    setLocalEvents(localEvents.filter((_, i) => i !== idx));
+                  }}
+                  className="absolute -top-2 -right-2 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-red-100 text-red-600 shadow-sm hover:bg-red-200 transition-colors"
+                  title="Delete Event"
+                >
+                  <Trash2 className="h-3 w-3" />
+                </button>
+              )}
+              <button onClick={() => setOpen(e)} className="w-full text-left surface-card p-4 hover:border-[var(--primary)] transition">
               <div className="flex items-center justify-between text-xs">
                 <span className="rounded-full bg-[var(--accent)]/15 text-[var(--accent)] px-2 py-0.5 font-semibold">{e.type}</span>
                 <span className="text-[var(--ink-soft)]">{e.date}</span>
@@ -126,6 +163,7 @@ function UpcomingCalendar() {
                 <span className="inline-flex items-center gap-1"><Users className="h-3 w-3" /> <EditableText contentKey={`event.${e.date}.seats`} fallback={`${e.seats} seats`} as="span" label="Event seats" /></span>
               </div>
             </button>
+            </div>
           ))}
         </aside>
       </div>

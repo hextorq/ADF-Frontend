@@ -67,14 +67,14 @@ export function EditableText({
   };
 
   return (
-    <span className="group/editable relative inline-block">
-      <Tag className={className}>{value}</Tag>
+    <Tag className={cn("group/editable relative", className)}>
+      {value}
       <Popover open={open} onOpenChange={handleOpenChange}>
         <PopoverTrigger asChild>
           <button
             type="button"
             aria-label={label ? `Edit ${label}` : "Edit text"}
-            className="absolute -right-6 top-0 hidden h-5 w-5 items-center justify-center rounded-full bg-[var(--primary)] text-white opacity-0 transition-opacity group-hover/editable:opacity-100 group-focus-within/editable:opacity-100 lg:inline-flex"
+            className="absolute -top-3 -right-3 hidden h-6 w-6 items-center justify-center rounded-full bg-[var(--primary)] text-white opacity-0 shadow-md transition-opacity group-hover/editable:opacity-100 group-focus-within/editable:opacity-100 lg:inline-flex z-10"
           >
             <Pencil className="h-3 w-3" />
           </button>
@@ -124,7 +124,7 @@ export function EditableText({
           </div>
         </PopoverContent>
       </Popover>
-    </span>
+    </Tag>
   );
 }
 

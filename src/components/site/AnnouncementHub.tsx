@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { ArrowRight, Calendar, Tag, Activity, BookOpen, FileText, CheckCircle, Video } from "lucide-react";
+import { ArrowRight, Calendar, Tag, Activity, BookOpen, FileText, CheckCircle, Video, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useCMSStore, Announcement, Publication, Activity as ActivityType } from "@/store/useCMSStore";
 import { EditableText } from "@/components/cms/EditableText";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const TABS = [
   "Announcements",
@@ -71,6 +72,18 @@ export function AnnouncementHub() {
         <div className="mt-8 min-h-[400px]">
           {tab === "Announcements" && (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {useAuthStore(s => s.isAdmin) && (
+                <button
+                  onClick={() => {
+                    const newAnnouncement = { id: Date.now().toString(), date: "New Date", type: "Announcement" as const, category: "New Category", priority: "New" as const, title: "New Announcement", excerpt: "New description", to: "/announcements", pinned: false, visible: true };
+                    useCMSStore.getState().setAnnouncements([newAnnouncement, ...allAnnouncements]);
+                  }}
+                  className="surface-card flex min-h-[200px] flex-col items-center justify-center gap-2 border-2 border-dashed border-slate-300 bg-slate-50 text-slate-500 hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors"
+                >
+                  <span className="text-3xl font-light">+</span>
+                  <span className="text-sm font-medium">Add New Announcement</span>
+                </button>
+              )}
               {displayAnnouncements.map(it => (
                 <AnnouncementCard key={it.id} item={it} />
               ))}
@@ -119,8 +132,25 @@ export function AnnouncementHub() {
 }
 
 function AnnouncementCard({ item }: { item: Announcement }) {
+  const isAdmin = useAuthStore(s => s.isAdmin);
+  const allAnnouncements = useCMSStore(s => s.announcements);
+  const setAnnouncements = useCMSStore(s => s.setAnnouncements);
+
+  const handleDelete = () => {
+    setAnnouncements(allAnnouncements.filter(a => a.id !== item.id));
+  };
+
   return (
-    <article className={`surface-card p-5 flex flex-col transition-colors ${item.pinned ? 'border-[var(--primary)] border-2' : 'hover:border-[var(--primary)]'}`}>
+    <article className={`relative surface-card p-5 flex flex-col transition-colors ${item.pinned ? 'border-[var(--primary)] border-2' : 'hover:border-[var(--primary)]'}`}>
+      {isAdmin && (
+        <button
+          onClick={handleDelete}
+          className="absolute -top-3 -right-3 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-red-100 text-red-600 shadow-sm hover:bg-red-200 transition-colors"
+          title="Delete Announcement"
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+        </button>
+      )}
       <div className="flex items-center gap-2 text-xs">
         <span className={`inline-flex items-center rounded-full px-2 py-0.5 font-semibold ${
           item.priority === "High" ? "bg-rose-50 text-rose-700"
@@ -132,7 +162,7 @@ function AnnouncementCard({ item }: { item: Announcement }) {
         </span>
         {item.pinned && <EditableText contentKey="home.hub.pinned" fallback="Pinned" as="span" className="ml-auto text-[var(--primary)] text-xs font-bold uppercase tracking-wider" label="Pinned label" />}
       </div>
-      <h3 className="mt-3 font-serif text-lg font-semibold text-[var(--ink)] leading-snug">
+      <h3 className="mt-3 font-serif text-lg font-semibold text-[var(--ink)] leading-snug pr-4">
         <EditableText contentKey={`announcement.${item.id}.title`} fallback={item.title} as="span" label="Announcement title" />
       </h3>
       <EditableText contentKey={`announcement.${item.id}.excerpt`} fallback={item.excerpt} as="p" multiline className="mt-2 text-sm text-[var(--ink-soft)] flex-1" label="Announcement excerpt" />
@@ -150,9 +180,26 @@ function AnnouncementCard({ item }: { item: Announcement }) {
 }
 
 function PublicationCard({ item }: { item: Publication }) {
+  const isAdmin = useAuthStore(s => s.isAdmin);
+  const allPublications = useCMSStore(s => s.publications);
+  const setPublications = useCMSStore(s => s.setPublications);
+
+  const handleDelete = () => {
+    setPublications(allPublications.filter(p => p.id !== item.id));
+  };
+
   return (
-    <article className="surface-card p-5 flex flex-col hover:border-[var(--primary)] transition">
-      <div className="flex items-center gap-2 text-xs mb-3">
+    <article className="relative surface-card p-5 flex flex-col hover:border-[var(--primary)] transition">
+      {isAdmin && (
+        <button
+          onClick={handleDelete}
+          className="absolute -top-3 -right-3 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-red-100 text-red-600 shadow-sm hover:bg-red-200 transition-colors"
+          title="Delete Publication"
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+        </button>
+      )}
+      <div className="flex items-center gap-2 text-xs mb-3 pr-4">
         <span className="bg-[var(--primary)]/10 text-[var(--primary)] rounded-full px-2 py-0.5 font-semibold">
           {item.pubType}
         </span>
@@ -177,6 +224,14 @@ function PublicationCard({ item }: { item: Publication }) {
 }
 
 function ActivityRow({ item }: { item: ActivityType }) {
+  const isAdmin = useAuthStore(s => s.isAdmin);
+  const allActivities = useCMSStore(s => s.activities);
+  const setActivities = useCMSStore(s => s.setActivities);
+
+  const handleDelete = () => {
+    setActivities(allActivities.filter(a => a.id !== item.id));
+  };
+
   const IconMap: Record<string, any> = {
     FileText: FileText,
     CheckCircle: CheckCircle,
@@ -186,11 +241,20 @@ function ActivityRow({ item }: { item: ActivityType }) {
   const IconComponent = IconMap[item.iconName] || Activity;
 
   return (
-    <div className="flex items-start gap-4 p-4 rounded-lg bg-white border border-slate-200 shadow-sm">
+    <div className="relative flex items-start gap-4 p-4 rounded-lg bg-white border border-slate-200 shadow-sm">
+      {isAdmin && (
+        <button
+          onClick={handleDelete}
+          className="absolute -top-3 -right-3 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-red-100 text-red-600 shadow-sm hover:bg-red-200 transition-colors"
+          title="Delete Activity"
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+        </button>
+      )}
       <div className="rounded-full bg-[var(--primary)]/10 p-3 text-[var(--primary)]">
         <IconComponent className="h-5 w-5" />
       </div>
-      <div className="flex-1">
+      <div className="flex-1 pr-4">
         <div className="flex items-center justify-between">
           <EditableText contentKey={`activity.${item.id}.title`} fallback={item.title} as="h4" className="font-semibold text-slate-900" label="Activity title" />
           <EditableText contentKey={`activity.${item.id}.time`} fallback={item.time} as="span" className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded" label="Activity time" />

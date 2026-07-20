@@ -5,10 +5,19 @@ import { useAuthStore } from "@/store/useAuthStore";
 
 export function FeaturedVideo() {
   const isAdmin = useAuthStore((s) => s.isAdmin);
-  // Client: Paste your latest YouTube video ID here. 
+  // Client: Paste your latest YouTube video ID or full URL here. 
   // For example, if your video URL is https://www.youtube.com/watch?v=abc123xyz, the ID is "abc123xyz".
   const LATEST_VIDEO_ID = "FSzhc4Q30Hw"; // The client's latest video ID
-  const videoId = useContentStore((s) => s.getContent("home.video.youtubeId", LATEST_VIDEO_ID));
+  const rawVideoInput = useContentStore((s) => s.getContent("home.video.youtubeId", LATEST_VIDEO_ID));
+  
+  // Helper to extract ID if a full URL is pasted
+  const extractYoutubeId = (urlOrId: string) => {
+    if (!urlOrId) return "";
+    const match = urlOrId.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+    return match ? match[1] : urlOrId.trim();
+  };
+  
+  const videoId = extractYoutubeId(rawVideoInput);
 
   return (
     <section className="py-20 bg-white relative overflow-hidden">
@@ -93,7 +102,7 @@ export function FeaturedVideo() {
               </div>
               {isAdmin && (
                 <div className="mt-2 rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-500">
-                  <EditableText contentKey="home.video.youtubeId" fallback={LATEST_VIDEO_ID} as="span" label="YouTube video ID" />
+                  <EditableText contentKey="home.video.youtubeId" fallback={LATEST_VIDEO_ID} as="span" label="YouTube video ID or Link" />
                 </div>
               )}
             </div>

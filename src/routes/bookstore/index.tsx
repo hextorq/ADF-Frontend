@@ -1,4 +1,4 @@
-import { Search, ChevronRight, Star, Filter, Heart, ShoppingCart, ArrowRight, CheckCircle, ShieldCheck, Truck, Globe, Download, PlayCircle, BookOpen } from "lucide-react";
+import { Search, ChevronRight, Star, Filter, Heart, ShoppingCart, ArrowRight, CheckCircle, ShieldCheck, Truck, Globe, Download, PlayCircle, BookOpen, Trash2 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -9,16 +9,20 @@ import { MOCK_BOOKS, CATEGORIES, type Book } from "@/components/store/store-mock
 import { cn } from "@/lib/utils";
 import { PageHeader } from "@/components/site/PageHeader";
 
+import { useAuthStore } from "@/store/useAuthStore";
+
 export default function BookStore() {
+  const isAdmin = useAuthStore(s => s.isAdmin);
   const [searchParams, setSearchParams] = useSearchParams();
   const initialCategory = searchParams.get("category") || "All Books";
 
+  const [localBooks, setLocalBooks] = useState(MOCK_BOOKS);
   const [quickViewBook, setQuickViewBook] = useState<Book | null>(null);
   const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
   const [activeCategory, setActiveCategory] = useState(initialCategory);
 
   const filteredBooks = useMemo(() => {
-    return MOCK_BOOKS.filter(book => {
+    return localBooks.filter(book => {
       const matchesSearch = book.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                             book.author.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesCategory = activeCategory === "All Books" || 
@@ -27,7 +31,7 @@ export default function BookStore() {
       
       return matchesSearch && matchesCategory;
     });
-  }, [searchQuery, activeCategory]);
+  }, [searchQuery, activeCategory, localBooks]);
 
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
@@ -111,8 +115,48 @@ export default function BookStore() {
 
               {filteredBooks.length > 0 ? (
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {isAdmin && (
+                    <button
+                      onClick={() => {
+                        const newBook: Book = {
+                          id: Date.now().toString(),
+                          title: "New Book Title",
+                          author: "New Author",
+                          genre: "Fiction",
+                          description: "New book description.",
+                          coverImage: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=800&auto=format&fit=crop",
+                          rating: 0,
+                          reviewCount: 0,
+                          price: 0,
+                          isbn: "000-00-0000-000-0",
+                          edition: "First Edition",
+                          stockStatus: "In Stock",
+                          language: "English",
+                          pages: 0,
+                          publisher: "ADF Publications",
+                          publicationDate: "2026-01-01",
+                          readers: 0,
+                          downloads: 0
+                        };
+                        setLocalBooks([newBook, ...localBooks]);
+                      }}
+                      className="surface-card flex min-h-[350px] flex-col items-center justify-center gap-2 border-2 border-dashed border-slate-300 bg-slate-50 text-slate-500 hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors rounded-xl"
+                    >
+                      <span className="text-4xl font-light">+</span>
+                      <span className="font-semibold">Add New Book</span>
+                    </button>
+                  )}
                   {filteredBooks.map(book => (
-                    <div key={book.id}>
+                    <div key={book.id} className="relative">
+                      {isAdmin && (
+                        <button
+                          onClick={() => setLocalBooks(localBooks.filter(b => b.id !== book.id))}
+                          className="absolute -top-3 -right-3 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-red-100 text-red-600 shadow-sm hover:bg-red-200 transition-colors"
+                          title="Delete Book"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      )}
                       <BookCard book={book} onQuickView={setQuickViewBook} />
                     </div>
                   ))}
@@ -162,75 +206,6 @@ export default function BookStore() {
                 </div>
                 <h3 className="text-xl font-bold text-[var(--ink)] mb-3">{feature.title}</h3>
                 <p className="text-gray-600">{feature.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Reader Reviews */}
-      <section className="py-24 bg-slate-50 relative overflow-hidden">
-        {/* Background decorations */}
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[var(--primary)]/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[var(--mint)]/10 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/3 pointer-events-none" />
-        
-        <div className="container-academic relative z-10">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-serif font-bold text-[var(--ink)] mb-4">What Our Readers Say</h2>
-            <p className="text-gray-500 max-w-2xl mx-auto text-lg">Discover why academics and literary enthusiasts worldwide trust ADF Publications.</p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { 
-                name: "Dr. Sarah Jenkins", 
-                role: "Research Scholar", 
-                review: "The multidisciplinary approach in these books is outstanding. Highly recommended for researchers looking for comprehensive perspectives.", 
-                rating: 5
-              },
-              { 
-                name: "Prof. Michael Chen", 
-                role: "University Professor", 
-                review: "ADF publications always deliver high-quality, peer-reviewed content. It has become my go-to source for academic literature.", 
-                rating: 5
-              },
-              { 
-                name: "Emily R.", 
-                role: "Avid Reader", 
-                review: "The novels published here are captivating and beautifully edited. The physical print quality of the paperbacks is also top-notch.", 
-                rating: 5
-              }
-            ].map((review, i) => (
-              <div 
-                key={i} 
-                className="bg-white/60 backdrop-blur-xl p-8 rounded-3xl border border-white shadow-xl shadow-[var(--primary)]/5 hover:border-[var(--primary)]/20 transition-all duration-300 relative group flex flex-col"
-              >
-                {/* Quote Icon */}
-                <div className="absolute top-8 right-8 text-[var(--primary)]/5 group-hover:text-[var(--primary)]/10 transition-colors duration-300">
-                  <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M14.017 21v-7.391c0-5.714 4.148-9.066 9.983-9.529v3.084c-3.13 0-5.32 1.434-5.32 4.195v1.641h5.32v8h-9.983zm-14.017 0v-7.391c0-5.714 4.148-9.066 9.983-9.529v3.084c-3.13 0-5.32 1.434-5.32 4.195v1.641h5.32v8h-9.983z"/>
-                  </svg>
-                </div>
-                
-                <div className="flex gap-1 mb-8">
-                  {[...Array(review.rating)].map((_, j) => (
-                    <Star key={j} className="w-5 h-5 fill-amber-400 text-amber-400 drop-shadow-sm" />
-                  ))}
-                </div>
-                
-                <p className="text-[var(--ink-soft)] text-lg mb-10 relative z-10 leading-relaxed flex-grow">
-                  "{review.review}"
-                </p>
-                
-                <div className="flex items-center gap-4 mt-auto">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--primary)] to-[var(--mint)] flex items-center justify-center text-white font-bold text-xl shadow-inner">
-                    {review.name.charAt(0)}
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-[var(--ink)]">{review.name}</h4>
-                    <p className="text-sm text-gray-500 font-medium">{review.role}</p>
-                  </div>
-                </div>
               </div>
             ))}
           </div>
