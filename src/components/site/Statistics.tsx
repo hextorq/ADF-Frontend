@@ -71,10 +71,10 @@ export function Statistics() {
             return (
               <div
                 key={stat.label}
-                className="group relative surface-card p-6 flex flex-col items-center justify-center text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-[var(--primary)]/10 border border-black/5"
+                className="group relative surface-card p-6 flex flex-col items-center justify-center text-center transition-colors duration-300 border border-black/5"
               >
                 <div className="absolute inset-0 bg-gradient-to-b from-[var(--primary)]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl pointer-events-none"></div>
-                <div className="h-12 w-12 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-inner">
+                <div className="h-12 w-12 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] flex items-center justify-center mb-4 transition-colors duration-300 shadow-inner">
                   <Icon className="h-6 w-6" />
                 </div>
                 <div className="text-3xl font-bold text-[var(--ink)] tracking-tight">

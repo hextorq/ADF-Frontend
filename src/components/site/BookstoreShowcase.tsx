@@ -35,14 +35,14 @@ export function BookstoreShowcase() {
             <div className="flex flex-wrap gap-4">
               <Link 
                 to="/bookstore" 
-                className="btn-primary shadow-lg shadow-[var(--primary)]/20 hover:-translate-y-1"
+                className="btn-primary shadow-lg shadow-[var(--primary)]/20"
               >
                 <BookOpen className="w-5 h-5" />
                 Explore Bookstore
               </Link>
               <Link 
                 to="/bookstore/search?sort=bestsellers" 
-                className="btn-outline hover:-translate-y-1"
+                className="btn-outline"
               >
                 Editor's Picks
                 <ArrowRight className="w-5 h-5" />
@@ -57,21 +57,36 @@ export function BookstoreShowcase() {
             <div className="relative w-full max-w-[360px] h-[450px] transform-style-3d group">
               
               {featuredBooks.map((book, index) => {
-                // Calculate dynamic positioning and rotation for the stack
-                const zIndex = 30 - index * 10;
-                const translateY = index * 30; // pixels down
-                const translateZ = index * -60; // pixels back
-                const rotateX = 15;
-                const rotateY = -15 + index * 5; // slight twist per book
+                let zIndex = 30;
+                let translateX = 0;
+                let translateY = 0;
+                let rotateZ = 0;
+                
+                if (index === 0) {
+                  zIndex = 30;
+                  translateX = 0;
+                  translateY = 0;
+                  rotateZ = 0;
+                } else if (index === 1) {
+                  zIndex = 20;
+                  translateX = -130;
+                  translateY = 30;
+                  rotateZ = -12;
+                } else if (index === 2) {
+                  zIndex = 10;
+                  translateX = 130;
+                  translateY = 30;
+                  rotateZ = 12;
+                }
                 
                 return (
                   <div 
                     key={book.id}
-                    className="absolute top-0 left-0 right-0 m-auto w-[260px] h-[380px] rounded-lg shadow-2xl transition-all duration-700 ease-out origin-bottom bg-white"
+                    className="absolute top-0 left-0 right-0 m-auto w-[260px] h-[380px] rounded-lg shadow-2xl transition-all duration-700 ease-out origin-center bg-white"
                     style={{
                       zIndex,
-                      transform: `translateY(${translateY}px) translateZ(${translateZ}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
-                      boxShadow: index === 0 ? "25px 25px 50px -12px rgba(7,26,140,0.25)" : "15px 15px 35px -10px rgba(7,26,140,0.15)",
+                      transform: `translateX(${translateX}px) translateY(${translateY}px) rotateZ(${rotateZ}deg)`,
+                      boxShadow: index === 0 ? "0 25px 50px -12px rgba(7,26,140,0.25)" : "0 15px 35px -10px rgba(7,26,140,0.15)",
                     }}
                   >
                     {/* Hover effect styling */}
@@ -95,20 +110,6 @@ export function BookstoreShowcase() {
                               {book.rating}
                             </div>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <button 
-                              className="flex-1 bg-[var(--primary)] text-white py-2 rounded-md font-medium text-sm hover:bg-[var(--deep)] transition-colors flex items-center justify-center gap-2 cursor-pointer"
-                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); addToCart(book); }}
-                            >
-                              <ShoppingCart className="w-4 h-4" /> Add to Cart
-                            </button>
-                            <button 
-                              className={`w-9 h-9 text-white rounded-md flex items-center justify-center transition-colors cursor-pointer ${isInWishlist(book.id) ? 'bg-red-500 hover:bg-red-600' : 'bg-white/20 hover:bg-white/40'}`}
-                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleWishlist(book); }}
-                            >
-                              <Heart className={`w-4 h-4 ${isInWishlist(book.id) ? 'fill-white' : ''}`} />
-                            </button>
-                          </div>
                         </div>
                       </div>
                     </Link>
@@ -128,16 +129,6 @@ export function BookstoreShowcase() {
               }
               .transform-style-3d {
                 transform-style: preserve-3d;
-              }
-              /* Interactive stack effect */
-              .group:hover > div:nth-child(1) {
-                transform: translateY(-20px) translateZ(50px) rotateX(5deg) rotateY(-5deg) !important;
-              }
-              .group:hover > div:nth-child(2) {
-                transform: translateY(20px) translateZ(-30px) rotateX(10deg) rotateY(-10deg) !important;
-              }
-              .group:hover > div:nth-child(3) {
-                transform: translateY(60px) translateZ(-110px) rotateX(15deg) rotateY(-15deg) !important;
               }
             `}} />
           </div>

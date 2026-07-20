@@ -120,7 +120,7 @@ export function AnnouncementHub() {
 
 function AnnouncementCard({ item }: { item: Announcement }) {
   return (
-    <article className={`surface-card p-5 flex flex-col transition hover:shadow-md ${item.pinned ? 'border-[var(--primary)] border-2' : 'hover:border-[var(--primary)]'}`}>
+    <article className={`surface-card p-5 flex flex-col transition-colors ${item.pinned ? 'border-[var(--primary)] border-2' : 'hover:border-[var(--primary)]'}`}>
       <div className="flex items-center gap-2 text-xs">
         <span className={`inline-flex items-center rounded-full px-2 py-0.5 font-semibold ${
           item.priority === "High" ? "bg-rose-50 text-rose-700"

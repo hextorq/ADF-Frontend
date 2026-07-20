@@ -168,6 +168,75 @@ export default function BookStore() {
         </div>
       </section>
 
+      {/* Reader Reviews */}
+      <section className="py-24 bg-slate-50 relative overflow-hidden">
+        {/* Background decorations */}
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[var(--primary)]/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[var(--mint)]/10 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/3 pointer-events-none" />
+        
+        <div className="container-academic relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-serif font-bold text-[var(--ink)] mb-4">What Our Readers Say</h2>
+            <p className="text-gray-500 max-w-2xl mx-auto text-lg">Discover why academics and literary enthusiasts worldwide trust ADF Publications.</p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { 
+                name: "Dr. Sarah Jenkins", 
+                role: "Research Scholar", 
+                review: "The multidisciplinary approach in these books is outstanding. Highly recommended for researchers looking for comprehensive perspectives.", 
+                rating: 5
+              },
+              { 
+                name: "Prof. Michael Chen", 
+                role: "University Professor", 
+                review: "ADF publications always deliver high-quality, peer-reviewed content. It has become my go-to source for academic literature.", 
+                rating: 5
+              },
+              { 
+                name: "Emily R.", 
+                role: "Avid Reader", 
+                review: "The novels published here are captivating and beautifully edited. The physical print quality of the paperbacks is also top-notch.", 
+                rating: 5
+              }
+            ].map((review, i) => (
+              <div 
+                key={i} 
+                className="bg-white/60 backdrop-blur-xl p-8 rounded-3xl border border-white shadow-xl shadow-[var(--primary)]/5 hover:border-[var(--primary)]/20 transition-all duration-300 relative group flex flex-col"
+              >
+                {/* Quote Icon */}
+                <div className="absolute top-8 right-8 text-[var(--primary)]/5 group-hover:text-[var(--primary)]/10 transition-colors duration-300">
+                  <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14.017 21v-7.391c0-5.714 4.148-9.066 9.983-9.529v3.084c-3.13 0-5.32 1.434-5.32 4.195v1.641h5.32v8h-9.983zm-14.017 0v-7.391c0-5.714 4.148-9.066 9.983-9.529v3.084c-3.13 0-5.32 1.434-5.32 4.195v1.641h5.32v8h-9.983z"/>
+                  </svg>
+                </div>
+                
+                <div className="flex gap-1 mb-8">
+                  {[...Array(review.rating)].map((_, j) => (
+                    <Star key={j} className="w-5 h-5 fill-amber-400 text-amber-400 drop-shadow-sm" />
+                  ))}
+                </div>
+                
+                <p className="text-[var(--ink-soft)] text-lg mb-10 relative z-10 leading-relaxed flex-grow">
+                  "{review.review}"
+                </p>
+                
+                <div className="flex items-center gap-4 mt-auto">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--primary)] to-[var(--mint)] flex items-center justify-center text-white font-bold text-xl shadow-inner">
+                    {review.name.charAt(0)}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-[var(--ink)]">{review.name}</h4>
+                    <p className="text-sm text-gray-500 font-medium">{review.role}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Become an Author CTA */}
       <section className="py-16 bg-[var(--secondary)]">
         <div className="container-academic text-center max-w-3xl mx-auto">

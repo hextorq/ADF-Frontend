@@ -27,7 +27,7 @@ export function WhyChooseADF() {
           {ITEMS.map(({ icon: Icon, title, desc }) => (
             <div
               key={title}
-              className="group surface-card p-6 transition hover:-translate-y-0.5 hover:border-[var(--primary)]"
+              className="group surface-card p-6 transition hover:border-[var(--primary)]"
             >
               <div className="grid h-11 w-11 place-items-center rounded-lg bg-[var(--primary)]/8 text-[var(--primary)] group-hover:bg-[var(--primary)] group-hover:text-white transition">
                 <Icon className="h-5 w-5" />

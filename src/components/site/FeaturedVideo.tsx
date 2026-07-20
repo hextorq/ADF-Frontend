@@ -46,7 +46,7 @@ export function FeaturedVideo() {
                 href="https://www.youtube.com/@adf_publisher?sub_confirmation=1" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-red-600 text-white px-6 py-3.5 rounded-lg font-semibold shadow-sm hover:bg-red-700 hover:-translate-y-0.5 transition-all"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-red-600 text-white px-6 py-3.5 rounded-lg font-semibold shadow-sm hover:bg-red-700 transition-colors"
               >
                 <Youtube className="h-5 w-5" />
                 Subscribe Now
