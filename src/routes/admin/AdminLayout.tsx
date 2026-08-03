@@ -9,6 +9,7 @@ const NAV_LINKS = [
   { to: "/admin/orders", icon: ShoppingCart, label: "Order Management", exact: false },
   { to: "/admin/publications/chapters", icon: BookOpen, label: "Chapter Publications", exact: false },
   { to: "/admin/publications/literary", icon: BookOpen, label: "Literary Publications", exact: false },
+  { to: "/admin/programmes", icon: Users, label: "Academic Programmes", exact: false },
   { to: "/", icon: Eye, label: "Edit Live Site", exact: true },
 ];
 

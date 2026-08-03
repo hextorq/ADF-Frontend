@@ -31,6 +31,7 @@ import AdminAuthorManagement from "@/routes/admin/bookstore/authors";
 import AdminOrderManagement from "@/routes/admin/bookstore/orders";
 import AdminChapterPublications from "@/routes/admin/publications/chapters";
 import AdminLiteraryPublications from "@/routes/admin/publications/literary";
+import AdminProgrammes from "@/routes/admin/programmes/index";
 import { Toaster } from "@/components/ui/sonner";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useContentStore } from "@/store/useContentStore";
@@ -118,6 +119,7 @@ export default function App() {
             <Route path="orders" element={<AdminOrderManagement />} />
             <Route path="publications/chapters" element={<AdminChapterPublications />} />
             <Route path="publications/literary" element={<AdminLiteraryPublications />} />
+            <Route path="programmes" element={<AdminProgrammes />} />
           </Route>
       </Route>
 

@@ -1,26 +1,21 @@
 import { PageHeader } from "@/components/site/PageHeader";
-import { useMemo, useState } from "react";
-import { CalendarDays, Clock, MapPin, User, Users, X, Trash2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { CalendarDays, Clock, MapPin, User, Users, X, Trash2, Edit } from "lucide-react";
 import { EditableText } from "@/components/cms/EditableText";
 import { useAuthStore } from "@/store/useAuthStore";
+import { Link } from "react-router-dom";
 
 type Event = {
-  date: string; // YYYY-MM-DD
+  id: number;
+  date: string;
   title: string;
-  type: "FDP" | "Workshop" | "Training" | "Webinar";
+  type: string;
   duration: string;
   speaker: string;
-  mode: "Online" | "Hybrid" | "On-campus";
+  mode: string;
   seats: number;
+  google_form_url: string;
 };
-
-const EVENTS: Event[] = [
-  { date: "2026-07-08", title: "Webinar: Avoiding Predatory Journals", type: "Webinar", duration: "90 min", speaker: "Dr. Anjali Rao", mode: "Online", seats: 480 },
-  { date: "2026-07-15", title: "Workshop on Academic Writing", type: "Workshop", duration: "1 day", speaker: "Prof. Imran Sheikh", mode: "Online", seats: 120 },
-  { date: "2026-07-22", title: "FDP on Research Methodology", type: "FDP", duration: "3 days", speaker: "Multiple Faculty", mode: "Hybrid", seats: 200 },
-  { date: "2026-08-05", title: "Training: SPSS for Beginners", type: "Training", duration: "2 days", speaker: "Dr. Meera Patel", mode: "Online", seats: 80 },
-  { date: "2026-08-19", title: "Workshop on Publication Ethics", type: "Workshop", duration: "1 day", speaker: "Dr. Saira Khan", mode: "Online", seats: 150 },
-];
 
 export default function Page() {
   return (
@@ -39,9 +34,18 @@ export default function Page() {
 
 function UpcomingCalendar() {
   const isAdmin = useAuthStore(s => s.isAdmin);
-  const [localEvents, setLocalEvents] = useState(EVENTS);
-  const [month, setMonth] = useState(() => new Date(2026, 6, 1)); // July 2026
+  const [localEvents, setLocalEvents] = useState<Event[]>([]);
+  const [month, setMonth] = useState(() => new Date()); // Default to current month
   const [open, setOpen] = useState<Event | null>(null);
+
+  useEffect(() => {
+    fetch("/api/programmes")
+      .then(r => r.json())
+      .then(data => {
+        if (Array.isArray(data)) setLocalEvents(data);
+      })
+      .catch(console.error);
+  }, []);
 
   const { weeks, eventsByDay } = useMemo(() => {
     const first = new Date(month.getFullYear(), month.getMonth(), 1);
@@ -99,11 +103,11 @@ function UpcomingCalendar() {
                   <div className="mt-1 flex flex-col gap-1">
                     {evs.map((e, evId) => (
                       <button
-                        key={`${e.title}-${evId}`}
+                        key={`${e.id}-${evId}`}
                         onClick={() => setOpen(e)}
                         className="text-left text-[11px] rounded bg-[var(--primary)]/10 text-[var(--primary)] px-1.5 py-1 hover:bg-[var(--primary)] hover:text-white truncate"
                       >
-                        <EditableText contentKey={`event.${e.date}.calendarTitle`} fallback={e.title} as="span" label="Calendar event" />
+                        {e.title}
                       </button>
                     ))}
                   </div>
@@ -117,50 +121,39 @@ function UpcomingCalendar() {
           <div className="flex items-center justify-between">
             <EditableText contentKey="page.academic-programmes.events.title" fallback="Upcoming Events" as="h3" className="font-serif text-xl font-semibold text-[var(--ink)]" label="Events section title" />
             {isAdmin && (
-              <button
-                onClick={() => {
-                  const newEvent: Event = {
-                    date: "2026-07-01",
-                    title: "New Academic Programme",
-                    type: "Workshop",
-                    duration: "1 day",
-                    speaker: "New Speaker",
-                    mode: "Online",
-                    seats: 100
-                  };
-                  setLocalEvents([newEvent, ...localEvents]);
-                }}
+              <Link
+                to="/admin/programmes"
                 className="btn-primary !py-1 !px-2 text-xs"
               >
-                + Add New
-              </button>
+                Manage
+              </Link>
             )}
           </div>
-          {localEvents.map((e, idx) => (
-            <div key={`${e.title}-${idx}`} className="relative">
+          {localEvents.length === 0 && (
+            <div className="text-sm text-slate-500 py-4">No upcoming events scheduled.</div>
+          )}
+          {localEvents.map((e) => (
+            <div key={e.id} className="relative">
               {isAdmin && (
-                <button
-                  onClick={(ev) => {
-                    ev.stopPropagation();
-                    setLocalEvents(localEvents.filter((_, i) => i !== idx));
-                  }}
-                  className="absolute -top-2 -right-2 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-red-100 text-red-600 shadow-sm hover:bg-red-200 transition-colors"
-                  title="Delete Event"
+                <Link
+                  to="/admin/programmes"
+                  className="absolute -top-2 -right-2 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 text-blue-600 shadow-sm hover:bg-blue-200 transition-colors"
+                  title="Manage Events"
                 >
-                  <Trash2 className="h-3 w-3" />
-                </button>
+                  <Edit className="h-3 w-3" />
+                </Link>
               )}
               <button onClick={() => setOpen(e)} className="w-full text-left surface-card p-4 hover:border-[var(--primary)] transition">
               <div className="flex items-center justify-between text-xs">
                 <span className="rounded-full bg-[var(--accent)]/15 text-[var(--accent)] px-2 py-0.5 font-semibold">{e.type}</span>
-                <span className="text-[var(--ink-soft)]">{e.date}</span>
+                <span className="text-[var(--ink-soft)]">{new Date(e.date).toLocaleDateString()}</span>
               </div>
-              <EditableText contentKey={`event.${e.date}.title`} fallback={e.title} as="div" className="mt-2 font-semibold text-[var(--ink)]" label="Event title" />
+              <div className="mt-2 font-semibold text-[var(--ink)]">{e.title}</div>
               <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--ink-soft)]">
-                <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" /> <EditableText contentKey={`event.${e.date}.duration`} fallback={e.duration} as="span" label="Event duration" /></span>
-                <span className="inline-flex items-center gap-1"><User className="h-3 w-3" /> <EditableText contentKey={`event.${e.date}.speaker`} fallback={e.speaker} as="span" label="Event speaker" /></span>
-                <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" /> <EditableText contentKey={`event.${e.date}.mode`} fallback={e.mode} as="span" label="Event mode" /></span>
-                <span className="inline-flex items-center gap-1"><Users className="h-3 w-3" /> <EditableText contentKey={`event.${e.date}.seats`} fallback={`${e.seats} seats`} as="span" label="Event seats" /></span>
+                <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" /> {e.duration}</span>
+                <span className="inline-flex items-center gap-1"><User className="h-3 w-3" /> {e.speaker}</span>
+                <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" /> {e.mode}</span>
+                <span className="inline-flex items-center gap-1"><Users className="h-3 w-3" /> {e.seats} seats</span>
               </div>
             </button>
             </div>
@@ -181,27 +174,34 @@ function RegisterModal({ event, onClose }: { event: Event; onClose: () => void }
           <X className="h-5 w-5" />
         </button>
         <div className="text-xs uppercase tracking-wider text-[var(--primary)] font-semibold">{event.type}</div>
-        <EditableText contentKey={`event.${event.date}.title`} fallback={event.title} as="h3" className="mt-1 font-serif text-2xl font-bold text-[var(--ink)]" label="Event title" />
+        <h3 className="mt-1 font-serif text-2xl font-bold text-[var(--ink)]">{event.title}</h3>
         <div className="mt-3 flex flex-wrap gap-3 text-xs text-[var(--ink-soft)]">
-          <span className="inline-flex items-center gap-1"><CalendarDays className="h-3.5 w-3.5" /> <EditableText contentKey={`event.${event.date}.date`} fallback={event.date} as="span" label="Event date" /></span>
-          <span className="inline-flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> <EditableText contentKey={`event.${event.date}.duration`} fallback={event.duration} as="span" label="Event duration" /></span>
-          <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> <EditableText contentKey={`event.${event.date}.mode`} fallback={event.mode} as="span" label="Event mode" /></span>
+          <span className="inline-flex items-center gap-1"><CalendarDays className="h-3.5 w-3.5" /> {new Date(event.date).toLocaleDateString()}</span>
+          <span className="inline-flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {event.duration}</span>
+          <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> {event.mode}</span>
         </div>
         <div className="mt-6">
-          <a
-            href="https://forms.google.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-primary w-full justify-center flex"
-            onClick={onClose}
-          >
-            <EditableText contentKey="page.academic-programmes.register" fallback="Register via Google Form" as="span" label="Register label" />
-          </a>
+          {event.google_form_url ? (
+            <a
+              href={event.google_form_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-primary w-full justify-center flex"
+              onClick={onClose}
+            >
+              <EditableText contentKey="page.academic-programmes.register" fallback="Register via Google Form" as="span" label="Register label" />
+            </a>
+          ) : (
+            <button disabled className="btn-primary w-full justify-center flex opacity-50 cursor-not-allowed">
+              Registration Closed / Not Available
+            </button>
+          )}
         </div>
       </div>
     </div>
   );
 }
+
 
 
 
