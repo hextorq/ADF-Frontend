@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Trash2, Edit, Plus, ExternalLink } from "lucide-react";
+import { apiFetch } from "@/lib/api";
 
 type Programme = {
   id: number;
@@ -38,9 +39,7 @@ export default function AdminProgrammes() {
 
   const fetchProgrammes = async () => {
     try {
-      const res = await fetch("/api/programmes");
-      if (!res.ok) throw new Error("Failed to fetch");
-      const data = await res.json();
+      const data = await apiFetch<Programme[]>("/programmes");
       setProgrammes(Array.isArray(data) ? data : []);
     } catch (e) {
       toast.error("Failed to fetch academic programmes");
@@ -75,16 +74,13 @@ export default function AdminProgrammes() {
     }
     
     try {
-      const url = editingId ? `/api/programmes/${editingId}` : "/api/programmes";
+      const url = editingId ? `/programmes/${editingId}` : "/programmes";
       const method = editingId ? "PATCH" : "POST";
       
-      const res = await fetch(url, {
+      await apiFetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)
       });
-      
-      if (!res.ok) throw new Error("Save failed");
       
       toast.success(`Programme ${editingId ? "updated" : "created"} successfully`);
       setIsModalOpen(false);
@@ -97,8 +93,7 @@ export default function AdminProgrammes() {
   const deleteProgramme = async (id: number) => {
     if (!confirm("Are you sure you want to delete this programme?")) return;
     try {
-      const res = await fetch(`/api/programmes/${id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Delete failed");
+      await apiFetch(`/programmes/${id}`, { method: "DELETE" });
       toast.success("Programme deleted");
       fetchProgrammes();
     } catch (e) {

@@ -39,7 +39,7 @@ function authHeaders(headers?: HeadersInit): HeadersInit {
   };
 }
 
-async function apiFetch<T>(path: string, opts: RequestInit = {}): Promise<T> {
+export async function apiFetch<T>(path: string, opts: RequestInit = {}): Promise<T> {
   const res = await fetch(apiUrl(path), {
     credentials: "include",
     headers: authHeaders({ "Content-Type": "application/json" }),

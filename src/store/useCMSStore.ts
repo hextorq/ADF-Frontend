@@ -137,13 +137,17 @@ const INITIAL_PUBLICATIONS: Publication[] = [
   { id: "p2", title: "Sustainable Business Practices in 2026", category: "Management", pubType: "Book Chapter", date: "10 Jun 2026", authors: "Alice Johnson", to: "/chapter-publications", pinned: false, visible: true },
 ];
 
+const INITIAL_JOURNALS: JournalRelease[] = [
+  { id: "j1", title: "International Journal of English for Academic Excellence", issn: "1234-5678", volume: "2", issue: "1", date: "June 2026", coverImage: "/placeholder-journal.jpg", to: "/journals", pinned: true, visible: true }
+];
+
 export const useCMSStore = create<CMSState>()(
   persist(
     (set) => ({
       announcements: INITIAL_ANNOUNCEMENTS,
       publications: INITIAL_PUBLICATIONS,
       activities: INITIAL_ACTIVITIES,
-      journals: [],
+      journals: INITIAL_JOURNALS,
       events: [],
       editorialUpdates: [],
       statistics: INITIAL_STATISTICS,

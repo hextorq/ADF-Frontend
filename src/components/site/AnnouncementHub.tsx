@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import { useCMSStore, Announcement, Publication, Activity as ActivityType } from "@/store/useCMSStore";
 import { EditableText } from "@/components/cms/EditableText";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useEffect } from "react";
+import { Clock, MapPin, Users } from "lucide-react";
 
 const TABS = [
   "Announcements",
@@ -20,6 +22,17 @@ export function AnnouncementHub() {
   const allAnnouncements = useCMSStore(s => s.announcements);
   const allPublications = useCMSStore(s => s.publications);
   const allActivities = useCMSStore(s => s.activities);
+  const journals = useCMSStore(s => s.journals).filter(j => j.visible);
+  
+  const [programmes, setProgrammes] = useState<any[]>([]);
+  useEffect(() => {
+    fetch("/api/programmes")
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setProgrammes(data);
+      })
+      .catch(console.error);
+  }, []);
   
   const announcements = allAnnouncements.filter(a => a.visible);
   const publications = allPublications.filter(p => p.visible);
@@ -54,17 +67,20 @@ export function AnnouncementHub() {
         <div className="mt-8 border-b border-border overflow-x-auto">
           <div className="flex gap-1 min-w-max">
             {TABS.map((t) => (
-              <button
+              <div
                 key={t}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setTab(t); } }}
                 onClick={() => setTab(t)}
-                className={`px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition ${
+                className={`px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition cursor-pointer ${
                   tab === t
                     ? "border-[var(--primary)] text-[var(--primary)] bg-white"
                     : "border-transparent text-[var(--ink-soft)] hover:text-[var(--ink)] hover:bg-slate-100/50"
                 }`}
               >
                 <EditableText contentKey={`home.hub.tab.${t}`} fallback={t} as="span" label="Hub tab" />
-              </button>
+              </div>
             ))}
           </div>
         </div>
@@ -118,11 +134,21 @@ export function AnnouncementHub() {
              </div>
           )}
           
-          {/* Placeholders for others */}
-          {["Journal Releases", "Programmes & Events"].includes(tab) && (
-            <div className="flex flex-col items-center justify-center h-48 text-slate-400">
-              <EditableText contentKey={`home.hub.placeholder.${tab}`} fallback={`Content for ${tab} will appear here.`} as="p" label="Placeholder" />
-              <EditableText contentKey="home.hub.placeholder.note" fallback="Manageable via Admin Panel" as="p" className="text-xs mt-2" label="Placeholder note" />
+          {tab === "Journal Releases" && (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+               {journals.map(it => (
+                <JournalCard key={it.id} item={it} />
+               ))}
+               {journals.length === 0 && <EditableText contentKey="home.hub.empty.journals" fallback="No journal releases." as="p" className="text-slate-500 col-span-full" label="Empty state" />}
+            </div>
+          )}
+
+          {tab === "Programmes & Events" && (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+               {programmes.map(it => (
+                <ProgrammeCard key={it.id} item={it} />
+               ))}
+               {programmes.length === 0 && <EditableText contentKey="home.hub.empty.programmes" fallback="No upcoming programmes." as="p" className="text-slate-500 col-span-full" label="Empty state" />}
             </div>
           )}
         </div>
@@ -131,7 +157,54 @@ export function AnnouncementHub() {
   );
 }
 
-function AnnouncementCard({ item }: { item: Announcement }) {
+function JournalCard({ item }: { item: any }) {
+  return (
+    <article className="relative surface-card p-5 flex flex-col hover:border-[var(--primary)] transition">
+      <div className="flex items-center gap-2 text-xs mb-3 pr-4">
+        <span className="bg-[var(--primary)]/10 text-[var(--primary)] rounded-full px-2 py-0.5 font-semibold">
+          Journal
+        </span>
+        <span className="text-slate-500">{item.date}</span>
+      </div>
+      <h3 className="font-serif text-lg font-semibold text-[var(--ink)] leading-snug">
+        {item.title}
+      </h3>
+      <div className="mt-2 text-sm text-slate-600 flex flex-col gap-0.5">
+        <span>Volume {item.volume}, Issue {item.issue}</span>
+        <span>ISSN: {item.issn}</span>
+      </div>
+      <div className="mt-auto pt-4 flex items-center justify-between text-sm">
+        <Link to={item.to || "/journals"} className="text-[var(--primary)] font-medium hover:underline">
+          View details
+        </Link>
+      </div>
+    </article>
+  );
+}
+
+function ProgrammeCard({ item }: { item: any }) {
+  return (
+    <article className="relative surface-card p-5 flex flex-col hover:border-[var(--primary)] transition">
+      <div className="flex items-center justify-between text-xs mb-3">
+        <span className="rounded-full bg-[var(--accent)]/15 text-[var(--accent)] px-2 py-0.5 font-semibold">{item.type}</span>
+        <span className="text-[var(--ink-soft)]">{new Date(item.date).toLocaleDateString()}</span>
+      </div>
+      <h3 className="font-serif text-lg font-semibold text-[var(--ink)] leading-snug">{item.title}</h3>
+      <div className="mt-3 flex flex-wrap gap-x-3 gap-y-2 text-xs text-[var(--ink-soft)]">
+        <span className="inline-flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {item.duration}</span>
+        <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> {item.mode}</span>
+        <span className="inline-flex items-center gap-1"><Users className="h-3.5 w-3.5" /> {item.seats} seats</span>
+      </div>
+      <div className="mt-auto pt-4 text-sm">
+        <Link to="/academic-programmes" className="text-[var(--primary)] font-medium hover:underline">
+          Learn more & register
+        </Link>
+      </div>
+    </article>
+  );
+}
+
+function AnnouncementCard({ item }: { item: any }) {
   const isAdmin = useAuthStore(s => s.isAdmin);
   const allAnnouncements = useCMSStore(s => s.announcements);
   const setAnnouncements = useCMSStore(s => s.setAnnouncements);
