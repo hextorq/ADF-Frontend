@@ -12,10 +12,12 @@ export default function AdminLiteraryPublications() {
   const fetchSubmissions = async () => {
     try {
       const res = await fetch("/api/publications/literary/admin");
+      if (!res.ok) throw new Error("Failed to fetch");
       const data = await res.json();
-      setSubmissions(data);
+      setSubmissions(Array.isArray(data) ? data : []);
     } catch (e) {
       toast.error("Failed to fetch literary submissions");
+      setSubmissions([]);
     }
   };
 

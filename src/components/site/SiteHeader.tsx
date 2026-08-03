@@ -97,14 +97,17 @@ export function SiteHeader() {
           </Link>
 
           <div className="ml-auto flex items-center gap-2">
-            <button
+            <div
               onClick={() => setSearchOpen((v) => !v)}
-              className="btn-primary !py-2 !px-4 !text-sm mr-2"
+              className="btn-primary !py-2 !px-4 !text-sm mr-2 cursor-pointer inline-flex items-center gap-2"
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSearchOpen((v) => !v); } }}
               aria-label="Search publications"
             >
               <Search className="h-4 w-4" />
               <EditableText contentKey="header.search.button" fallback="Search Publications" as="span" label="Search button" />
-            </button>
+            </div>
             
             {/* Global Favourites & Cart Buttons */}
             <Sheet>

@@ -11,10 +11,12 @@ export default function AdminChapterPublications() {
   const fetchSubmissions = async () => {
     try {
       const res = await fetch("/api/publications/chapters/admin");
+      if (!res.ok) throw new Error("Failed to fetch");
       const data = await res.json();
-      setSubmissions(data);
+      setSubmissions(Array.isArray(data) ? data : []);
     } catch (e) {
       toast.error("Failed to fetch chapter submissions");
+      setSubmissions([]);
     }
   };
 
