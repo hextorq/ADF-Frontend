@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { PageHeader } from "@/components/site/PageHeader";
 import { CheckCircle2, Download, FileText, BookOpen } from "lucide-react";
@@ -19,14 +20,21 @@ const STEPS = [
   { n: "06", t: "Open access release", d: "Volume published online and in print." },
 ];
 
-const RELEASED_CHAPTERS = [
-  { id: 1, title: "Convergence Vol. I", topic: "Digital Transformation in Contemporary Education and Pedagogy", date: "Jan 2025", pages: 124, image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=600&auto=format&fit=crop" },
-  { id: 2, title: "Convergence Vol. II", topic: "Sustainable Development Goals & Modern Society", date: "Mar 2025", pages: 142, image: "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=600&auto=format&fit=crop" },
-  { id: 3, title: "Convergence Vol. III", topic: "AI, Machine Learning, and Ethics in Technology", date: "May 2025", pages: 156, image: "https://images.unsplash.com/photo-1532012197267-da84d127e765?q=80&w=600&auto=format&fit=crop" },
-  { id: 4, title: "Convergence Vol. IV", topic: "Global Healthcare Innovations & Management", date: "Jul 2025", pages: 138, image: "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?q=80&w=600&auto=format&fit=crop" },
-];
-
 export default function Page() {
+  const [releasedChapters, setReleasedChapters] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch("/api/publications/chapters/volumes")
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          // Only show published volumes
+          setReleasedChapters(data.filter(v => v.status === 'published'));
+        }
+      })
+      .catch(console.error);
+  }, []);
+
   return (
     <>
       <PageHeader
@@ -101,16 +109,20 @@ export default function Page() {
             className="w-full"
           >
             <CarouselContent className="-ml-4">
-              {RELEASED_CHAPTERS.map((chapter) => (
+              {releasedChapters.map((chapter) => (
                 <CarouselItem key={chapter.id} className="pl-4 sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
                   <div className="bg-white rounded-xl shadow-sm border border-black/5 overflow-hidden group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full">
                     {/* Actual Book Cover Image */}
-                    <div className="h-56 relative overflow-hidden">
-                      <img 
-                        src={chapter.image} 
-                        alt={chapter.title} 
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
+                    <div className="h-56 relative overflow-hidden bg-slate-100 flex items-center justify-center">
+                      {chapter.cover_url ? (
+                        <img 
+                          src={chapter.cover_url} 
+                          alt={chapter.title} 
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      ) : (
+                         <BookOpen className="w-12 h-12 text-slate-300" />
+                      )}
                       {/* Dark overlay for text readability */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/40 pointer-events-none" />
                       
@@ -120,7 +132,7 @@ export default function Page() {
                           Volume
                         </span>
                         <span className="text-white/90 text-xs font-semibold bg-black/40 px-2.5 py-1 rounded-md backdrop-blur-sm border border-white/10 shadow-sm">
-                          {chapter.date}
+                          {new Date(chapter.submission_deadline).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}
                         </span>
                       </div>
                       
@@ -133,7 +145,7 @@ export default function Page() {
                     <div className="p-6 flex flex-col flex-grow">
                       <div className="flex items-center gap-3 text-xs text-[var(--ink-soft)] font-semibold mb-4">
                         <span className="flex items-center gap-1.5">
-                          <FileText className="w-3.5 h-3.5 text-slate-400" /> {chapter.pages} Pages
+                          <FileText className="w-3.5 h-3.5 text-slate-400" /> {chapter.pages || 0} Pages
                         </span>
                         <span className="w-1 h-1 rounded-full bg-slate-300" />
                         <span className="flex items-center gap-1.5 text-emerald-600">
@@ -142,7 +154,7 @@ export default function Page() {
                       </div>
                       
                       <p className="text-[var(--ink)] text-sm font-medium leading-relaxed mb-6 flex-grow line-clamp-3">
-                        {chapter.topic}
+                        {chapter.theme}
                       </p>
 
                       <a 

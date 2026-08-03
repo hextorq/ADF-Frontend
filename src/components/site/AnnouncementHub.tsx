@@ -4,8 +4,31 @@ import { Link } from "react-router-dom";
 import { useCMSStore, Announcement, Publication, Activity as ActivityType } from "@/store/useCMSStore";
 import { EditableText } from "@/components/cms/EditableText";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useEffect } from "react";
-import { Clock, MapPin, Users } from "lucide-react";
+import React, { useEffect } from "react";
+import { Clock, MapPin, Users, AlertTriangle } from "lucide-react";
+
+class HubErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, error: Error | null}> {
+  constructor(props: {children: React.ReactNode}) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="p-8 text-center text-red-600 bg-red-50 rounded-xl my-8">
+          <AlertTriangle className="mx-auto h-8 w-8 mb-4" />
+          <h2 className="text-lg font-bold">Crash in AnnouncementHub</h2>
+          <p className="mt-2 text-sm font-mono whitespace-pre-wrap text-left bg-white p-4 border rounded">{this.state.error?.toString()}</p>
+          <p className="mt-2 text-sm font-mono whitespace-pre-wrap text-left bg-white p-4 border rounded">{this.state.error?.stack}</p>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 const TABS = [
   "Announcements",
@@ -17,12 +40,21 @@ const TABS = [
 ];
 
 export function AnnouncementHub() {
+  return (
+    <HubErrorBoundary>
+      <AnnouncementHubInner />
+    </HubErrorBoundary>
+  );
+}
+
+function AnnouncementHubInner() {
   const [tab, setTab] = useState(TABS[0]);
+  const isAdmin = useAuthStore(s => s.isAdmin);
   
-  const allAnnouncements = useCMSStore(s => s.announcements);
-  const allPublications = useCMSStore(s => s.publications);
-  const allActivities = useCMSStore(s => s.activities);
-  const journals = useCMSStore(s => s.journals).filter(j => j.visible);
+  const allAnnouncements = useCMSStore(s => s.announcements) || [];
+  const allPublications = useCMSStore(s => s.publications) || [];
+  const allActivities = useCMSStore(s => s.activities) || [];
+  const journals = (useCMSStore(s => s.journals) || []).filter(j => j?.visible);
   
   const [programmes, setProgrammes] = useState<any[]>([]);
   useEffect(() => {
@@ -34,14 +66,14 @@ export function AnnouncementHub() {
       .catch(console.error);
   }, []);
   
-  const announcements = allAnnouncements.filter(a => a.visible);
-  const publications = allPublications.filter(p => p.visible);
-  const activities = allActivities.filter(a => a.visible);
+  const announcements = allAnnouncements.filter(a => a?.visible);
+  const publications = allPublications.filter(p => p?.visible);
+  const activities = allActivities.filter(a => a?.visible);
   
   // Helper to group announcements by type or just show all
   const displayAnnouncements = announcements;
-  const recentPubs = publications.filter(p => p.pubType === 'Article' || p.pubType === 'Book');
-  const chapters = publications.filter(p => p.pubType === 'Book Chapter');
+  const recentPubs = publications.filter(p => p?.pubType === 'Article' || p?.pubType === 'Book');
+  const chapters = publications.filter(p => p?.pubType === 'Book Chapter');
   
   return (
     <section className="py-20 bg-slate-50 border-t border-slate-200">
@@ -88,7 +120,7 @@ export function AnnouncementHub() {
         <div className="mt-8 min-h-[400px]">
           {tab === "Announcements" && (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {useAuthStore(s => s.isAdmin) && (
+              {isAdmin && (
                 <button
                   onClick={() => {
                     const newAnnouncement = { id: Date.now().toString(), date: "New Date", type: "Announcement" as const, category: "New Category", priority: "New" as const, title: "New Announcement", excerpt: "New description", to: "/announcements", pinned: false, visible: true };
@@ -100,55 +132,55 @@ export function AnnouncementHub() {
                   <span className="text-sm font-medium">Add New Announcement</span>
                 </button>
               )}
-              {displayAnnouncements.map(it => (
-                <AnnouncementCard key={it.id} item={it} />
+              {displayAnnouncements?.map(it => (
+                <AnnouncementCard key={it?.id} item={it} />
               ))}
-              {displayAnnouncements.length === 0 && <EditableText contentKey="home.hub.empty.announcements" fallback="No active announcements." as="p" className="text-slate-500 col-span-full" label="Empty state" />}
+              {(!displayAnnouncements || displayAnnouncements.length === 0) && <EditableText contentKey="home.hub.empty.announcements" fallback="No active announcements." as="p" className="text-slate-500 col-span-full" label="Empty state" />}
             </div>
           )}
 
           {tab === "Recent Publications" && (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-               {recentPubs.map(it => (
-                <PublicationCard key={it.id} item={it} />
+               {recentPubs?.map(it => (
+                <PublicationCard key={it?.id} item={it} />
                ))}
-               {recentPubs.length === 0 && <EditableText contentKey="home.hub.empty.publications" fallback="No recent publications." as="p" className="text-slate-500 col-span-full" label="Empty state" />}
+               {(!recentPubs || recentPubs.length === 0) && <EditableText contentKey="home.hub.empty.publications" fallback="No recent publications." as="p" className="text-slate-500 col-span-full" label="Empty state" />}
             </div>
           )}
 
           {tab === "Latest Chapters" && (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-               {chapters.map(it => (
-                <PublicationCard key={it.id} item={it} />
+               {chapters?.map(it => (
+                <PublicationCard key={it?.id} item={it} />
                ))}
-               {chapters.length === 0 && <EditableText contentKey="home.hub.empty.chapters" fallback="No latest chapters." as="p" className="text-slate-500 col-span-full" label="Empty state" />}
+               {(!chapters || chapters.length === 0) && <EditableText contentKey="home.hub.empty.chapters" fallback="No latest chapters." as="p" className="text-slate-500 col-span-full" label="Empty state" />}
             </div>
           )}
 
           {tab === "Recent Activity" && (
              <div className="space-y-4 max-w-3xl">
-               {activities.map(it => (
-                <ActivityRow key={it.id} item={it} />
+               {activities?.map(it => (
+                <ActivityRow key={it?.id} item={it} />
                ))}
-               {activities.length === 0 && <EditableText contentKey="home.hub.empty.activities" fallback="No recent activities." as="p" className="text-slate-500" label="Empty state" />}
+               {(!activities || activities.length === 0) && <EditableText contentKey="home.hub.empty.activities" fallback="No recent activities." as="p" className="text-slate-500" label="Empty state" />}
              </div>
           )}
           
           {tab === "Journal Releases" && (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-               {journals.map(it => (
-                <JournalCard key={it.id} item={it} />
+               {journals?.map(it => (
+                <JournalCard key={it?.id} item={it} />
                ))}
-               {journals.length === 0 && <EditableText contentKey="home.hub.empty.journals" fallback="No journal releases." as="p" className="text-slate-500 col-span-full" label="Empty state" />}
+               {(!journals || journals.length === 0) && <EditableText contentKey="home.hub.empty.journals" fallback="No journal releases." as="p" className="text-slate-500 col-span-full" label="Empty state" />}
             </div>
           )}
 
           {tab === "Programmes & Events" && (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-               {programmes.map(it => (
-                <ProgrammeCard key={it.id} item={it} />
+               {programmes?.map(it => (
+                <ProgrammeCard key={it?.id} item={it} />
                ))}
-               {programmes.length === 0 && <EditableText contentKey="home.hub.empty.programmes" fallback="No upcoming programmes." as="p" className="text-slate-500 col-span-full" label="Empty state" />}
+               {(!programmes || programmes.length === 0) && <EditableText contentKey="home.hub.empty.programmes" fallback="No upcoming programmes." as="p" className="text-slate-500 col-span-full" label="Empty state" />}
             </div>
           )}
         </div>
