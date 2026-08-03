@@ -74,7 +74,9 @@ export default function LiterarySubmit() {
     formData.append("synopsis", synopsis);
     formData.append("keywords", keywords);
     
-    formData.append("package_id", packageId);
+    if (packageId) {
+      formData.append("package_id", packageId);
+    }
     
     formData.append("agreed_original", String(agreed.original));
     formData.append("agreed_copyright", String(agreed.copyright));
@@ -176,50 +178,11 @@ export default function LiterarySubmit() {
                 </div>
               </div>
 
-              <div>
-                <label className="text-xl font-serif font-bold mb-4 block">Select Publishing Package</label>
-                {packages.length === 0 ? (
-                  <div className="p-6 border-2 border-dashed rounded-xl text-center text-slate-500">
-                    Loading packages...
-                  </div>
-                ) : (
-                  <div className="grid md:grid-cols-3 gap-6">
-                    {packages.map(p => {
-                      const isSelected = packageId === p.id.toString();
-                      return (
-                        <div 
-                          key={p.id} 
-                          onClick={() => setPackageId(p.id.toString())}
-                          className={`relative rounded-xl border-2 p-6 cursor-pointer transition-all duration-200 ${
-                            isSelected 
-                              ? 'border-[var(--primary)] bg-[var(--primary)]/5 shadow-md transform -translate-y-1' 
-                              : 'border-border hover:border-slate-300 hover:bg-slate-50'
-                          }`}
-                        >
-                          {isSelected && (
-                            <div className="absolute top-4 right-4 text-[var(--primary)]">
-                              <CheckCircle2 className="w-6 h-6" />
-                            </div>
-                          )}
-                          <h3 className="text-xl font-bold text-[var(--ink)] mb-2">{p.name}</h3>
-                          <div className="text-2xl font-bold text-[var(--primary)] mb-6">
-                            ₹{p.price}
-                          </div>
-                          <ul className="space-y-3">
-                            {p.features.map((f, i) => (
-                              <li key={i} className="flex items-start gap-2 text-sm text-slate-600">
-                                <Check className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
-                                <span>{f}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-                {/* Hidden input to retain required validation */}
-                <input type="text" className="sr-only" required value={packageId} onChange={() => {}} tabIndex={-1} />
+              <div className="bg-slate-50 text-slate-800 p-5 rounded-xl border border-slate-200">
+                <h3 className="font-semibold mb-2">Publishing Packages & Payment</h3>
+                <p className="text-sm">
+                  We are currently accepting initial sample submissions. Once our editorial team reviews your manuscript, we will contact you via email to discuss the suitable publishing packages and payment options for your book.
+                </p>
               </div>
 
               <div className="space-y-3 pt-4 border-t">
@@ -236,7 +199,7 @@ export default function LiterarySubmit() {
               <div className="pt-6 flex gap-4">
                 <Button type="button" variant="outline" onClick={() => setStep(2)}>Back</Button>
                 <Button type="submit" disabled={isSubmitting} className="flex-1 bg-[var(--primary)]">
-                  {isSubmitting ? "Submitting..." : "Submit & Proceed to Payment"}
+                  {isSubmitting ? "Submitting..." : "Submit Manuscript"}
                 </Button>
               </div>
             </form>

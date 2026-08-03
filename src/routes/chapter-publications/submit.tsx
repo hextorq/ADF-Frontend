@@ -7,11 +7,12 @@ import { toast } from "sonner";
 import { Plus, Trash2, UploadCloud } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useCMSStore } from "@/store/useCMSStore";
 
 interface Volume {
-  id: number;
+  id: string | number;
   title: string;
-  theme: string;
+  theme?: string;
 }
 
 interface Author {
@@ -22,7 +23,17 @@ interface Author {
 }
 
 export default function ChapterSubmit() {
-  const [volumes, setVolumes] = useState<Volume[]>([]);
+  const announcements = useCMSStore(s => s.announcements);
+  
+  // Derive open calls from announcements
+  const volumes: Volume[] = announcements
+    .filter(a => a.type.includes("Call") || a.title.includes("Call"))
+    .map(a => ({
+      id: a.id,
+      title: a.title,
+      theme: a.category
+    }));
+
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -34,13 +45,6 @@ export default function ChapterSubmit() {
   const [authors, setAuthors] = useState<Author[]>([{ name: "", email: "", institution: "", is_primary: true }]);
   const [manuscript, setManuscript] = useState<File | null>(null);
   const [agreed, setAgreed] = useState(false);
-
-  useEffect(() => {
-    fetch("/api/publications/chapters/volumes")
-      .then(res => res.json())
-      .then(data => setVolumes(data))
-      .catch(console.error);
-  }, []);
 
   const addCoAuthor = () => {
     setAuthors([...authors, { name: "", email: "", institution: "", is_primary: false }]);
@@ -79,7 +83,6 @@ export default function ChapterSubmit() {
       const data = await res.json();
       
       if (res.ok) {
-        // Step 2: Simulate Payment for testing
         toast.success(`Submission Successful! ID: ${data.submissionId}`);
         setStep(3); // Success Screen
       } else {
@@ -117,7 +120,7 @@ export default function ChapterSubmit() {
                     </SelectTrigger>
                     <SelectContent>
                     {volumes.length === 0 ? (
-                      <div className="p-2 text-sm text-slate-500 text-center">Loading volumes...</div>
+                      <div className="p-2 text-sm text-slate-500 text-center">No open calls available</div>
                     ) : (
                       volumes.map(v => (
                         <SelectItem key={v.id} value={v.id.toString()}>{v.title}</SelectItem>
@@ -198,14 +201,14 @@ export default function ChapterSubmit() {
                 <div className="flex items-start gap-2 pt-4">
                   <Checkbox id="policies" checked={agreed} onCheckedChange={(c) => setAgreed(c as boolean)} />
                   <label htmlFor="policies" className="text-sm text-slate-600 leading-tight">
-                    I agree to the publisher policies, confirm this is original work, and accept the publication fee.
+                    I agree to the publisher policies and confirm this is my original work.
                   </label>
                 </div>
 
                 <div className="flex gap-4 pt-4">
                   <Button type="button" variant="outline" onClick={() => setStep(1)}>Back</Button>
                   <Button type="submit" disabled={isSubmitting} className="flex-1 bg-[var(--primary)]">
-                    {isSubmitting ? "Submitting..." : "Submit & Pay Fee"}
+                    {isSubmitting ? "Submitting..." : "Submit Chapter"}
                   </Button>
                 </div>
               </div>
@@ -219,7 +222,7 @@ export default function ChapterSubmit() {
               </div>
               <h2 className="text-3xl font-serif font-bold text-[var(--ink)] mb-4">Submission Received!</h2>
               <p className="text-slate-600 mb-8 max-w-md mx-auto">
-                Your chapter has been submitted successfully and the payment fee has been processed. Our editorial team will begin the review process shortly.
+                Your chapter has been submitted successfully. Our editorial team will begin the review process shortly.
               </p>
               <Button onClick={() => window.location.href = '/'} className="bg-[var(--primary)]">Return Home</Button>
             </div>

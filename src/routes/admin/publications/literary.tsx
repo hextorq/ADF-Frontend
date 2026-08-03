@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { BookOpen, Edit3, CheckCircle, FileText, UploadCloud } from "lucide-react";
+import { BookOpen, Edit3, CheckCircle, FileText, UploadCloud, Mail } from "lucide-react";
 
 export default function AdminLiteraryPublications() {
   const [submissions, setSubmissions] = useState<any[]>([]);
@@ -151,6 +151,16 @@ export default function AdminLiteraryPublications() {
                         {isPublishing === sub.id ? "Publishing..." : <><UploadCloud className="w-3 h-3 mr-1" /> Publish to Store</>}
                       </Button>
                     )}
+                    
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-8 w-8 p-0"
+                      onClick={() => window.open(`mailto:${sub.author_email}?subject=Regarding Your Manuscript Submission (${sub.id})`)}
+                      title="Email Author"
+                    >
+                      <Mail className="w-4 h-4" />
+                    </Button>
                   </div>
                 </TableCell>
               </TableRow>
