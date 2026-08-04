@@ -1,6 +1,6 @@
 import { Link, NavLink as RouterNavLink, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Menu, Search, X, Youtube, Linkedin, Instagram, ShoppingCart, Heart, Trash2 } from "lucide-react";
+import { ChevronDown, Menu, Search, X, Youtube, Linkedin, Instagram, ShoppingCart, Heart, Trash2, MessageCircle } from "lucide-react";
 import { EditableImage, EditableText } from "@/components/cms/EditableText";
 import { useStoreStore } from "@/store/useStoreStore";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -72,6 +72,9 @@ export function SiteHeader() {
               </a>
               <a href="https://www.instagram.com/adf_publisher" target="_blank" rel="noopener noreferrer" className="hover:text-[#E1306C] transition-colors" aria-label="ADF Instagram Profile">
                 <Instagram className="h-4 w-4" />
+              </a>
+              <a href="https://whatsapp.com/channel/0029Vb81bKK2v1IytFrFwr3E" target="_blank" rel="noopener noreferrer" className="hover:text-[#25D366] transition-colors" aria-label="ADF WhatsApp Channel">
+                <MessageCircle className="h-4 w-4" />
               </a>
             </div>
           </div>

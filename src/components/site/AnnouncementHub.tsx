@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowRight, Calendar, Tag, Activity, BookOpen, FileText, CheckCircle, Video, Trash2 } from "lucide-react";
+import { ArrowRight, Calendar, Tag, Activity, BookOpen, FileText, CheckCircle, Video, Trash2, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useCMSStore, Announcement, Publication, Activity as ActivityType } from "@/store/useCMSStore";
 import { EditableText } from "@/components/cms/EditableText";
@@ -91,9 +91,15 @@ function AnnouncementHubInner() {
               label="Hub description"
             />
           </div>
-          <Link to="/announcements" className="btn-outline">
-            <EditableText contentKey="home.hub.viewAll" fallback="View all updates" as="span" label="View all updates" /> <ArrowRight className="h-4 w-4" />
-          </Link>
+          <div className="flex items-center gap-3 flex-wrap">
+            <a href="https://whatsapp.com/channel/0029Vb81bKK2v1IytFrFwr3E" target="_blank" rel="noopener noreferrer" className="btn-primary !bg-[#25D366] hover:!bg-[#128C7E] border-transparent flex items-center gap-2">
+              <MessageCircle className="h-4 w-4" />
+              <span>Get Instant Updates</span>
+            </a>
+            <Link to="/announcements" className="btn-outline">
+              <EditableText contentKey="home.hub.viewAll" fallback="View all updates" as="span" label="View all updates" /> <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
 
         <div className="mt-8 border-b border-border overflow-x-auto">

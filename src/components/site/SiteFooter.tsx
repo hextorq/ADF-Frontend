@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Globe2, Mail, Send, Youtube, Linkedin, Instagram } from "lucide-react";
+import { Globe2, Mail, Send, Youtube, Linkedin, Instagram, MessageCircle } from "lucide-react";
 import { EditableImage, EditableText } from "@/components/cms/EditableText";
 
 const COLUMNS = [
@@ -166,6 +166,9 @@ export function SiteFooter() {
               </a>
               <a href="https://www.instagram.com/adf_publisher" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 hover:text-[#E1306C] transition-colors" aria-label="ADF Instagram Profile">
                 <Instagram className="h-4 w-4" /> 
+              </a>
+              <a href="https://whatsapp.com/channel/0029Vb81bKK2v1IytFrFwr3E" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 hover:text-[#25D366] transition-colors" aria-label="ADF WhatsApp Channel">
+                <MessageCircle className="h-4 w-4" /> 
               </a>
             </div>
             <Link to="/policies" className="hover:text-white"><EditableText contentKey="footer.bottom.policies" fallback="Policies & Ethics" as="span" label="Footer bottom link" /></Link>
