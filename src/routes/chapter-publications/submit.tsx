@@ -205,10 +205,21 @@ export default function ChapterSubmit() {
                   </label>
                 </div>
 
+                <div className="bg-slate-100 text-slate-800 p-5 rounded-xl border border-slate-200 mt-6">
+                  <h3 className="font-semibold mb-2">Publication Fee</h3>
+                  <p className="text-sm text-slate-600 mb-4">
+                    A permanent submission and processing fee of <strong>₹500</strong> is required to publish your chapter in this volume.
+                  </p>
+                  <div className="flex items-center justify-between bg-white p-4 rounded-lg border border-slate-200">
+                    <span className="font-medium text-[var(--ink)]">Total Amount</span>
+                    <span className="font-bold text-lg text-[var(--primary)]">₹500</span>
+                  </div>
+                </div>
+
                 <div className="flex gap-4 pt-4">
                   <Button type="button" variant="outline" onClick={() => setStep(1)}>Back</Button>
                   <Button type="submit" disabled={isSubmitting} className="flex-1 bg-[var(--primary)]">
-                    {isSubmitting ? "Submitting..." : "Submit Chapter"}
+                    {isSubmitting ? "Processing Payment & Submitting..." : "Pay ₹500 & Submit Chapter"}
                   </Button>
                 </div>
               </div>

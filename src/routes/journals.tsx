@@ -66,7 +66,7 @@ export default function Journals() {
         <div className="container-academic">
           <div className="flex items-end justify-between">
             <EditableText contentKey="page.journals.browse.title" fallback="Browse Journals" as="h2" className="font-serif text-2xl md:text-3xl font-bold text-[var(--ink)]" label="Section title" />
-            <Link to="/guidelines/author" className="btn-outline"><EditableText contentKey="page.journals.browse.authorGuidelines" fallback="Author Guidelines" as="span" label="Button label" /> <ArrowRight className="h-4 w-4" /></Link>
+            <Link to="/guidelines/editor" className="btn-outline"><EditableText contentKey="page.journals.browse.editorialGuidelines" fallback="Editorial Guidelines" as="span" label="Button label" /> <ArrowRight className="h-4 w-4" /></Link>
           </div>
 
           <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
@@ -101,13 +101,13 @@ export default function Journals() {
       <section className="py-16 bg-white">
         <div className="container-academic surface-card p-8 md:p-12 grid md:grid-cols-3 gap-6 items-center">
           <div className="md:col-span-2">
-            <div className="eyebrow"><BookOpen className="h-3.5 w-3.5" /> <EditableText contentKey="page.journals.authorCta.eyebrow" fallback="For Authors" as="span" label="CTA eyebrow" /></div>
-            <EditableText contentKey="page.journals.authorCta.title" fallback="Ready to submit your manuscript?" as="h3" className="mt-2 font-serif text-2xl font-bold text-[var(--ink)]" label="CTA title" />
-            <EditableText contentKey="page.journals.authorCta.description" fallback="Review the author guidelines and submission checklist before you upload." as="p" multiline className="mt-2 text-[var(--ink-soft)]" label="CTA description" />
+            <div className="eyebrow"><BookOpen className="h-3.5 w-3.5" /> <EditableText contentKey="page.journals.editorCta.eyebrow" fallback="Editorial Guidelines" as="span" label="CTA eyebrow" /></div>
+            <EditableText contentKey="page.journals.editorCta.title" fallback="Interested in joining the editorial board?" as="h3" className="mt-2 font-serif text-2xl font-bold text-[var(--ink)]" label="CTA title" />
+            <EditableText contentKey="page.journals.editorCta.description" fallback="Review the editorial guidelines and requirements before applying." as="p" multiline className="mt-2 text-[var(--ink-soft)]" label="CTA description" />
           </div>
           <div className="flex md:justify-end gap-2 flex-wrap">
-            <Link to="/guidelines/author" className="btn-primary"><EditableText contentKey="page.journals.cta.authorGuidelines" fallback="Author Guidelines" as="span" label="Button label" /></Link>
-            <Link to="/contact" className="btn-outline"><EditableText contentKey="page.journals.cta.contactEditor" fallback="Contact Editor" as="span" label="Button label" /></Link>
+            <Link to="/guidelines/editor" className="btn-primary"><EditableText contentKey="page.journals.cta.editorialGuidelines" fallback="Editorial Guidelines" as="span" label="Button label" /></Link>
+            <Link to="/contact" className="btn-outline"><EditableText contentKey="page.journals.cta.contactEditor" fallback="Contact Us" as="span" label="Button label" /></Link>
           </div>
         </div>
       </section>

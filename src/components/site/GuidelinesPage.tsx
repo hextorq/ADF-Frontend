@@ -14,7 +14,7 @@ export function GuidelinesPage({
   eyebrow: string;
   title: string;
   lead: string;
-  sections: { h: string; t: string }[];
+  sections: { h: string; t?: string; content?: React.ReactNode }[];
   crumbs: { label: string }[];
   cmsKey?: string;
   actionCard?: {
@@ -55,14 +55,20 @@ export function GuidelinesPage({
                   className="font-serif text-xl font-semibold text-[var(--ink)]"
                   label="Section heading"
                 />
-                <EditableText
-                  contentKey={`${key}.section.${i}.text`}
-                  fallback={s.t}
-                  as="p"
-                  multiline
-                  className="mt-2 text-[var(--ink-soft)] leading-relaxed"
-                  label="Section text"
-                />
+                {s.content ? (
+                  <div className="mt-4 prose prose-slate max-w-none text-[var(--ink-soft)]">
+                    {s.content}
+                  </div>
+                ) : (
+                  <EditableText
+                    contentKey={`${key}.section.${i}.text`}
+                    fallback={s.t || ""}
+                    as="p"
+                    multiline
+                    className="mt-2 text-[var(--ink-soft)] leading-relaxed"
+                    label="Section text"
+                  />
+                )}
               </article>
             ))}
           </div>
