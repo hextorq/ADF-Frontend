@@ -77,6 +77,17 @@ export interface EditorialUpdate {
   visible: boolean;
 }
 
+export interface JournalInfo {
+  id: string;
+  abbr: string;
+  title: string;
+  issn: string;
+  scope: string;
+  frequency: string;
+  access: string;
+  submitUrl?: string;
+}
+
 export interface StatisticsData {
   articles: number;
   chapters: number;
@@ -96,6 +107,7 @@ interface CMSState {
   events: EventItem[];
   editorialUpdates: EditorialUpdate[];
   statistics: StatisticsData;
+  journalList: JournalInfo[];
 
   // Generic CRUD actions (simplified for brevity, we could also use specific ones)
   setAnnouncements: (data: Announcement[]) => void;
@@ -105,6 +117,7 @@ interface CMSState {
   setEvents: (data: EventItem[]) => void;
   setEditorialUpdates: (data: EditorialUpdate[]) => void;
   setStatistics: (data: StatisticsData) => void;
+  setJournalList: (data: JournalInfo[]) => void;
 }
 
 const INITIAL_ANNOUNCEMENTS: Announcement[] = [
@@ -141,6 +154,19 @@ const INITIAL_JOURNALS: JournalRelease[] = [
   { id: "j1", title: "International Journal of English for Academic Excellence", issn: "1234-5678", volume: "2", issue: "1", date: "June 2026", coverImage: "/placeholder-journal.jpg", to: "/journals", pinned: true, visible: true }
 ];
 
+const INITIAL_JOURNAL_LIST: JournalInfo[] = [
+  {
+    id: "1",
+    title: "International Journal of English for Academic Excellence",
+    abbr: "IJEAE",
+    issn: "Online ISSN · Forthcoming",
+    scope: "Applied linguistics, academic writing, ELT, literature studies.",
+    frequency: "Quarterly",
+    access: "Open Access · CC BY 4.0",
+    submitUrl: "https://ijeae.com/index.php/ijeae"
+  }
+];
+
 export const useCMSStore = create<CMSState>()(
   persist(
     (set) => ({
@@ -151,6 +177,7 @@ export const useCMSStore = create<CMSState>()(
       events: [],
       editorialUpdates: [],
       statistics: INITIAL_STATISTICS,
+      journalList: INITIAL_JOURNAL_LIST,
 
       setAnnouncements: (data) => set({ announcements: data }),
       setPublications: (data) => set({ publications: data }),
@@ -159,6 +186,7 @@ export const useCMSStore = create<CMSState>()(
       setEvents: (data) => set({ events: data }),
       setEditorialUpdates: (data) => set({ editorialUpdates: data }),
       setStatistics: (data) => set({ statistics: data }),
+      setJournalList: (data) => set({ journalList: data }),
     }),
     {
       name: "adf-cms-storage",

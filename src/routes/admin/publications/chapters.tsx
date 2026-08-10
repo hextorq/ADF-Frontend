@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { BookOpen, CheckCircle, Clock, FileText, Plus } from "lucide-react";
+import { BookOpen, CheckCircle, Clock, FileText, Plus, Trash2, Edit } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -22,6 +22,7 @@ export default function AdminChapterPublications() {
     submission_deadline: "",
     pages: 0
   });
+  const [editingVolumeId, setEditingVolumeId] = useState<string | null>(null);
   const [coverImage, setCoverImage] = useState<File | null>(null);
 
   const fetchData = async () => {
@@ -79,21 +80,69 @@ export default function AdminChapterPublications() {
         formData.append("cover_image", coverImage);
       }
 
-      const res = await fetch("/api/publications/chapters/volumes", {
-        method: "POST",
+      const url = editingVolumeId 
+        ? `/api/publications/chapters/volumes/${editingVolumeId}`
+        : "/api/publications/chapters/volumes";
+      const method = editingVolumeId ? "PATCH" : "POST";
+
+      const res = await fetch(url, {
+        method,
         body: formData
       });
       if (res.ok) {
-        toast.success("Volume created successfully");
+        toast.success(`Volume ${editingVolumeId ? 'updated' : 'created'} successfully`);
         setIsDialogOpen(false);
         setNewVolume({ title: "", theme: "", description: "", submission_deadline: "", pages: 0 });
         setCoverImage(null);
+        setEditingVolumeId(null);
         fetchData();
       } else {
-        toast.error("Failed to create volume");
+        toast.error(`Failed to ${editingVolumeId ? 'update' : 'create'} volume`);
       }
     } catch (e) {
-      toast.error("Error creating volume");
+      toast.error("Error saving volume");
+    }
+  };
+
+  const openEditVolume = (vol: any) => {
+    setNewVolume({
+      title: vol.title,
+      theme: vol.theme,
+      description: vol.description,
+      submission_deadline: vol.submission_deadline.split('T')[0],
+      pages: vol.pages || 0
+    });
+    setEditingVolumeId(vol.id);
+    setIsDialogOpen(true);
+  };
+
+  const deleteVolume = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this volume?")) return;
+    try {
+      const res = await fetch(`/api/publications/chapters/volumes/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        toast.success("Volume deleted");
+        fetchData();
+      } else {
+        toast.error("Failed to delete volume");
+      }
+    } catch (e) {
+      toast.error("Error deleting volume");
+    }
+  };
+
+  const deleteSubmission = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this submission?")) return;
+    try {
+      const res = await fetch(`/api/publications/chapters/admin/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        toast.success("Submission deleted");
+        fetchData();
+      } else {
+        toast.error("Failed to delete submission");
+      }
+    } catch (e) {
+      toast.error("Error deleting submission");
     }
   };
 
@@ -132,11 +181,11 @@ export default function AdminChapterPublications() {
         
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button><Plus className="h-4 w-4 mr-2" /> New Volume</Button>
+            <Button onClick={() => { setEditingVolumeId(null); setNewVolume({ title: "", theme: "", description: "", submission_deadline: "", pages: 0 }); }}><Plus className="h-4 w-4 mr-2" /> New Volume</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Create New Volume</DialogTitle>
+              <DialogTitle>{editingVolumeId ? 'Edit Volume' : 'Create New Volume'}</DialogTitle>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
@@ -168,7 +217,7 @@ export default function AdminChapterPublications() {
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-              <Button onClick={createVolume}>Create Volume</Button>
+              <Button onClick={createVolume}>{editingVolumeId ? 'Save Changes' : 'Create Volume'}</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -205,7 +254,7 @@ export default function AdminChapterPublications() {
                   <TableHead>Chapter Title</TableHead>
                   <TableHead>Payment</TableHead>
                   <TableHead>Current Stage</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -224,8 +273,8 @@ export default function AdminChapterPublications() {
                         {sub.stage}
                       </span>
                     </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-2">
                         <Select defaultValue={sub.stage} onValueChange={(val) => updateStage(sub.id, val)}>
                           <SelectTrigger className="w-[140px] h-8 text-xs">
                             <SelectValue />
@@ -241,6 +290,9 @@ export default function AdminChapterPublications() {
                             <SelectItem value="Rejected">Rejected</SelectItem>
                           </SelectContent>
                         </Select>
+                        <Button variant="ghost" size="sm" onClick={() => deleteSubmission(sub.id)} className="text-red-500 hover:text-red-700 h-8 w-8 p-0">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -267,7 +319,7 @@ export default function AdminChapterPublications() {
                   <TableHead>Deadline</TableHead>
                   <TableHead>Pages</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -282,12 +334,20 @@ export default function AdminChapterPublications() {
                         {vol.status || 'open'}
                       </span>
                     </TableCell>
-                    <TableCell>
-                      {vol.status !== 'published' && (
-                        <Button size="sm" variant="outline" onClick={() => publishVolume(vol.id)} className="text-xs">
-                          Publish
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        {vol.status !== 'published' && (
+                          <Button size="sm" variant="outline" onClick={() => publishVolume(vol.id)} className="text-xs">
+                            Publish
+                          </Button>
+                        )}
+                        <Button variant="ghost" size="sm" onClick={() => openEditVolume(vol)} className="h-8 w-8 p-0">
+                          <Edit className="h-4 w-4" />
                         </Button>
-                      )}
+                        <Button variant="ghost" size="sm" onClick={() => deleteVolume(vol.id)} className="text-red-500 hover:text-red-700 h-8 w-8 p-0">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}

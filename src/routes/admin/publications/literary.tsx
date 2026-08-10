@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { BookOpen, Edit3, CheckCircle, FileText, UploadCloud, Mail } from "lucide-react";
+import { BookOpen, Edit3, CheckCircle, FileText, UploadCloud, Mail, Trash2 } from "lucide-react";
 
 export default function AdminLiteraryPublications() {
   const [submissions, setSubmissions] = useState<any[]>([]);
@@ -58,8 +58,22 @@ export default function AdminLiteraryPublications() {
       }
     } catch (e) {
       toast.error("Error publishing to store");
-    } finally {
       setIsPublishing(null);
+    }
+  };
+
+  const deleteSubmission = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this submission?")) return;
+    try {
+      const res = await fetch(`/api/publications/literary/admin/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        toast.success("Submission deleted");
+        fetchSubmissions();
+      } else {
+        toast.error("Failed to delete submission");
+      }
+    } catch (e) {
+      toast.error("Error deleting submission");
     }
   };
 
@@ -103,7 +117,7 @@ export default function AdminLiteraryPublications() {
               <TableHead>Genre</TableHead>
               <TableHead>Payment</TableHead>
               <TableHead>Current Status</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -123,8 +137,8 @@ export default function AdminLiteraryPublications() {
                     {sub.current_stage}
                   </span>
                 </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
+                <TableCell className="text-right">
+                  <div className="flex items-center justify-end gap-2">
                     <Select defaultValue={sub.current_stage} onValueChange={(val) => updateStage(sub.id, val)}>
                       <SelectTrigger className="w-[140px] h-8 text-xs">
                         <SelectValue />
@@ -162,6 +176,10 @@ export default function AdminLiteraryPublications() {
                       title="Email Author"
                     >
                       <Mail className="w-4 h-4" />
+                    </Button>
+
+                    <Button variant="ghost" size="sm" onClick={() => deleteSubmission(sub.id)} className="text-red-500 hover:text-red-700 h-8 w-8 p-0" title="Delete Submission">
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
                 </TableCell>
