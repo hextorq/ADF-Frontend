@@ -3,11 +3,18 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { BookOpen, Edit3, CheckCircle, FileText, UploadCloud, Mail, Trash2 } from "lucide-react";
+import { BookOpen, Edit3, CheckCircle, FileText, UploadCloud, Mail, Trash2, Edit } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function AdminLiteraryPublications() {
   const [submissions, setSubmissions] = useState<any[]>([]);
   const [isPublishing, setIsPublishing] = useState<string | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingSub, setEditingSub] = useState<any>(null);
 
   const fetchSubmissions = async () => {
     try {
@@ -27,10 +34,10 @@ export default function AdminLiteraryPublications() {
 
   const updateStage = async (id: string, stage: string) => {
     try {
-      const res = await fetch(`/api/publications/literary/admin/${id}/stage`, {
+      const res = await fetch(`/api/publications/literary/admin/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ stage })
+        body: JSON.stringify({ current_stage: stage })
       });
       if (res.ok) {
         toast.success(`Stage updated to ${stage}`);
@@ -75,6 +82,31 @@ export default function AdminLiteraryPublications() {
     } catch (e) {
       toast.error("Error deleting submission");
     }
+  };
+
+  const saveSubmission = async () => {
+    if (!editingSub) return;
+    try {
+      const res = await fetch(`/api/publications/literary/admin/${editingSub.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editingSub)
+      });
+      if (res.ok) {
+        toast.success("Submission updated successfully");
+        setIsEditModalOpen(false);
+        fetchSubmissions();
+      } else {
+        toast.error("Failed to update submission");
+      }
+    } catch (e) {
+      toast.error("Error updating submission");
+    }
+  };
+
+  const openEditModal = (sub: any) => {
+    setEditingSub({ ...sub });
+    setIsEditModalOpen(true);
   };
 
   // Mock stats
@@ -178,6 +210,10 @@ export default function AdminLiteraryPublications() {
                       <Mail className="w-4 h-4" />
                     </Button>
 
+                    <Button variant="ghost" size="sm" onClick={() => openEditModal(sub)} className="h-8 w-8 p-0" title="View / Edit Details">
+                      <Edit className="h-4 w-4" />
+                    </Button>
+
                     <Button variant="ghost" size="sm" onClick={() => deleteSubmission(sub.id)} className="text-red-500 hover:text-red-700 h-8 w-8 p-0" title="Delete Submission">
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -195,6 +231,124 @@ export default function AdminLiteraryPublications() {
           </TableBody>
         </Table>
       </div>
+
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>View / Edit Literary Submission</DialogTitle>
+          </DialogHeader>
+          
+          {editingSub && (
+            <Tabs defaultValue="author" className="mt-4">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="author">Author Info</TabsTrigger>
+                <TabsTrigger value="book">Book Details</TabsTrigger>
+                <TabsTrigger value="status">Status & Misc</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="author" className="space-y-4 pt-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Author Name</Label>
+                    <Input value={editingSub.author_name || ""} onChange={e => setEditingSub({...editingSub, author_name: e.target.value})} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Email</Label>
+                    <Input value={editingSub.author_email || ""} onChange={e => setEditingSub({...editingSub, author_email: e.target.value})} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Phone</Label>
+                    <Input value={editingSub.author_phone || ""} onChange={e => setEditingSub({...editingSub, author_phone: e.target.value})} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Country</Label>
+                    <Input value={editingSub.author_country || ""} onChange={e => setEditingSub({...editingSub, author_country: e.target.value})} />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Author Bio</Label>
+                  <Textarea value={editingSub.author_bio || ""} onChange={e => setEditingSub({...editingSub, author_bio: e.target.value})} rows={4} />
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="book" className="space-y-4 pt-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Book Title</Label>
+                    <Input value={editingSub.book_title || ""} onChange={e => setEditingSub({...editingSub, book_title: e.target.value})} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Book Subtitle</Label>
+                    <Input value={editingSub.book_subtitle || ""} onChange={e => setEditingSub({...editingSub, book_subtitle: e.target.value})} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Genre</Label>
+                    <Input value={editingSub.book_genre || ""} onChange={e => setEditingSub({...editingSub, book_genre: e.target.value})} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Language</Label>
+                    <Input value={editingSub.book_language || ""} onChange={e => setEditingSub({...editingSub, book_language: e.target.value})} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Word Count</Label>
+                    <Input type="number" value={editingSub.word_count || ""} onChange={e => setEditingSub({...editingSub, word_count: parseInt(e.target.value)})} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Manuscript / Cover</Label>
+                    <div className="flex gap-2 text-sm mt-2">
+                      {editingSub.manuscript_url && <a href={editingSub.manuscript_url} target="_blank" rel="noreferrer" className="text-blue-600 underline">View Manuscript</a>}
+                      {editingSub.cover_url && <a href={editingSub.cover_url} target="_blank" rel="noreferrer" className="text-blue-600 underline ml-4">View Cover</a>}
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Synopsis</Label>
+                  <Textarea value={editingSub.synopsis || ""} onChange={e => setEditingSub({...editingSub, synopsis: e.target.value})} rows={5} />
+                </div>
+              </TabsContent>
+
+              <TabsContent value="status" className="space-y-4 pt-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Current Stage</Label>
+                    <Select value={editingSub.current_stage || ""} onValueChange={(val) => setEditingSub({...editingSub, current_stage: val})}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Submitted">Submitted</SelectItem>
+                        <SelectItem value="Editorial Review">Editorial Review</SelectItem>
+                        <SelectItem value="Editing">Editing</SelectItem>
+                        <SelectItem value="Author Approval">Author Approval</SelectItem>
+                        <SelectItem value="ISBN Assigned">ISBN Assigned</SelectItem>
+                        <SelectItem value="Cover Design">Cover Design</SelectItem>
+                        <SelectItem value="Publication">Publication</SelectItem>
+                        <SelectItem value="Book Store">Book Store</SelectItem>
+                        <SelectItem value="Rejected">Rejected</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Editor Assigned</Label>
+                    <Input value={editingSub.editor_assigned || ""} onChange={e => setEditingSub({...editingSub, editor_assigned: e.target.value})} placeholder="Name of Editor" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>ISBN</Label>
+                    <Input value={editingSub.isbn || ""} onChange={e => setEditingSub({...editingSub, isbn: e.target.value})} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Payment Status</Label>
+                    <Input value={editingSub.payment_status || ""} readOnly className="bg-slate-50 text-slate-500" />
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
+          )}
+
+          <DialogFooter className="mt-6">
+            <Button variant="outline" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
+            <Button onClick={saveSubmission} className="btn-primary">Save Changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
