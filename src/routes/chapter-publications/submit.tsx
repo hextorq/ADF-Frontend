@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { PageHeader } from "@/components/site/PageHeader";
 import { toast } from "sonner";
-import { Plus, Trash2, UploadCloud } from "lucide-react";
+import { Plus, Trash2, UploadCloud, Download, FileText } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useCMSStore } from "@/store/useCMSStore";
@@ -45,6 +45,8 @@ export default function ChapterSubmit() {
   const [authors, setAuthors] = useState<Author[]>([{ name: "", email: "", institution: "", is_primary: true }]);
   const [manuscript, setManuscript] = useState<File | null>(null);
   const [agreed, setAgreed] = useState(false);
+  const [transactionId, setTransactionId] = useState("");
+  const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
 
   const addCoAuthor = () => {
     setAuthors([...authors, { name: "", email: "", institution: "", is_primary: false }]);
@@ -73,6 +75,10 @@ export default function ChapterSubmit() {
     formData.append("keywords", keywords);
     formData.append("authors", JSON.stringify(authors));
     formData.append("manuscript", manuscript);
+    formData.append("transaction_id", transactionId);
+    if (paymentScreenshot) {
+      formData.append("payment_screenshot", paymentScreenshot);
+    }
 
     try {
       // Step 1: Submit Form
@@ -205,14 +211,68 @@ export default function ChapterSubmit() {
                   </label>
                 </div>
 
-                <div className="bg-slate-100 text-slate-800 p-5 rounded-xl border border-slate-200 mt-6">
-                  <h3 className="font-semibold mb-2">Publication Fee</h3>
-                  <p className="text-sm text-slate-600 mb-4">
-                    A permanent submission and processing fee of <strong>₹500</strong> is required to publish your chapter in this volume.
+                <div className="bg-slate-50 text-slate-800 p-6 rounded-xl border border-slate-200 mt-6 shadow-sm">
+                  <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+                    <span className="bg-emerald-100 text-emerald-700 p-1.5 rounded-lg">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M9 15v2"/><path d="M15 9h2"/><path d="M15 15h2"/></svg>
+                    </span>
+                    Payment Instructions
+                  </h3>
+                  <p className="text-sm text-slate-600 mb-6 leading-relaxed">
+                    A permanent submission and processing fee of <strong>₹500</strong> is required to publish your chapter in this volume. Scan the QR code below using any UPI app (GPay, PhonePe, Paytm, etc.) to complete the payment.
                   </p>
-                  <div className="flex items-center justify-between bg-white p-4 rounded-lg border border-slate-200">
-                    <span className="font-medium text-[var(--ink)]">Total Amount</span>
-                    <span className="font-bold text-lg text-[var(--primary)]">₹500</span>
+
+                  <div className="flex flex-col md:flex-row gap-6 items-center bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+                    <div className="bg-white p-3 rounded-2xl border-2 border-slate-100 shadow-sm shrink-0">
+                      <img 
+                        src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent("upi://pay?pa=7502398680@sbi&pn=ATTRAIT DOVIN FEDRICK SELVARAJ&cu=INR&am=500")}`} 
+                        alt="Payment QR Code" 
+                        className="w-40 h-40 rounded-lg"
+                      />
+                    </div>
+                    
+                    <div className="flex-1 space-y-4 w-full">
+                      <div className="space-y-1">
+                        <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">UPI ID</label>
+                        <div className="font-mono text-slate-700 font-medium bg-slate-50 p-2 rounded-md border flex justify-between items-center">
+                          7502398680@sbi
+                          <button type="button" onClick={() => {navigator.clipboard.writeText('7502398680@sbi'); toast.success('UPI ID copied!');}} className="text-slate-400 hover:text-[var(--primary)] p-1 transition-colors">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                          </button>
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Receiver Name</label>
+                        <div className="text-sm font-medium text-slate-700">
+                          ATTRAIT DOVIN FEDRICK SELVARAJ
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Amount</label>
+                        <div className="text-xl font-bold text-[var(--primary)]">
+                          ₹500.00
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 space-y-5">
+                    <div>
+                      <label className="text-sm font-medium mb-1 block">Transaction Reference ID (UTR / UPI Ref Number)</label>
+                      <Input required placeholder="e.g. 312345678901" value={transactionId} onChange={e => setTransactionId(e.target.value)} className="bg-white border-slate-200" />
+                      <p className="text-xs text-slate-500 mt-1">Please enter the 12-digit reference number after making the payment.</p>
+                    </div>
+                    
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">Upload Payment Screenshot</label>
+                      <label className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-slate-500 cursor-pointer hover:bg-white relative transition-colors bg-white/50 border-slate-200">
+                        <UploadCloud className="w-6 h-6 mb-2 text-slate-400" />
+                        <span className="text-sm font-medium text-slate-600">Choose screenshot</span>
+                        <span className="text-xs mt-1 text-slate-400">{paymentScreenshot ? paymentScreenshot.name : 'No file chosen'}</span>
+                        <input type="file" required onChange={e => setPaymentScreenshot(e.target.files?.[0] || null)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*" />
+                      </label>
+                      <p className="text-xs text-slate-500 mt-2">Please upload a clear screenshot of your successful transaction.</p>
+                    </div>
                   </div>
                 </div>
 

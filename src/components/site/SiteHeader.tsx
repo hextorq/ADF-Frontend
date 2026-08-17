@@ -16,22 +16,28 @@ type NavItem = {
 const NAV: NavItem[] = [
   { key: "home", label: "Home", to: "/" },
   { key: "about", label: "About Us", to: "/about" },
-  { key: "journals", label: "Journals", to: "/journals" },
-  { key: "chapter-publications", label: "Chapter Publications", to: "/chapter-publications" },
-  { key: "literary-publications", label: "Literary Publications", to: "/literary-publications" },
+  {
+    key: "publications",
+    label: "Publications",
+    children: [
+      { key: "journals", label: "Journals", to: "/journals" },
+      { key: "chapter-publications", label: "Chapter Publications", to: "/chapter-publications" },
+      { key: "literary-publications", label: "Literary Publications", to: "/literary-publications" },
+    ],
+  },
   { key: "bookstore", label: "Book Store", to: "/bookstore" },
   { key: "academic-programmes", label: "Academic Programmes", to: "/academic-programmes" },
   {
-    key: "guidelines",
-    label: "Guidelines",
+    key: "resources",
+    label: "Resources",
     children: [
       { key: "guidelines.author", label: "Author Guidelines", to: "/guidelines/author" },
       { key: "guidelines.reviewer", label: "Reviewer Guidelines", to: "/guidelines/reviewer" },
       { key: "guidelines.editor", label: "Editor Guidelines", to: "/guidelines/editor" },
+      { key: "editorial-board", label: "Editorial Board", to: "/editorial-board" },
+      { key: "policies", label: "Policies", to: "/policies" },
     ],
   },
-  { key: "editorial-board", label: "Editorial Board", to: "/editorial-board" },
-  { key: "policies", label: "Policies", to: "/policies" },
   { key: "contact", label: "Contact Us", to: "/contact" },
 ];
 
@@ -86,11 +92,11 @@ export function SiteHeader() {
           scrolled ? "shadow-[0_4px_20px_-12px_rgba(7,26,140,0.25)]" : ""
         }`}
       >
-        <div className="container-academic flex items-center gap-6 py-3">
-          <Link to="/" className="flex items-center gap-3 shrink-0">
+        <div className="container-academic flex flex-wrap items-center justify-between py-3 md:py-4 gap-y-4 gap-x-2">
+          <Link to="/" className="flex items-center gap-2 md:gap-3 group shrink-0">
             <Logo />
-            <div className="leading-tight">
-              <div className="font-serif text-[1.05rem] font-bold text-[var(--primary)]">
+            <div className="flex flex-col max-w-[200px] sm:max-w-none">
+              <div className="font-serif font-bold text-base md:text-xl text-[var(--ink)] tracking-tight leading-tight">
                 <EditableText contentKey="header.brand.name" fallback="Academic Development Forum" as="span" label="Header brand" />
               </div>
               <div className="text-[0.7rem] uppercase tracking-[0.18em] text-[var(--ink-soft)]">
@@ -102,20 +108,22 @@ export function SiteHeader() {
           <div className="ml-auto flex items-center gap-2">
             <div
               onClick={() => setSearchOpen((v) => !v)}
-              className="btn-primary !py-2 !px-4 !text-sm mr-2 cursor-pointer inline-flex items-center gap-2"
+              className="btn-primary !py-2 !px-3 md:!px-4 !text-sm mr-1 md:mr-2 cursor-pointer inline-flex items-center gap-2 shrink-0"
               role="button"
               tabIndex={0}
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSearchOpen((v) => !v); } }}
               aria-label="Search publications"
             >
               <Search className="h-4 w-4" />
-              <EditableText contentKey="header.search.button" fallback="Search Publications" as="span" label="Search button" />
+              <span className="hidden md:inline">
+                <EditableText contentKey="header.search.button" fallback="Search Publications" as="span" label="Search button" />
+              </span>
             </div>
             
             {/* Global Favourites & Cart Buttons */}
             <Sheet>
               <SheetTrigger asChild>
-                <button className="p-2 text-[var(--ink-soft)] hover:text-[var(--primary)] transition-colors relative cursor-pointer" aria-label="Favourites">
+                <button className="p-2 text-[var(--ink-soft)] hover:text-[var(--primary)] transition-colors relative cursor-pointer shrink-0" aria-label="Favourites">
                   <Heart className="h-5 w-5" />
                   <span className="absolute top-1 right-0 h-4 w-4 bg-[var(--mint)] text-white text-[10px] font-bold rounded-full flex items-center justify-center transform translate-x-1 -translate-y-1 shadow-sm">{wishlist.length}</span>
                 </button>
@@ -148,7 +156,7 @@ export function SiteHeader() {
 
             <Sheet>
               <SheetTrigger asChild>
-                <button className="p-2 text-[var(--ink-soft)] hover:text-[var(--primary)] transition-colors relative mr-1 cursor-pointer" aria-label="Cart">
+                <button className="p-2 text-[var(--ink-soft)] hover:text-[var(--primary)] transition-colors relative mr-1 cursor-pointer shrink-0" aria-label="Cart">
                   <ShoppingCart className="h-5 w-5" />
                   <span className="absolute top-1 right-0 h-4 w-4 bg-[var(--primary)] text-white text-[10px] font-bold rounded-full flex items-center justify-center transform translate-x-1 -translate-y-1 shadow-sm">{cart.length}</span>
                 </button>
@@ -196,7 +204,7 @@ export function SiteHeader() {
             </Sheet>
 
             <button
-              className="lg:hidden inline-flex items-center justify-center rounded-md border border-border p-2"
+              className="lg:hidden inline-flex items-center justify-center rounded-md border border-border p-2 shrink-0 ml-1"
               onClick={() => setMobileOpen((v) => !v)}
               aria-label="Menu"
             >
@@ -207,7 +215,7 @@ export function SiteHeader() {
 
         {/* Primary nav */}
         <nav className="hidden lg:block border-t border-border bg-white">
-          <div className="container-academic flex items-center gap-1">
+          <div className="container-academic flex items-center justify-center flex-wrap gap-x-1 gap-y-2 py-1">
             {NAV.map((item) => (
               <NavLink key={item.key} item={item} />
             ))}
@@ -325,20 +333,32 @@ function SearchPanel({ onClose }: { onClose: () => void }) {
     <div className="border-t border-border bg-[var(--secondary)]">
       <div className="container-academic py-5">
         <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-2">
-            <Search className="h-5 w-5 text-[var(--primary)]" />
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSearch();
+            }} 
+            className="flex items-center gap-3 bg-white rounded-lg px-4 py-2.5 border shadow-sm border-slate-200 focus-within:border-[var(--primary)] focus-within:ring-1 focus-within:ring-[var(--primary)] transition-all"
+          >
+            <Search className="h-5 w-5 text-[var(--ink-soft)]" />
             <input
               autoFocus
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
               placeholder="Search journals, chapters, books, announcements…"
-              className="flex-1 bg-transparent text-base outline-none placeholder:text-[var(--ink-soft)]"
+              className="flex-1 bg-transparent text-base outline-none text-[var(--ink)] placeholder:text-slate-400"
             />
-            <button onClick={onClose} className="text-[var(--ink-soft)] hover:text-[var(--ink)]">
+            <button 
+              type="submit" 
+              className="bg-[var(--primary)] text-white px-4 py-1.5 rounded text-sm font-semibold hover:bg-[var(--deep)] transition-colors"
+            >
+              Search
+            </button>
+            <div className="w-px h-5 bg-slate-200 mx-1"></div>
+            <button type="button" onClick={onClose} className="text-slate-400 hover:text-slate-600 p-1 rounded hover:bg-slate-100 transition-colors">
               <X className="h-5 w-5" />
             </button>
-          </div>
+          </form>
           <div className="flex flex-wrap gap-2 text-xs">
             {(["all", "journals", "chapters", "books", "announcements"] as const).map((s) => (
               <button

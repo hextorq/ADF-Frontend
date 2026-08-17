@@ -29,7 +29,7 @@ export function FeaturedVideo() {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           
           {/* Left Column: Text & CTAs */}
-          <div className="max-w-xl">
+          <div className="max-w-xl order-2 lg:order-1">
             <div className="eyebrow flex items-center gap-2 mb-4">
               <Youtube className="h-5 w-5 text-red-600" />
               <EditableText contentKey="home.video.eyebrow" fallback="ADF PUBLISHER CHANNEL" as="span" className="text-red-600" label="Video eyebrow" />
@@ -85,7 +85,7 @@ export function FeaturedVideo() {
           </div>
 
           {/* Right Column: Embedded Video */}
-          <div className="relative group perspective">
+          <div className="relative group perspective order-1 lg:order-2">
             <div className="absolute -inset-2 bg-gradient-to-r from-[var(--primary)] to-[var(--mint)] rounded-2xl blur-lg opacity-20 group-hover:opacity-40 transition duration-500"></div>
             <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-white bg-white p-2">
               <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-gray-100">

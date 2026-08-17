@@ -87,8 +87,13 @@ export default function Page() {
       actionCard={{
         eyebrow: "FOR AUTHORS",
         title: "Ready to submit your manuscript?",
-        description: "Review the author guidelines and submission checklist before you upload.",
-        primaryAction: <a href="/guidelines/author" className="btn-primary font-semibold py-2.5 px-5"><EditableText contentKey="page.guidelines.author.button.primary" fallback="Author Guidelines" as="span" label="Button label" /></a>,
+        description: "Download the official manuscript template and review the checklist before you upload.",
+        primaryAction: (
+          <a href="/ADF_Manuscript_Template.docx" download className="btn-primary font-semibold py-2.5 px-5 inline-flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            <EditableText contentKey="page.guidelines.author.button.download" fallback="Download Template" as="span" label="Download Button label" />
+          </a>
+        ),
         secondaryAction: <a href="/contact" className="btn-outline font-semibold py-2.5 px-5"><EditableText contentKey="page.guidelines.author.button.secondary" fallback="Contact Editor" as="span" label="Button label" /></a>,
       }}
     />

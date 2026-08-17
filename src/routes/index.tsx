@@ -1,7 +1,9 @@
+import React, { Suspense } from "react";
 import { HeroSlider } from "@/components/site/HeroSlider";
 import { AnnouncementHub } from "@/components/site/AnnouncementHub";
 import { WhyChooseADF } from "@/components/site/WhyChooseADF";
-import { BookstoreShowcase } from "@/components/site/BookstoreShowcase";
+
+const PublishCTA = React.lazy(() => import("@/components/site/PublishCTA"));
 
 import { CoreValues } from "@/components/site/CoreValues";
 import { Statistics } from "@/components/site/Statistics";
@@ -14,7 +16,9 @@ export default function Index() {
       <AnnouncementHub />
       <FeaturedVideo />
       <Statistics />
-      <BookstoreShowcase />
+      <Suspense fallback={<div className="h-[500px] w-full bg-[var(--deep)] animate-pulse flex items-center justify-center"><span className="text-white/50">Loading Editor...</span></div>}>
+        <PublishCTA />
+      </Suspense>
       <WhyChooseADF />
       <CoreValues />
     </>
