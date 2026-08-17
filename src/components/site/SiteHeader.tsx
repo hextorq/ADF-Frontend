@@ -92,20 +92,22 @@ export function SiteHeader() {
           scrolled ? "shadow-[0_4px_20px_-12px_rgba(7,26,140,0.25)]" : ""
         }`}
       >
-        <div className="container-academic flex flex-wrap items-center justify-between py-3 md:py-4 gap-y-4 gap-x-2">
-          <Link to="/" className="flex items-center gap-2 md:gap-3 group shrink-0">
-            <Logo />
-            <div className="flex flex-col max-w-[200px] sm:max-w-none">
-              <div className="font-serif font-bold text-base md:text-xl text-[var(--ink)] tracking-tight leading-tight">
+        <div className="container-academic flex items-center justify-between py-2 md:py-4 gap-1 sm:gap-2">
+          <Link to="/" className="flex items-center gap-1.5 md:gap-3 group shrink">
+            <div className="shrink-0 scale-75 sm:scale-90 md:scale-100 origin-left">
+              <Logo />
+            </div>
+            <div className="flex flex-col">
+              <div className="font-serif font-bold text-[11px] sm:text-sm md:text-xl text-[var(--ink)] tracking-tight leading-tight max-w-[110px] sm:max-w-none">
                 <EditableText contentKey="header.brand.name" fallback="Academic Development Forum" as="span" label="Header brand" />
               </div>
-              <div className="text-[0.7rem] uppercase tracking-[0.18em] text-[var(--ink-soft)]">
+              <div className="hidden sm:block text-[0.55rem] md:text-[0.7rem] uppercase tracking-[0.18em] text-[var(--ink-soft)] mt-0.5">
                 <EditableText contentKey="header.brand.tagline" fallback="Attitude Defines Future" as="span" label="Header tagline" />
               </div>
             </div>
           </Link>
 
-          <div className="ml-auto flex items-center gap-2">
+          <div className="ml-auto flex items-center gap-0.5 sm:gap-2 shrink-0">
             <div
               onClick={() => setSearchOpen((v) => !v)}
               className="btn-primary !py-2 !px-3 md:!px-4 !text-sm mr-1 md:mr-2 cursor-pointer inline-flex items-center gap-2 shrink-0"
@@ -332,33 +334,39 @@ function SearchPanel({ onClose }: { onClose: () => void }) {
   return (
     <div className="border-t border-border bg-[var(--secondary)]">
       <div className="container-academic py-5">
-        <div className="flex flex-col gap-3">
-          <form 
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSearch();
-            }} 
-            className="flex items-center gap-3 bg-white rounded-lg px-4 py-2.5 border shadow-sm border-slate-200 focus-within:border-[var(--primary)] focus-within:ring-1 focus-within:ring-[var(--primary)] transition-all"
-          >
-            <Search className="h-5 w-5 text-[var(--ink-soft)]" />
-            <input
-              autoFocus
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder="Search journals, chapters, books, announcements…"
-              className="flex-1 bg-transparent text-base outline-none text-[var(--ink)] placeholder:text-slate-400"
-            />
-            <button 
-              type="submit" 
-              className="bg-[var(--primary)] text-white px-4 py-1.5 rounded text-sm font-semibold hover:bg-[var(--deep)] transition-colors"
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-3">
+            <form 
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSearch();
+              }} 
+              className="flex-1 flex items-center gap-2 sm:gap-3 bg-white rounded-xl px-3 sm:px-4 py-2 border shadow-sm border-slate-200 focus-within:border-[var(--primary)] focus-within:ring-1 focus-within:ring-[var(--primary)] transition-all"
             >
-              Search
-            </button>
-            <div className="w-px h-5 bg-slate-200 mx-1"></div>
-            <button type="button" onClick={onClose} className="text-slate-400 hover:text-slate-600 p-1 rounded hover:bg-slate-100 transition-colors">
+              <Search className="h-5 w-5 text-[var(--ink-soft)] shrink-0 hidden sm:block" />
+              <input
+                autoFocus
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                placeholder="Search publications..."
+                className="flex-1 min-w-0 bg-transparent text-sm sm:text-base py-1 outline-none text-[var(--ink)] placeholder:text-slate-400"
+              />
+              <button 
+                type="submit" 
+                className="bg-[var(--primary)] text-white px-3 sm:px-4 py-1.5 rounded-lg text-sm font-semibold hover:bg-[var(--deep)] transition-colors shrink-0"
+              >
+                Search
+              </button>
+            </form>
+            <button 
+              type="button" 
+              onClick={onClose} 
+              className="text-slate-500 hover:text-slate-800 p-2.5 rounded-xl hover:bg-slate-200 transition-colors shrink-0 bg-slate-100"
+              aria-label="Close search"
+            >
               <X className="h-5 w-5" />
             </button>
-          </form>
+          </div>
           <div className="flex flex-wrap gap-2 text-xs">
             {(["all", "journals", "chapters", "books", "announcements"] as const).map((s) => (
               <button

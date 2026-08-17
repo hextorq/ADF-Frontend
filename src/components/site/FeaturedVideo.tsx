@@ -19,6 +19,31 @@ export function FeaturedVideo() {
   
   const videoId = extractYoutubeId(rawVideoInput);
 
+  const VideoPlayer = (
+    <div className="relative group perspective w-full">
+      <div className="absolute -inset-2 bg-gradient-to-r from-[var(--primary)] to-[var(--mint)] rounded-2xl blur-lg opacity-20 group-hover:opacity-40 transition duration-500"></div>
+      <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-white bg-white p-2">
+        <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-gray-100">
+          <iframe 
+            width="100%" 
+            height="100%" 
+            src={`https://www.youtube.com/embed/${videoId}`}
+            title="ADF Publisher YouTube Channel" 
+            frameBorder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            allowFullScreen
+            className="absolute inset-0 w-full h-full"
+          ></iframe>
+        </div>
+        {isAdmin && (
+          <div className="mt-2 rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-500">
+            <EditableText contentKey="home.video.youtubeId" fallback={LATEST_VIDEO_ID} as="span" label="YouTube video ID or Link" />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
   return (
     <section className="py-20 bg-white relative overflow-hidden">
       {/* Decorative background element */}
@@ -26,10 +51,10 @@ export function FeaturedVideo() {
       <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-[400px] h-[400px] bg-[var(--mint)] rounded-full blur-3xl opacity-10 pointer-events-none" />
 
       <div className="container-academic relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="flex flex-col lg:grid lg:grid-cols-2 gap-12 items-center">
           
           {/* Left Column: Text & CTAs */}
-          <div className="max-w-xl order-2 lg:order-1">
+          <div className="max-w-xl w-full order-1 flex flex-col">
             <div className="eyebrow flex items-center gap-2 mb-4">
               <Youtube className="h-5 w-5 text-red-600" />
               <EditableText contentKey="home.video.eyebrow" fallback="ADF PUBLISHER CHANNEL" as="span" className="text-red-600" label="Video eyebrow" />
@@ -49,6 +74,11 @@ export function FeaturedVideo() {
               className="text-lg text-[var(--ink-soft)] leading-relaxed mb-8"
               label="Video description"
             />
+
+            {/* Mobile Video Player placed BETWEEN text and buttons */}
+            <div className="block lg:hidden w-full mb-8">
+              {VideoPlayer}
+            </div>
             
             <div className="flex flex-col sm:flex-row items-center gap-4">
               <a 
@@ -84,28 +114,9 @@ export function FeaturedVideo() {
             </div>
           </div>
 
-          {/* Right Column: Embedded Video */}
-          <div className="relative group perspective order-1 lg:order-2">
-            <div className="absolute -inset-2 bg-gradient-to-r from-[var(--primary)] to-[var(--mint)] rounded-2xl blur-lg opacity-20 group-hover:opacity-40 transition duration-500"></div>
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-white bg-white p-2">
-              <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-gray-100">
-                <iframe 
-                  width="100%" 
-                  height="100%" 
-                  src={`https://www.youtube.com/embed/${videoId}`}
-                  title="ADF Publisher YouTube Channel" 
-                  frameBorder="0" 
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                  allowFullScreen
-                  className="absolute inset-0 w-full h-full"
-                ></iframe>
-              </div>
-              {isAdmin && (
-                <div className="mt-2 rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-500">
-                  <EditableText contentKey="home.video.youtubeId" fallback={LATEST_VIDEO_ID} as="span" label="YouTube video ID or Link" />
-                </div>
-              )}
-            </div>
+          {/* Right Column: Embedded Video (Desktop Only) */}
+          <div className="hidden lg:block order-2">
+            {VideoPlayer}
           </div>
 
         </div>
