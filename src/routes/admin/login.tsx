@@ -87,8 +87,8 @@ export default function AdminLogin() {
 
         <div className="relative z-10 max-w-2xl mt-auto mb-auto">
           <div className="flex items-center gap-3 mb-10">
-            <div className="flex items-center justify-center shrink-0">
-              <img src="/logo.png" alt="ADF Logo" className="h-10 w-auto object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] brightness-0 invert" />
+            <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-1.5 shrink-0 shadow-[0_0_20px_rgba(255,255,255,0.15)]">
+              <img src="/logo.png" alt="ADF Logo" className="w-full h-full object-contain" />
             </div>
             <span className="text-xl font-bold tracking-tight">ADF <span className="text-blue-500">Admin</span></span>
           </div>
@@ -138,7 +138,7 @@ export default function AdminLogin() {
               Back to website
             </Link>
             <span className="text-blue-600 font-bold tracking-tight flex items-center gap-2">
-              <img src="/logo.png" alt="ADF Logo" className="h-6 w-auto object-contain" /> ADF Admin
+              <img src="/logo.png" alt="ADF Logo" className="h-6 w-auto object-contain mix-blend-multiply" /> ADF Admin
             </span>
           </div>
 
