@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { apiFetch, uploadImage } from "@/lib/api";
 
 export default function AdminChapterPublications() {
   const [submissions, setSubmissions] = useState<any[]>([]);
@@ -20,27 +21,21 @@ export default function AdminChapterPublications() {
     theme: "",
     description: "",
     submission_deadline: "",
-    pages: 0
+    pages: 0,
+    cover_url: ""
   });
   const [editingVolumeId, setEditingVolumeId] = useState<string | null>(null);
   const [coverImage, setCoverImage] = useState<File | null>(null);
 
   const fetchData = async () => {
     try {
-      const [subsRes, volsRes] = await Promise.all([
-        fetch("/api/publications/chapters/admin"),
-        fetch("/api/publications/chapters/volumes")
+      const [subs, vols] = await Promise.all([
+        apiFetch<any[]>("/publications/chapters/admin"),
+        apiFetch<any[]>("/publications/chapters/volumes")
       ]);
       
-      if (subsRes.ok) {
-        const subs = await subsRes.json();
-        setSubmissions(Array.isArray(subs) ? subs : []);
-      }
-      
-      if (volsRes.ok) {
-        const vols = await volsRes.json();
-        setVolumes(Array.isArray(vols) ? vols : []);
-      }
+      setSubmissions(Array.isArray(subs) ? subs : []);
+      setVolumes(Array.isArray(vols) ? vols : []);
     } catch (e) {
       toast.error("Failed to fetch chapter data");
     }
@@ -52,55 +47,53 @@ export default function AdminChapterPublications() {
 
   const updateStage = async (id: string, stage: string) => {
     try {
-      const res = await fetch(`/api/publications/chapters/admin/${id}/stage`, {
+      await apiFetch(`/publications/chapters/admin/${id}/stage`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ stage })
       });
-      if (res.ok) {
-        toast.success(`Stage updated to ${stage}`);
-        fetchData();
-      } else {
-        toast.error("Failed to update stage");
-      }
-    } catch (e) {
-      toast.error("Error updating stage");
+      toast.success(`Stage updated to ${stage}`);
+      fetchData();
+    } catch (e: any) {
+      toast.error(e.message || "Error updating stage");
     }
   };
 
   const createVolume = async () => {
     try {
-      const formData = new FormData();
-      formData.append("title", newVolume.title);
-      formData.append("theme", newVolume.theme);
-      formData.append("description", newVolume.description);
-      formData.append("submission_deadline", newVolume.submission_deadline);
-      formData.append("pages", newVolume.pages.toString());
+      let finalCoverUrl = newVolume.cover_url || "";
       if (coverImage) {
-        formData.append("cover_image", coverImage);
+        toast.info("Uploading cover...");
+        const res = await uploadImage(coverImage);
+        finalCoverUrl = res.url;
       }
+
+      const payload = {
+        title: newVolume.title,
+        theme: newVolume.theme,
+        description: newVolume.description,
+        submission_deadline: newVolume.submission_deadline,
+        pages: Number(newVolume.pages),
+        cover_url: finalCoverUrl
+      };
 
       const url = editingVolumeId 
-        ? `/api/publications/chapters/volumes/${editingVolumeId}`
-        : "/api/publications/chapters/volumes";
+        ? `/publications/chapters/volumes/${editingVolumeId}`
+        : "/publications/chapters/volumes";
       const method = editingVolumeId ? "PATCH" : "POST";
 
-      const res = await fetch(url, {
+      await apiFetch(url, {
         method,
-        body: formData
+        body: JSON.stringify(payload)
       });
-      if (res.ok) {
-        toast.success(`Volume ${editingVolumeId ? 'updated' : 'created'} successfully`);
-        setIsDialogOpen(false);
-        setNewVolume({ title: "", theme: "", description: "", submission_deadline: "", pages: 0 });
-        setCoverImage(null);
-        setEditingVolumeId(null);
-        fetchData();
-      } else {
-        toast.error(`Failed to ${editingVolumeId ? 'update' : 'create'} volume`);
-      }
-    } catch (e) {
-      toast.error("Error saving volume");
+      
+      toast.success(`Volume ${editingVolumeId ? 'updated' : 'created'} successfully`);
+      setIsDialogOpen(false);
+      setNewVolume({ title: "", theme: "", description: "", submission_deadline: "", pages: 0, cover_url: "" } as any);
+      setCoverImage(null);
+      setEditingVolumeId(null);
+      fetchData();
+    } catch (e: any) {
+      toast.error(e.message || `Failed to ${editingVolumeId ? 'update' : 'create'} volume`);
     }
   };
 
@@ -110,57 +103,45 @@ export default function AdminChapterPublications() {
       theme: vol.theme,
       description: vol.description,
       submission_deadline: vol.submission_deadline.split('T')[0],
-      pages: vol.pages || 0
+      pages: vol.pages || 0,
+      cover_url: vol.cover_url || ""
     });
     setEditingVolumeId(vol.id);
     setIsDialogOpen(true);
   };
 
   const deleteVolume = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this volume?")) return;
+    if (!confirm("Delete this volume?")) return;
     try {
-      const res = await fetch(`/api/publications/chapters/volumes/${id}`, { method: "DELETE" });
-      if (res.ok) {
-        toast.success("Volume deleted");
-        fetchData();
-      } else {
-        toast.error("Failed to delete volume");
-      }
-    } catch (e) {
-      toast.error("Error deleting volume");
+      await apiFetch(`/publications/chapters/volumes/${id}`, { method: "DELETE" });
+      toast.success("Volume deleted");
+      fetchData();
+    } catch (e: any) {
+      toast.error(e.message || "Error deleting volume");
     }
   };
 
   const deleteSubmission = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this submission?")) return;
+    if (!confirm("Delete this submission?")) return;
     try {
-      const res = await fetch(`/api/publications/chapters/admin/${id}`, { method: "DELETE" });
-      if (res.ok) {
-        toast.success("Submission deleted");
-        fetchData();
-      } else {
-        toast.error("Failed to delete submission");
-      }
-    } catch (e) {
-      toast.error("Error deleting submission");
+      await apiFetch(`/publications/chapters/admin/${id}`, { method: "DELETE" });
+      toast.success("Submission deleted");
+      fetchData();
+    } catch (e: any) {
+      toast.error(e.message || "Error deleting submission");
     }
   };
 
   const publishVolume = async (id: string) => {
     try {
-      const res = await fetch(`/api/publications/chapters/volumes/${id}`, {
+      await apiFetch(`/publications/chapters/volumes/${id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "published" })
       });
-      if (res.ok) {
-        toast.success("Volume published successfully");
-        fetchData();
-      } else {
-        toast.error("Failed to publish volume");
-      }
-    } catch (e) {
-      toast.error("Error publishing volume");
+      toast.success("Volume published successfully");
+      fetchData();
+    } catch (e: any) {
+      toast.error(e.message || "Error publishing volume");
     }
   };
 

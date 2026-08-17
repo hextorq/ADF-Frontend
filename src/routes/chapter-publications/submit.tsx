@@ -13,6 +13,7 @@ interface Volume {
   id: string | number;
   title: string;
   theme?: string;
+  status: string;
 }
 
 interface Author {
@@ -23,16 +24,19 @@ interface Author {
 }
 
 export default function ChapterSubmit() {
-  const announcements = useCMSStore(s => s.announcements);
+  const [volumes, setVolumes] = useState<Volume[]>([]);
   
-  // Derive open calls from announcements
-  const volumes: Volume[] = announcements
-    .filter(a => a.type.includes("Call") || a.title.includes("Call"))
-    .map(a => ({
-      id: a.id,
-      title: a.title,
-      theme: a.category
-    }));
+  useEffect(() => {
+    fetch("/api/publications/chapters/volumes")
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          // Only show open volumes
+          setVolumes(data.filter(v => v.status === 'open' || v.status === 'open'));
+        }
+      })
+      .catch(console.error);
+  }, []);
 
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -121,18 +125,19 @@ export default function ChapterSubmit() {
                 <div>
                   <label className="text-sm font-medium mb-1 block">Select Volume</label>
                   <Select value={volumeId} onValueChange={setVolumeId} required>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Choose an open call..." />
+                    <SelectTrigger className="h-12 border-slate-300">
+                      <SelectValue placeholder="Select an Open Call / Volume" />
                     </SelectTrigger>
                     <SelectContent>
-                    {volumes.length === 0 ? (
-                      <div className="p-2 text-sm text-slate-500 text-center">No open calls available</div>
-                    ) : (
-                      volumes.map(v => (
-                        <SelectItem key={v.id} value={v.id.toString()}>{v.title}</SelectItem>
-                      ))
-                    )}
-                  </SelectContent>
+                      {volumes.length === 0 && (
+                        <SelectItem value="none" disabled>No open volumes available</SelectItem>
+                      )}
+                      {volumes.map(v => (
+                        <SelectItem key={v.id} value={v.id.toString()}>
+                          {v.title} {v.theme ? `(${v.theme})` : ''}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
                   </Select>
                 </div>
 

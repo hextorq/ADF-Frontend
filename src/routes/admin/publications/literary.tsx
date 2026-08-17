@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { apiFetch } from "@/lib/api";
 
 export default function AdminLiteraryPublications() {
   const [submissions, setSubmissions] = useState<any[]>([]);
@@ -18,9 +19,7 @@ export default function AdminLiteraryPublications() {
 
   const fetchSubmissions = async () => {
     try {
-      const res = await fetch("/api/publications/literary/admin");
-      if (!res.ok) throw new Error("Failed to fetch");
-      const data = await res.json();
+      const data = await apiFetch<any[]>("/publications/literary/admin");
       setSubmissions(Array.isArray(data) ? data : []);
     } catch (e) {
       toast.error("Failed to fetch literary submissions");
@@ -34,37 +33,28 @@ export default function AdminLiteraryPublications() {
 
   const updateStage = async (id: string, stage: string) => {
     try {
-      const res = await fetch(`/api/publications/literary/admin/${id}`, {
+      await apiFetch(`/publications/literary/admin/${id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ current_stage: stage })
       });
-      if (res.ok) {
-        toast.success(`Stage updated to ${stage}`);
-        fetchSubmissions();
-      } else {
-        toast.error("Failed to update stage");
-      }
-    } catch (e) {
-      toast.error("Error updating stage");
+      toast.success(`Stage updated to ${stage}`);
+      fetchSubmissions();
+    } catch (e: any) {
+      toast.error(e.message || "Error updating stage");
     }
   };
 
   const publishToStore = async (id: string) => {
     setIsPublishing(id);
     try {
-      const res = await fetch(`/api/publications/literary/admin/${id}/publish`, {
+      const data = await apiFetch<{ bookId: number }>(`/publications/literary/admin/${id}/publish`, {
         method: 'POST'
       });
-      const data = await res.json();
-      if (res.ok) {
-        toast.success(`Published to Store! Book ID: ${data.bookId}`);
-        fetchSubmissions();
-      } else {
-        toast.error(data.error || "Failed to publish");
-      }
-    } catch (e) {
-      toast.error("Error publishing to store");
+      toast.success(`Published to Store! Book ID: ${data.bookId}`);
+      fetchSubmissions();
+    } catch (e: any) {
+      toast.error(e.message || "Error publishing to store");
+    } finally {
       setIsPublishing(null);
     }
   };
@@ -72,35 +62,26 @@ export default function AdminLiteraryPublications() {
   const deleteSubmission = async (id: string) => {
     if (!confirm("Are you sure you want to delete this submission?")) return;
     try {
-      const res = await fetch(`/api/publications/literary/admin/${id}`, { method: "DELETE" });
-      if (res.ok) {
-        toast.success("Submission deleted");
-        fetchSubmissions();
-      } else {
-        toast.error("Failed to delete submission");
-      }
-    } catch (e) {
-      toast.error("Error deleting submission");
+      await apiFetch(`/publications/literary/admin/${id}`, { method: "DELETE" });
+      toast.success("Submission deleted");
+      fetchSubmissions();
+    } catch (e: any) {
+      toast.error(e.message || "Error deleting submission");
     }
   };
 
   const saveSubmission = async () => {
     if (!editingSub) return;
     try {
-      const res = await fetch(`/api/publications/literary/admin/${editingSub.id}`, {
+      await apiFetch(`/publications/literary/admin/${editingSub.id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(editingSub)
       });
-      if (res.ok) {
-        toast.success("Submission updated successfully");
-        setIsEditModalOpen(false);
-        fetchSubmissions();
-      } else {
-        toast.error("Failed to update submission");
-      }
-    } catch (e) {
-      toast.error("Error updating submission");
+      toast.success("Submission updated successfully");
+      setIsEditModalOpen(false);
+      fetchSubmissions();
+    } catch (e: any) {
+      toast.error(e.message || "Error updating submission");
     }
   };
 
