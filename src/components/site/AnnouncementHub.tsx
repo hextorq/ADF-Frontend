@@ -103,7 +103,33 @@ function AnnouncementHubInner() {
             title: c.chapter_title,
             authors: c.authors && c.authors.length > 0 ? c.authors.map((a: any) => a.name).join(', ') : "Unknown",
             date: new Date(c.created_at).toLocaleDateString(),
-            to: `/chapter-publications`
+            to: `/chapter-publications`,
+            pinned: false,
+            visible: true
+          })));
+        }
+      })
+      .catch(console.error);
+  }, []);
+
+  // Fetch latest published literary books from backend
+  const [publishedBooks, setPublishedBooks] = useState<any[]>([]);
+  useEffect(() => {
+    fetch("/api/publications/literary/admin")
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          const published = data.filter(b => b.current_stage === 'Book Store');
+          setPublishedBooks(published.map(b => ({
+            id: b.id,
+            pubType: 'Book',
+            category: b.book_genre,
+            title: b.book_title,
+            authors: b.author_name,
+            date: new Date(b.created_at).toLocaleDateString(),
+            to: `/bookstore?q=${encodeURIComponent(b.book_title)}`,
+            pinned: false,
+            visible: true
           })));
         }
       })
@@ -112,15 +138,17 @@ function AnnouncementHubInner() {
 
   const displayAnnouncements = announcements;
   
-  // Use bookstore mock data for recent publications
-  const recentPubs = MOCK_BOOKS.slice(0, 3).map(book => ({
+  // Use real backend data for recent publications
+  const recentPubs = publishedBooks.length > 0 ? publishedBooks : MOCK_BOOKS.slice(0, 3).map(book => ({
     id: book.id,
     pubType: 'Book',
     category: book.genre,
     title: book.title,
     authors: book.author,
     date: new Date(book.publicationDate).toLocaleDateString(),
-    to: `/bookstore?q=${encodeURIComponent(book.title)}`
+    to: `/bookstore?q=${encodeURIComponent(book.title)}`,
+    pinned: false,
+    visible: true
   }));
   
   // Use backend data for latest chapters if available, else fallback to CMS
