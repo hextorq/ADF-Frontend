@@ -96,13 +96,15 @@ function AnnouncementHubInner() {
       .then(data => {
         if (Array.isArray(data)) {
           const published = data.filter(c => c.stage === 'Published');
+          // Sort by updated_at or created_at descending
+          published.sort((a, b) => new Date(b.updated_at || b.created_at).getTime() - new Date(a.updated_at || a.created_at).getTime());
           setPublishedChapters(published.map(c => ({
             id: c.id,
             pubType: 'Book Chapter',
             category: c.volume_title,
             title: c.chapter_title,
             authors: c.authors && c.authors.length > 0 ? c.authors.map((a: any) => a.name).join(', ') : "Unknown",
-            date: new Date(c.created_at).toLocaleDateString(),
+            date: new Date(c.updated_at || c.created_at).toLocaleDateString(),
             to: `/chapter-publications`,
             pinned: false,
             visible: true
@@ -120,13 +122,15 @@ function AnnouncementHubInner() {
       .then(data => {
         if (Array.isArray(data)) {
           const published = data.filter(b => b.current_stage === 'Book Store');
+          // Sort by updated_at or created_at descending
+          published.sort((a, b) => new Date(b.updated_at || b.created_at).getTime() - new Date(a.updated_at || a.created_at).getTime());
           setPublishedBooks(published.map(b => ({
             id: b.id,
             pubType: 'Book',
             category: b.book_genre,
             title: b.book_title,
             authors: b.author_name,
-            date: new Date(b.created_at).toLocaleDateString(),
+            date: new Date(b.updated_at || b.created_at).toLocaleDateString(),
             to: `/bookstore?q=${encodeURIComponent(b.book_title)}`,
             pinned: false,
             visible: true
