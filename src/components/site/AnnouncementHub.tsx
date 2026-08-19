@@ -7,6 +7,7 @@ import { EditableText } from "@/components/cms/EditableText";
 import { useAuthStore } from "@/store/useAuthStore";
 import React, { useEffect } from "react";
 import { Clock, MapPin, Users, AlertTriangle } from "lucide-react";
+import { MOCK_BOOKS } from "@/components/store/store-mock-data";
 
 function getRelativeTime(timeStr: string) {
   const d = new Date(timeStr);
@@ -87,10 +88,43 @@ function AnnouncementHubInner() {
   const publications = allPublications.filter(p => p?.visible);
   const activities = allActivities.filter(a => a?.visible);
   
-  // Helper to group announcements by type or just show all
+  // Fetch latest published chapters from backend
+  const [publishedChapters, setPublishedChapters] = useState<any[]>([]);
+  useEffect(() => {
+    fetch("/api/publications/chapters/admin")
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          const published = data.filter(c => c.stage === 'Published');
+          setPublishedChapters(published.map(c => ({
+            id: c.id,
+            pubType: 'Book Chapter',
+            category: c.volume_title,
+            title: c.chapter_title,
+            authors: c.authors && c.authors.length > 0 ? c.authors.map((a: any) => a.name).join(', ') : "Unknown",
+            date: new Date(c.created_at).toLocaleDateString(),
+            to: `/chapter-publications`
+          })));
+        }
+      })
+      .catch(console.error);
+  }, []);
+
   const displayAnnouncements = announcements;
-  const recentPubs = publications.filter(p => p?.pubType === 'Article' || p?.pubType === 'Book');
-  const chapters = publications.filter(p => p?.pubType === 'Book Chapter');
+  
+  // Use bookstore mock data for recent publications
+  const recentPubs = MOCK_BOOKS.slice(0, 3).map(book => ({
+    id: book.id,
+    pubType: 'Book',
+    category: book.genre,
+    title: book.title,
+    authors: book.author,
+    date: new Date(book.publicationDate).toLocaleDateString(),
+    to: `/bookstore?q=${encodeURIComponent(book.title)}`
+  }));
+  
+  // Use backend data for latest chapters if available, else fallback to CMS
+  const chapters = publishedChapters.length > 0 ? publishedChapters : publications.filter(p => p?.pubType === 'Book Chapter');
   
   return (
     <section className="py-20 bg-slate-50 border-t border-slate-200">
