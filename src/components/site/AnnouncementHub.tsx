@@ -139,20 +139,10 @@ function AnnouncementHubInner() {
   const displayAnnouncements = announcements;
   
   // Use real backend data for recent publications
-  const recentPubs = publishedBooks.length > 0 ? publishedBooks : MOCK_BOOKS.slice(0, 3).map(book => ({
-    id: book.id,
-    pubType: 'Book',
-    category: book.genre,
-    title: book.title,
-    authors: book.author,
-    date: new Date(book.publicationDate).toLocaleDateString(),
-    to: `/bookstore?q=${encodeURIComponent(book.title)}`,
-    pinned: false,
-    visible: true
-  }));
+  const recentPubs = publishedBooks;
   
-  // Use backend data for latest chapters if available, else fallback to CMS
-  const chapters = publishedChapters.length > 0 ? publishedChapters : publications.filter(p => p?.pubType === 'Book Chapter');
+  // Use backend data for latest chapters
+  const chapters = publishedChapters;
   
   return (
     <section className="py-20 bg-slate-50 border-t border-slate-200">

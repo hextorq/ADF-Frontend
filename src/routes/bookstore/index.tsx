@@ -1,5 +1,5 @@
 import { Search, ChevronRight, Star, Filter, Heart, ShoppingCart, ArrowRight, CheckCircle, ShieldCheck, Truck, Globe, Download, PlayCircle, BookOpen, Trash2, PenTool, Users, Lightbulb, Leaf, Plus } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,10 +16,46 @@ export default function BookStore() {
   const [searchParams, setSearchParams] = useSearchParams();
   const initialCategory = searchParams.get("category") || "All Books";
 
-  const [localBooks, setLocalBooks] = useState(MOCK_BOOKS);
+  const [localBooks, setLocalBooks] = useState<Book[]>([]);
   const [quickViewBook, setQuickViewBook] = useState<Book | null>(null);
   const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
   const [activeCategory, setActiveCategory] = useState(initialCategory);
+
+  useEffect(() => {
+    fetch("/api/publications/literary/admin")
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          const published = data.filter(b => b.current_stage === 'Book Store');
+          const fetchedBooks: Book[] = published.map(b => ({
+            id: b.id.toString(),
+            title: b.book_title,
+            author: b.author_name,
+            genre: b.book_genre,
+            description: b.synopsis || "",
+            coverImage: b.cover_url || "https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=800&auto=format&fit=crop",
+            rating: 5.0,
+            reviewCount: 0,
+            price: 999, // default
+            isbn: b.isbn || "N/A",
+            edition: "First Edition",
+            stockStatus: "In Stock",
+            badge: "NEW",
+            language: b.book_language || "English",
+            pages: b.page_count || 0,
+            publisher: "ADF Publications",
+            publicationDate: new Date(b.created_at).toISOString().split('T')[0],
+            readers: 0,
+            downloads: 0
+          }));
+          setLocalBooks(fetchedBooks);
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        setLocalBooks([]); // Fallback on error
+      });
+  }, []);
 
   const filteredBooks = useMemo(() => {
     return localBooks.filter(book => {
