@@ -27,6 +27,7 @@ export default function AdminChapterPublications() {
   const [editingVolumeId, setEditingVolumeId] = useState<string | null>(null);
   const [coverImage, setCoverImage] = useState<File | null>(null);
   const [viewingSubmission, setViewingSubmission] = useState<any | null>(null);
+  const [paymentFilter, setPaymentFilter] = useState<string>("All");
 
   const fetchData = async () => {
     try {
@@ -236,10 +237,27 @@ export default function AdminChapterPublications() {
       </div>
 
       <Tabs defaultValue="submissions">
-        <TabsList className="mb-4">
-          <TabsTrigger value="submissions">Submissions</TabsTrigger>
-          <TabsTrigger value="volumes">Volumes</TabsTrigger>
-        </TabsList>
+        <div className="flex justify-between items-center mb-4">
+          <TabsList>
+            <TabsTrigger value="submissions">Submissions</TabsTrigger>
+            <TabsTrigger value="volumes">Volumes</TabsTrigger>
+          </TabsList>
+          
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-slate-500 hidden sm:inline-block">Filter Payment:</span>
+            <Select value={paymentFilter} onValueChange={setPaymentFilter}>
+              <SelectTrigger className="w-[140px] bg-white">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">All Statuses</SelectItem>
+                <SelectItem value="Pending">Pending</SelectItem>
+                <SelectItem value="Success">Success</SelectItem>
+                <SelectItem value="Failed">Failed</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
         
         <TabsContent value="submissions">
           <div className="rounded-md border bg-white overflow-x-auto">
@@ -255,14 +273,18 @@ export default function AdminChapterPublications() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {submissions.map((sub) => (
+                {submissions.filter(sub => paymentFilter === "All" || sub.payment_status === paymentFilter).map((sub) => (
                   <TableRow key={sub.id}>
                     <TableCell className="font-medium">{sub.id}</TableCell>
                     <TableCell>{sub.volume_title}</TableCell>
                     <TableCell className="max-w-[200px] truncate">{sub.chapter_title}</TableCell>
                     <TableCell>
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        {sub.payment_status}
+                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                        sub.payment_status === 'Success' ? 'bg-green-100 text-green-800' : 
+                        sub.payment_status === 'Failed' ? 'bg-red-100 text-red-800' : 
+                        'bg-orange-100 text-orange-800'
+                      }`}>
+                        {sub.payment_status || 'Pending'}
                       </span>
                     </TableCell>
                     <TableCell>
