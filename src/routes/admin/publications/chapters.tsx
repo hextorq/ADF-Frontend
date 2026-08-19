@@ -27,7 +27,6 @@ export default function AdminChapterPublications() {
     pdf_url: ""
   });
   const [editingVolumeId, setEditingVolumeId] = useState<string | null>(null);
-  const [coverImage, setCoverImage] = useState<File | null>(null);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [viewingSubmission, setViewingSubmission] = useState<any | null>(null);
   const [activeTab, setActiveTab] = useState("submissions");
@@ -35,6 +34,7 @@ export default function AdminChapterPublications() {
   const [isPublishDialogOpen, setIsPublishDialogOpen] = useState(false);
   const [publishVolumeId, setPublishVolumeId] = useState<string>("");
   const [publishPdfFile, setPublishPdfFile] = useState<File | null>(null);
+  const [publishCoverImage, setPublishCoverImage] = useState<File | null>(null);
 
   const fetchData = async () => {
     try {
@@ -119,9 +119,7 @@ export default function AdminChapterPublications() {
       formData.append("submission_deadline", newVolume.submission_deadline);
       formData.append("pages", String(newVolume.pages || 0));
       
-      if (coverImage) {
-        formData.append("cover_image", coverImage);
-      } else if (newVolume.cover_url) {
+      if (newVolume.cover_url) {
         formData.append("cover_url", newVolume.cover_url);
       }
       
@@ -153,7 +151,6 @@ export default function AdminChapterPublications() {
       toast.success(`Volume ${editingVolumeId ? 'updated' : 'created'} successfully`);
       setIsDialogOpen(false);
       setNewVolume({ title: "", theme: "", description: "", submission_deadline: "", pages: 0, cover_url: "", pdf_url: "" } as any);
-      setCoverImage(null);
       setEditingVolumeId(null);
       fetchData();
     } catch (e: any) {
@@ -169,6 +166,9 @@ export default function AdminChapterPublications() {
       const formData = new FormData();
       formData.append("status", "published");
       formData.append("pdf_file", publishPdfFile);
+      if (publishCoverImage) {
+        formData.append("cover_image", publishCoverImage);
+      }
       
       const token = localStorage.getItem("adf_admin_token");
       const url = `/api/publications/chapters/volumes/${publishVolumeId}`;
@@ -186,6 +186,7 @@ export default function AdminChapterPublications() {
       setIsPublishDialogOpen(false);
       setPublishVolumeId("");
       setPublishPdfFile(null);
+      setPublishCoverImage(null);
       fetchData();
     } catch (e: any) {
       toast.error(e.message || "Failed to publish volume");
@@ -301,10 +302,6 @@ export default function AdminChapterPublications() {
                   <Input type="number" value={newVolume.pages || ""} onChange={e => setNewVolume({...newVolume, pages: parseInt(e.target.value) || 0})} />
                 </div>
               </div>
-              <div className="grid gap-2">
-                <Label>Cover Image</Label>
-                <Input type="file" accept="image/*" onChange={e => setCoverImage(e.target.files?.[0] || null)} />
-              </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
@@ -340,6 +337,11 @@ export default function AdminChapterPublications() {
                 <Label>Upload Compiled Manuscript (PDF)</Label>
                 <Input type="file" accept="application/pdf" onChange={e => setPublishPdfFile(e.target.files?.[0] || null)} />
                 <p className="text-xs text-slate-500">This PDF will be available for public download.</p>
+              </div>
+              <div className="grid gap-2">
+                <Label>Upload Cover Image</Label>
+                <Input type="file" accept="image/*" onChange={e => setPublishCoverImage(e.target.files?.[0] || null)} />
+                <p className="text-xs text-slate-500">The cover image will be displayed in Latest Chapter Releases.</p>
               </div>
             </div>
             <DialogFooter>
