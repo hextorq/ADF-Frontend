@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { BookOpen, CheckCircle, Clock, FileText, Plus, Trash2, Edit } from "lucide-react";
+import { BookOpen, CheckCircle, Clock, FileText, Plus, Trash2, Edit, Eye, Download, Users, File, ExternalLink } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -26,6 +26,7 @@ export default function AdminChapterPublications() {
   });
   const [editingVolumeId, setEditingVolumeId] = useState<string | null>(null);
   const [coverImage, setCoverImage] = useState<File | null>(null);
+  const [viewingSubmission, setViewingSubmission] = useState<any | null>(null);
 
   const fetchData = async () => {
     try {
@@ -271,7 +272,10 @@ export default function AdminChapterPublications() {
                             <SelectItem value="Rejected">Rejected</SelectItem>
                           </SelectContent>
                         </Select>
-                        <Button variant="ghost" size="sm" onClick={() => deleteSubmission(sub.id)} className="text-red-500 hover:text-red-700 h-8 w-8 p-0">
+                        <Button variant="ghost" size="sm" onClick={() => setViewingSubmission(sub)} className="text-blue-500 hover:text-blue-700 h-8 w-8 p-0" title="View Details">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => deleteSubmission(sub.id)} className="text-red-500 hover:text-red-700 h-8 w-8 p-0" title="Delete Submission">
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
@@ -344,6 +348,116 @@ export default function AdminChapterPublications() {
           </div>
         </TabsContent>
       </Tabs>
+      {/* VIEW SUBMISSION DIALOG */}
+      {viewingSubmission && (
+        <Dialog open={!!viewingSubmission} onOpenChange={() => setViewingSubmission(null)}>
+          <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Submission Details: {viewingSubmission.id}</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-6 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <h4 className="text-sm font-semibold text-slate-500">Chapter Title</h4>
+                  <p className="font-medium mt-1">{viewingSubmission.chapter_title}</p>
+                </div>
+                <div>
+                  <h4 className="text-sm font-semibold text-slate-500">Volume</h4>
+                  <p className="font-medium mt-1">{viewingSubmission.volume_title}</p>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-sm font-semibold text-slate-500 flex items-center gap-2 border-b pb-2 mb-3">
+                  <Users className="w-4 h-4" /> Authors
+                </h4>
+                <div className="space-y-4">
+                  {viewingSubmission.authors && viewingSubmission.authors.map((author: any) => (
+                    <div key={author.id} className={`p-3 rounded-md border ${author.is_primary ? 'bg-slate-50 border-slate-200' : 'bg-white'}`}>
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-bold text-sm">
+                            {author.name} {author.is_primary && <span className="ml-2 text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full uppercase tracking-wider">Primary</span>}
+                          </p>
+                          <p className="text-xs text-slate-500 mt-1">{author.institution} • {author.country}</p>
+                        </div>
+                        <div className="text-right text-xs text-slate-500 space-y-1">
+                          <p>{author.email}</p>
+                          <p>{author.phone}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {(!viewingSubmission.authors || viewingSubmission.authors.length === 0) && (
+                    <p className="text-sm text-slate-500 italic">No author details found.</p>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-sm font-semibold text-slate-500 flex items-center gap-2 border-b pb-2 mb-3">
+                  <FileText className="w-4 h-4" /> Content
+                </h4>
+                <div className="space-y-4">
+                  <div>
+                    <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Abstract</span>
+                    <p className="text-sm text-slate-700 mt-1 bg-slate-50 p-3 rounded border">{viewingSubmission.abstract || "N/A"}</p>
+                  </div>
+                  <div>
+                    <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Keywords</span>
+                    <p className="text-sm text-slate-700 mt-1">{viewingSubmission.keywords || "N/A"}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <h4 className="text-sm font-semibold text-slate-500 flex items-center gap-2 border-b pb-2 mb-3">
+                    <File className="w-4 h-4" /> Documents
+                  </h4>
+                  {viewingSubmission.manuscript_url ? (
+                    <a href={viewingSubmission.manuscript_url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 border rounded-md hover:bg-slate-50 transition-colors">
+                      <div className="flex items-center gap-2">
+                        <div className="bg-blue-100 p-2 rounded">
+                          <Download className="w-4 h-4 text-blue-600" />
+                        </div>
+                        <span className="text-sm font-medium">Manuscript File</span>
+                      </div>
+                      <ExternalLink className="w-4 h-4 text-slate-400" />
+                    </a>
+                  ) : (
+                    <p className="text-sm text-slate-500 italic">No manuscript uploaded.</p>
+                  )}
+                </div>
+                <div>
+                  <h4 className="text-sm font-semibold text-slate-500 flex items-center gap-2 border-b pb-2 mb-3">
+                    <CheckCircle className="w-4 h-4" /> Payment Details
+                  </h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between border-b border-dashed pb-2">
+                      <span className="text-slate-500">Status</span>
+                      <span className={`font-semibold ${viewingSubmission.payment_status === 'Pending' ? 'text-orange-500' : 'text-green-600'}`}>{viewingSubmission.payment_status || 'N/A'}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-dashed pb-2">
+                      <span className="text-slate-500">Transaction ID</span>
+                      <span className="font-medium">{viewingSubmission.transaction_id || 'N/A'}</span>
+                    </div>
+                    {viewingSubmission.payment_screenshot_url && (
+                      <div className="pt-2">
+                        <span className="text-slate-500 block mb-2">Screenshot:</span>
+                        <a href={viewingSubmission.payment_screenshot_url} target="_blank" rel="noopener noreferrer">
+                          <img src={viewingSubmission.payment_screenshot_url} alt="Payment" className="w-full h-32 object-cover rounded border hover:opacity-90 transition-opacity" />
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+
     </div>
   );
 }
