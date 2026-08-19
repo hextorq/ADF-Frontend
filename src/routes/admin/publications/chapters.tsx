@@ -59,6 +59,21 @@ export default function AdminChapterPublications() {
     }
   };
 
+  const updatePaymentStatus = async (id: string, payment_status: string) => {
+    try {
+      await apiFetch(`/publications/chapters/admin/${id}/stage`, {
+        method: 'PATCH',
+        body: JSON.stringify({ payment_status })
+      });
+      toast.success(`Payment status updated to ${payment_status}`);
+      // Update local state for immediate UI reflection in the modal
+      setViewingSubmission((prev: any) => prev ? { ...prev, payment_status } : null);
+      fetchData();
+    } catch (e: any) {
+      toast.error(e.message || "Error updating payment status");
+    }
+  };
+
   const createVolume = async () => {
     try {
       let finalCoverUrl = newVolume.cover_url || "";
@@ -436,7 +451,19 @@ export default function AdminChapterPublications() {
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between border-b border-dashed pb-2">
                       <span className="text-slate-500">Status</span>
-                      <span className={`font-semibold ${viewingSubmission.payment_status === 'Pending' ? 'text-orange-500' : 'text-green-600'}`}>{viewingSubmission.payment_status || 'N/A'}</span>
+                      <Select 
+                        defaultValue={viewingSubmission.payment_status || 'Pending'} 
+                        onValueChange={(val) => updatePaymentStatus(viewingSubmission.id, val)}
+                      >
+                        <SelectTrigger className={`w-[140px] h-8 text-xs font-semibold ${viewingSubmission.payment_status === 'Pending' ? 'text-orange-500' : viewingSubmission.payment_status === 'Failed' ? 'text-red-500' : 'text-green-600'}`}>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Pending">Pending</SelectItem>
+                          <SelectItem value="Success">Success</SelectItem>
+                          <SelectItem value="Failed">Failed</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div className="flex justify-between border-b border-dashed pb-2">
                       <span className="text-slate-500">Transaction ID</span>
