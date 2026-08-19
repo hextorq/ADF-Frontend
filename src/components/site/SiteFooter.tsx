@@ -62,8 +62,8 @@ export function SiteFooter() {
         </svg>
       </div>
 
-      <div className="container-academic relative py-14">
-        <div className="grid gap-10 lg:grid-cols-12">
+      <div className="container-academic relative py-8 sm:py-14">
+        <div className="grid gap-6 sm:gap-10 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <div className="flex items-center gap-3">
               <div className="bg-white p-1 rounded-xl shadow-sm">
@@ -89,7 +89,7 @@ export function SiteFooter() {
               label="Footer description"
             />
 
-            <div className="mt-6 surface-card !bg-white/[0.06] !border-white/15 !text-white p-5">
+            <div className="mt-6 surface-card !bg-white/[0.06] !border-white/15 !text-white p-5 hidden sm:block">
               <div className="flex items-center gap-2 text-sm font-semibold text-white">
                 <Send className="h-4 w-4" />
                 <EditableText contentKey="footer.newsletter.title" fallback="Keep Up To Date" as="span" label="Newsletter title" />
@@ -118,7 +118,7 @@ export function SiteFooter() {
             </div>
           </div>
 
-          <div className="lg:col-span-8 grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-4">
+          <div className="lg:col-span-8 grid grid-cols-2 gap-x-4 gap-y-6 sm:gap-y-8 md:grid-cols-4">
             {COLUMNS.map((col) => (
               <div key={col.title}>
                 <EditableText
@@ -147,7 +147,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col gap-4 border-t border-white/10 pt-6 md:flex-row md:items-center md:justify-between text-xs text-white/60">
+        <div className="mt-8 sm:mt-12 flex flex-col gap-4 border-t border-white/10 pt-4 sm:pt-6 md:flex-row md:items-center md:justify-between text-xs text-white/60">
           <div className="flex items-center gap-4">
             <Globe2 className="h-4 w-4 shrink-0" />
             <span>© {new Date().getFullYear()} Academic Development Forum. All rights reserved.</span>
