@@ -60,28 +60,28 @@ export default function LiterarySubmit() {
 
     setIsSubmitting(true);
     const formData = new FormData();
-    formData.append("author_name", authorName);
-    formData.append("author_email", authorEmail);
-    formData.append("author_phone", authorPhone);
-    formData.append("author_country", authorCountry);
-    formData.append("author_address", authorAddress);
-    formData.append("author_bio", authorBio);
+    formData.append("authorName", authorName);
+    formData.append("authorEmail", authorEmail);
+    formData.append("authorPhone", authorPhone);
+    formData.append("authorCountry", authorCountry);
+    formData.append("authorAddress", authorAddress);
+    formData.append("authorBio", authorBio);
     
-    formData.append("book_title", bookTitle);
-    formData.append("book_genre", bookGenre);
-    formData.append("book_language", bookLanguage);
-    formData.append("word_count", wordCount);
+    formData.append("bookTitle", bookTitle);
+    formData.append("bookGenre", bookGenre);
+    formData.append("bookLanguage", bookLanguage);
+    formData.append("wordCount", wordCount);
     formData.append("synopsis", synopsis);
     formData.append("keywords", keywords);
     
     if (packageId) {
-      formData.append("package_id", packageId);
+      formData.append("packageId", packageId);
     }
     
-    formData.append("agreed_original", String(agreed.original));
-    formData.append("agreed_copyright", String(agreed.copyright));
-    formData.append("agreed_not_published", String(agreed.not_published));
-    formData.append("agreed_policies", String(agreed.policies));
+    formData.append("agreedOriginal", String(agreed.original));
+    formData.append("agreedCopyright", String(agreed.copyright));
+    formData.append("agreedNotPublished", String(agreed.not_published));
+    formData.append("agreedPolicies", String(agreed.policies));
 
     formData.append("manuscript", manuscript);
     if (cover) formData.append("coverImage", cover);
