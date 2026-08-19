@@ -293,6 +293,7 @@ export default function AdminChapterPublications() {
           <TabsList>
             <TabsTrigger value="submissions">Submissions</TabsTrigger>
             <TabsTrigger value="volumes">Volumes</TabsTrigger>
+            <TabsTrigger value="publish">Publish</TabsTrigger>
           </TabsList>
           
           <div className="flex items-center gap-2">
@@ -410,11 +411,6 @@ export default function AdminChapterPublications() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
-                        {vol.status !== 'published' && (
-                          <Button size="sm" variant="outline" onClick={() => publishVolume(vol.id)} className="text-xs">
-                            Publish
-                          </Button>
-                        )}
                         <Button variant="ghost" size="sm" onClick={() => openEditVolume(vol)} className="h-8 w-8 p-0">
                           <Edit className="h-4 w-4" />
                         </Button>
@@ -428,6 +424,60 @@ export default function AdminChapterPublications() {
                 {volumes.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={6} className="h-24 text-center text-slate-500">
+                      No volumes found.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="publish">
+          <div className="rounded-md border bg-white overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Volume</TableHead>
+                  <TableHead>Theme / Topic</TableHead>
+                  <TableHead>Manuscript</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {volumes.map((vol) => (
+                  <TableRow key={vol.id}>
+                    <TableCell className="font-medium">{vol.title}</TableCell>
+                    <TableCell className="max-w-[200px] truncate">{vol.theme}</TableCell>
+                    <TableCell>
+                      {vol.pdf_url ? (
+                        <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Uploaded</span>
+                      ) : (
+                        <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">Missing</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${vol.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`}>
+                        {vol.status === 'published' ? 'Published' : 'Draft'}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {vol.status !== 'published' ? (
+                        <Button size="sm" onClick={() => publishVolume(vol.id)} className="bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white">
+                          Publish to Releases
+                        </Button>
+                      ) : (
+                        <Button size="sm" variant="outline" className="text-slate-500 cursor-not-allowed" disabled>
+                          Already Published
+                        </Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {volumes.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={5} className="h-24 text-center text-slate-500">
                       No volumes found.
                     </TableCell>
                   </TableRow>
