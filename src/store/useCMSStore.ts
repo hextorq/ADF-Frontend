@@ -120,52 +120,21 @@ interface CMSState {
   setJournalList: (data: JournalInfo[]) => void;
 }
 
-const INITIAL_ANNOUNCEMENTS: Announcement[] = [
-  { id: "1", date: "12 Jun 2026", type: "Announcement", category: "Editorial", priority: "High", title: "ADF expands editorial board with 14 new international members", excerpt: "Welcoming scholars from 9 countries across humanities, sciences, and management.", to: "/announcements", pinned: true, visible: true },
-  { id: "2", date: "08 Jun 2026", type: "Announcement", category: "Publishing", priority: "New", title: "Convergence Volume III now in production", excerpt: "Edited volume featuring 22 chapters across multidisciplinary research themes.", to: "/announcements", pinned: false, visible: true },
-  { id: "3", date: "01 Jun 2026", type: "Announcement", category: "Open Access", priority: "Normal", title: "All ADF journals adopt CC BY 4.0 by default", excerpt: "Authors retain copyright; readers gain unrestricted access worldwide.", to: "/announcements", pinned: false, visible: true },
-  { id: "4", date: "Open · Rolling", type: "Call for Papers", category: "Journal", priority: "High", title: "International Journal of English for Academic Excellence — Vol. 2", excerpt: "Original research articles, literature reviews, and pedagogical studies invited.", to: "/journals", pinned: false, visible: true },
-  { id: "5", date: "Closes 30 Aug 2026", type: "Call for Papers", category: "Special Issue", priority: "New", title: "Special Issue: AI and the Future of Academic Writing", excerpt: "Empirical and theoretical contributions on AI in research practice.", to: "/journals", pinned: false, visible: true },
-];
-
+const INITIAL_ANNOUNCEMENTS: Announcement[] = [];
 const INITIAL_STATISTICS: StatisticsData = {
-  articles: 1250,
-  chapters: 430,
-  books: 12,
-  journals: 4,
-  reviewers: 85,
-  editors: 42,
-  countries: 18,
-  authors: 2100,
+  articles: 0,
+  chapters: 0,
+  books: 0,
+  journals: 0,
+  reviewers: 0,
+  editors: 0,
+  countries: 0,
+  authors: 0,
 };
-
-const INITIAL_ACTIVITIES: Activity[] = [
-  { id: "a1", title: "New manuscript submitted", description: "Submission for Journal of English for Academic Excellence", time: "2 hours ago", category: "Submission", iconName: "FileText", pinned: false, visible: true },
-  { id: "a2", title: "Peer review completed", description: "Review completed for 'AI in Education' paper", time: "5 hours ago", category: "Review", iconName: "CheckCircle", pinned: false, visible: true },
-  { id: "a3", title: "Chapter accepted", description: "Chapter accepted for Convergence Vol. IV", time: "Yesterday", category: "Publishing", iconName: "BookOpen", pinned: true, visible: true },
-];
-
-const INITIAL_PUBLICATIONS: Publication[] = [
-  { id: "p1", title: "The Impact of AI on Academic Writing", category: "Technology", pubType: "Article", date: "15 Jun 2026", volume: "2", issue: "1", authors: "Jane Doe, John Smith", to: "/journals", pinned: true, visible: true },
-  { id: "p2", title: "Sustainable Business Practices in 2026", category: "Management", pubType: "Book Chapter", date: "10 Jun 2026", authors: "Alice Johnson", to: "/chapter-publications", pinned: false, visible: true },
-];
-
-const INITIAL_JOURNALS: JournalRelease[] = [
-  { id: "j1", title: "International Journal of English for Academic Excellence", issn: "1234-5678", volume: "2", issue: "1", date: "June 2026", coverImage: "/placeholder-journal.jpg", to: "/journals", pinned: true, visible: true }
-];
-
-const INITIAL_JOURNAL_LIST: JournalInfo[] = [
-  {
-    id: "1",
-    title: "International Journal of English for Academic Excellence",
-    abbr: "IJEAE",
-    issn: "Online ISSN · Forthcoming",
-    scope: "Applied linguistics, academic writing, ELT, literature studies.",
-    frequency: "Quarterly",
-    access: "Open Access · CC BY 4.0",
-    submitUrl: "https://ijeae.com/index.php/ijeae"
-  }
-];
+const INITIAL_ACTIVITIES: Activity[] = [];
+const INITIAL_PUBLICATIONS: Publication[] = [];
+const INITIAL_JOURNALS: JournalRelease[] = [];
+const INITIAL_JOURNAL_LIST: JournalInfo[] = [];
 
 export const useCMSStore = create<CMSState>()(
   persist(

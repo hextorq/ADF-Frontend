@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { apiFetch, uploadImage, assetUrl } from "@/lib/api";
+import { useCMSStore, Activity as ActivityType } from "@/store/useCMSStore";
 
 export default function AdminChapterPublications() {
   const [submissions, setSubmissions] = useState<any[]>([]);
@@ -54,6 +55,20 @@ export default function AdminChapterPublications() {
         body: JSON.stringify({ stage })
       });
       toast.success(`Stage updated to ${stage}`);
+      
+      const newActivity: ActivityType = {
+        id: Date.now().toString(),
+        title: `Chapter stage updated: ${stage}`,
+        description: `Status changed to '${stage}' for submission ${id}`,
+        time: "Just now",
+        category: "Review",
+        iconName: "CheckCircle",
+        pinned: false,
+        visible: true
+      };
+      const currentActivities = useCMSStore.getState().activities || [];
+      useCMSStore.getState().setActivities([newActivity, ...currentActivities]);
+      
       fetchData();
     } catch (e: any) {
       toast.error(e.message || "Error updating stage");
@@ -69,6 +84,20 @@ export default function AdminChapterPublications() {
       toast.success(`Payment status updated to ${payment_status}`);
       // Update local state for immediate UI reflection in the modal
       setViewingSubmission((prev: any) => prev ? { ...prev, payment_status } : null);
+      
+      const newActivity: ActivityType = {
+        id: Date.now().toString(),
+        title: `Payment status updated: ${payment_status}`,
+        description: `Payment status changed to '${payment_status}' for submission ${id}`,
+        time: "Just now",
+        category: "Payment",
+        iconName: "FileText",
+        pinned: false,
+        visible: true
+      };
+      const currentActivities = useCMSStore.getState().activities || [];
+      useCMSStore.getState().setActivities([newActivity, ...currentActivities]);
+
       fetchData();
     } catch (e: any) {
       toast.error(e.message || "Error updating payment status");
