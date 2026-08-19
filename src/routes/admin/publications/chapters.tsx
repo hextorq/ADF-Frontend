@@ -162,7 +162,7 @@ export default function AdminChapterPublications() {
         
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => { setEditingVolumeId(null); setNewVolume({ title: "", theme: "", description: "", submission_deadline: "", pages: 0 }); }}><Plus className="h-4 w-4 mr-2" /> New Volume</Button>
+            <Button onClick={() => { setEditingVolumeId(null); setNewVolume({ title: "", theme: "", description: "", submission_deadline: "", pages: 0, cover_url: "" }); }}><Plus className="h-4 w-4 mr-2" /> New Volume</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
