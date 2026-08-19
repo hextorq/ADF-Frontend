@@ -173,6 +173,7 @@ export function SiteFooter() {
             </div>
             <Link to="/policies" className="hover:text-white"><EditableText contentKey="footer.bottom.policies" fallback="Policies & Ethics" as="span" label="Footer bottom link" /></Link>
             <Link to="/policies" className="hover:text-white"><EditableText contentKey="footer.bottom.openAccess" fallback="Open Access" as="span" label="Footer bottom link" /></Link>
+            <a href="/docs/adf-documentation.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-white"><EditableText contentKey="footer.bottom.docs" fallback="Documentation" as="span" label="Footer bottom link" /></a>
           </div>
         </div>
       </div>

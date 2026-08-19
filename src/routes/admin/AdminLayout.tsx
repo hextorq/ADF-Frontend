@@ -75,9 +75,9 @@ export default function AdminLayout() {
             </div>
             <h4 className="text-sm font-bold text-slate-900 mb-1 relative z-10">Need Help?</h4>
             <p className="text-xs text-slate-500 leading-relaxed mb-4 relative z-10">Check our documentation or contact support.</p>
-            <Link to="#" className="text-xs font-bold text-blue-600 flex items-center gap-1 hover:text-blue-800 transition-colors relative z-10">
+            <a href="/docs/adf-documentation.pdf" target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-blue-600 flex items-center gap-1 hover:text-blue-800 transition-colors relative z-10">
               View Docs <ArrowUpRight className="w-3 h-3" />
-            </Link>
+            </a>
             
             {/* Decorative Books Illustration */}
             <div className="absolute -bottom-4 -right-4 w-28 h-28 opacity-40 pointer-events-none">
