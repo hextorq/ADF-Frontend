@@ -192,16 +192,21 @@ export default function AdminChapterPublications() {
   };
 
   const openEditVolume = (vol: any) => {
-    setNewVolume({
-      title: vol.title,
-      theme: vol.theme,
-      description: vol.description,
-      submission_deadline: vol.submission_deadline.split('T')[0],
-      pages: vol.pages || 0,
-      cover_url: vol?.cover_url || "",
-      pdf_url: vol?.pdf_url || ""
-    });
-    setEditingVolumeId(vol?.id || null);
+    if (!vol) {
+      setNewVolume({ title: "", theme: "", description: "", submission_deadline: "", pages: 0, cover_url: "", pdf_url: "" } as any);
+      setEditingVolumeId(null);
+    } else {
+      setNewVolume({
+        title: vol.title,
+        theme: vol.theme,
+        description: vol.description,
+        submission_deadline: vol.submission_deadline ? vol.submission_deadline.split('T')[0] : "",
+        pages: vol.pages || 0,
+        cover_url: vol.cover_url || "",
+        pdf_url: vol.pdf_url || ""
+      });
+      setEditingVolumeId(vol.id);
+    }
     setCoverImage(null);
     setIsDialogOpen(true);
   };
