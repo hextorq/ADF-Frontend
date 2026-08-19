@@ -29,7 +29,11 @@ export default function AdminChapterPublications() {
   const [coverImage, setCoverImage] = useState<File | null>(null);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [viewingSubmission, setViewingSubmission] = useState<any | null>(null);
+  const [activeTab, setActiveTab] = useState("submissions");
   const [paymentFilter, setPaymentFilter] = useState<string>("All");
+  const [isPublishDialogOpen, setIsPublishDialogOpen] = useState(false);
+  const [publishVolumeId, setPublishVolumeId] = useState<string>("");
+  const [publishPdfFile, setPublishPdfFile] = useState<File | null>(null);
 
   const fetchData = async () => {
     try {
@@ -149,11 +153,41 @@ export default function AdminChapterPublications() {
       setIsDialogOpen(false);
       setNewVolume({ title: "", theme: "", description: "", submission_deadline: "", pages: 0, cover_url: "", pdf_url: "" } as any);
       setCoverImage(null);
-      setPdfFile(null);
       setEditingVolumeId(null);
       fetchData();
     } catch (e: any) {
       toast.error(e.message || `Failed to ${editingVolumeId ? 'update' : 'create'} volume`);
+    }
+  };
+
+  const submitPublish = async () => {
+    if (!publishVolumeId) return toast.error("Select a volume to publish");
+    if (!publishPdfFile) return toast.error("Please upload the Manuscript PDF");
+    
+    try {
+      const formData = new FormData();
+      formData.append("status", "published");
+      formData.append("pdf_file", publishPdfFile);
+      
+      const token = localStorage.getItem("adf_admin_token");
+      const url = `/api/publications/chapters/volumes/${publishVolumeId}`;
+      const res = await fetch(import.meta.env.VITE_API_BASE_URL ? import.meta.env.VITE_API_BASE_URL + url : url, {
+        method: "PATCH",
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        body: formData
+      });
+      
+      if (!res.ok) throw new Error("Failed to publish volume");
+      
+      toast.success("Volume published to releases!");
+      setIsPublishDialogOpen(false);
+      setPublishVolumeId("");
+      setPublishPdfFile(null);
+      fetchData();
+    } catch (e: any) {
+      toast.error(e.message || "Failed to publish volume");
     }
   };
 
@@ -164,12 +198,11 @@ export default function AdminChapterPublications() {
       description: vol.description,
       submission_deadline: vol.submission_deadline.split('T')[0],
       pages: vol.pages || 0,
-      cover_url: vol.cover_url || "",
-      pdf_url: vol.pdf_url || ""
+      cover_url: vol?.cover_url || "",
+      pdf_url: vol?.pdf_url || ""
     });
-    setEditingVolumeId(vol.id);
+    setEditingVolumeId(vol?.id || null);
     setCoverImage(null);
-    setPdfFile(null);
     setIsDialogOpen(true);
   };
 
@@ -210,9 +243,9 @@ export default function AdminChapterPublications() {
 
   const stats = [
     { label: "Total Volumes", value: volumes.length, icon: BookOpen },
-    { label: "Pending Reviews", value: submissions.filter(s => s.stage === 'Peer Review').length, icon: Clock },
+    { label: "Pending Reviews", value: submissions.filter(s => ['Submitted', 'Editorial Screening', 'Peer Review', 'Revision'].includes(s.stage)).length, icon: Clock },
     { label: "Accepted", value: submissions.filter(s => s.stage === 'Accepted').length, icon: CheckCircle },
-    { label: "Published Chapters", value: submissions.filter(s => s.stage === 'Published').length, icon: FileText }
+    { label: "Published Chapters", value: submissions.filter(s => s.stage === 'Published' || s.stage === 'Payment Verified').length, icon: FileText }
   ];
 
   return (
@@ -222,11 +255,19 @@ export default function AdminChapterPublications() {
           <h2 className="text-2xl font-bold tracking-tight">Chapter Publications</h2>
           <p className="text-muted-foreground">Manage volumes, submissions, and peer reviews.</p>
         </div>
+        {activeTab === "volumes" && (
+          <Button onClick={() => openEditVolume(null)}>
+            <Plus className="h-4 w-4 mr-2" /> New Volume
+          </Button>
+        )}
+        
+        {activeTab === "publish" && (
+          <Button onClick={() => { setPublishVolumeId(""); setPublishPdfFile(null); setIsPublishDialogOpen(true); }}>
+            <Plus className="h-4 w-4 mr-2" /> Publish Volume
+          </Button>
+        )}
         
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={() => { setEditingVolumeId(null); setNewVolume({ title: "", theme: "", description: "", submission_deadline: "", pages: 0, cover_url: "" }); }}><Plus className="h-4 w-4 mr-2" /> New Volume</Button>
-          </DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>{editingVolumeId ? 'Edit Volume' : 'Create New Volume'}</DialogTitle>
@@ -254,20 +295,50 @@ export default function AdminChapterPublications() {
                   <Input type="number" value={newVolume.pages || ""} onChange={e => setNewVolume({...newVolume, pages: parseInt(e.target.value) || 0})} />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label>Cover Image</Label>
-                  <Input type="file" accept="image/*" onChange={e => setCoverImage(e.target.files?.[0] || null)} />
-                </div>
-                <div className="grid gap-2">
-                  <Label>Manuscript PDF</Label>
-                  <Input type="file" accept="application/pdf" onChange={e => setPdfFile(e.target.files?.[0] || null)} />
-                </div>
+              <div className="grid gap-2">
+                <Label>Cover Image</Label>
+                <Input type="file" accept="image/*" onChange={e => setCoverImage(e.target.files?.[0] || null)} />
               </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
               <Button onClick={createVolume}>{editingVolumeId ? 'Save Changes' : 'Create Volume'}</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* PUBLISH DIALOG */}
+        <Dialog open={isPublishDialogOpen} onOpenChange={setIsPublishDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Publish Volume & Upload Manuscript</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label>Select Volume to Publish</Label>
+                <Select value={publishVolumeId} onValueChange={setPublishVolumeId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a volume..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {volumes.filter(v => v.status !== 'published').map(v => (
+                      <SelectItem key={v.id} value={v.id.toString()}>{v.title}</SelectItem>
+                    ))}
+                    {volumes.filter(v => v.status !== 'published').length === 0 && (
+                      <SelectItem value="none" disabled>No unpublished volumes found</SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid gap-2">
+                <Label>Upload Compiled Manuscript (PDF)</Label>
+                <Input type="file" accept="application/pdf" onChange={e => setPublishPdfFile(e.target.files?.[0] || null)} />
+                <p className="text-xs text-slate-500">This PDF will be available for public download.</p>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsPublishDialogOpen(false)}>Cancel</Button>
+              <Button onClick={submitPublish}>Publish to Releases</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -288,7 +359,7 @@ export default function AdminChapterPublications() {
         })}
       </div>
 
-      <Tabs defaultValue="submissions">
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
         <div className="flex justify-between items-center mb-4">
           <TabsList>
             <TabsTrigger value="submissions">Submissions</TabsTrigger>
@@ -464,8 +535,8 @@ export default function AdminChapterPublications() {
                     </TableCell>
                     <TableCell className="text-right">
                       {vol.status !== 'published' ? (
-                        <Button size="sm" onClick={() => publishVolume(vol.id)} className="bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white">
-                          Publish to Releases
+                        <Button size="sm" onClick={() => { setPublishVolumeId(vol.id.toString()); setPublishPdfFile(null); setIsPublishDialogOpen(true); }} className="bg-[var(--primary)] hover:bg-[var(--primary)]/90 text-white">
+                          Upload & Publish
                         </Button>
                       ) : (
                         <Button size="sm" variant="outline" className="text-slate-500 cursor-not-allowed" disabled>
