@@ -24,6 +24,7 @@ type Book = {
 type Author = {
   id: number;
   name: string;
+  bio?: string;
 };
 
 export default function BookManagement() {
@@ -34,9 +35,9 @@ export default function BookManagement() {
   
   const [formData, setFormData] = useState({
     title: "",
-    author_id: "none",
+    author_id: "",
     category: "Academic",
-    price: 0,
+    price: "" as string | number,
     stock_status: "In Stock",
     cover_url: "",
     description: "",
@@ -63,7 +64,7 @@ export default function BookManagement() {
 
   const openAddModal = () => {
     setEditingId(null);
-    setFormData({ title: "", author_id: "none", category: "Academic", price: 0, stock_status: "In Stock", cover_url: "", description: "", isbn: "" });
+    setFormData({ title: "", author_id: "", category: "Academic", price: "", stock_status: "In Stock", cover_url: "", description: "", isbn: "" });
     setCoverFile(null);
     setIsModalOpen(true);
   };
@@ -76,11 +77,11 @@ export default function BookManagement() {
       title: b.title, 
       author_id: b.author_id ? b.author_id.toString() : "none", 
       category: b.category || "Academic", 
-      price: Number(b.price) || 0, 
+      price: b.price !== null && b.price !== undefined ? b.price.toString() : "", 
       stock_status: b.stock_status || "In Stock", 
       cover_url: b.cover_url || "",
-      description: "", // Might be empty if not in list payload
-      isbn: "" 
+      description: (b as any).description || "",
+      isbn: (b as any).isbn || "" 
     });
     setCoverFile(null);
     setIsModalOpen(true);
@@ -89,6 +90,16 @@ export default function BookManagement() {
   const saveBook = async () => {
     if (!formData.title || !formData.category) {
       toast.error("Title and category are required");
+      return;
+    }
+    if (!formData.author_id) {
+      toast.error("Please select an author.");
+      return;
+    }
+    
+    const parsedPrice = Number(formData.price);
+    if (isNaN(parsedPrice) || parsedPrice < 0) {
+      toast.error("Price must be a valid positive number or 0 for free books.");
       return;
     }
     
@@ -103,7 +114,7 @@ export default function BookManagement() {
       const payload = {
         ...formData,
         author_id: formData.author_id === "none" ? null : Number(formData.author_id),
-        price: Number(formData.price),
+        price: parsedPrice,
         cover_url: finalCoverUrl
       };
 
@@ -216,16 +227,18 @@ export default function BookManagement() {
             </div>
             
             <div className="space-y-2">
-              <Label>Author</Label>
+              <Label>Author *</Label>
               <Select value={formData.author_id} onValueChange={v => setFormData({ ...formData, author_id: v })}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select Author" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">No Author (Anonymous)</SelectItem>
                   {authors.map(a => (
-                    <SelectItem key={a.id} value={a.id.toString()}>{a.name}</SelectItem>
+                    <SelectItem key={a.id} value={a.id.toString()}>
+                      {a.name} {a.bio ? `(${a.bio.substring(0, 30)}${a.bio.length > 30 ? '...' : ''})` : ''}
+                    </SelectItem>
                   ))}
+                  <SelectItem value="none">No Author (Anonymous)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -246,11 +259,14 @@ export default function BookManagement() {
             </div>
 
             <div className="space-y-2">
-              <Label>Price (₹)</Label>
+              <Label>Price (₹) *</Label>
               <Input 
                 type="number" 
+                min="0"
+                step="0.01"
                 value={formData.price} 
-                onChange={e => setFormData({ ...formData, price: Number(e.target.value) })} 
+                onChange={e => setFormData({ ...formData, price: e.target.value })} 
+                placeholder="e.g. 499 (0 for free)"
               />
             </div>
 
