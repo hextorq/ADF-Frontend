@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { apiFetch, uploadImage } from "@/lib/api";
+import { apiFetch, uploadImage, assetUrl } from "@/lib/api";
 
 export default function AdminChapterPublications() {
   const [submissions, setSubmissions] = useState<any[]>([]);
@@ -416,7 +416,7 @@ export default function AdminChapterPublications() {
                     <File className="w-4 h-4" /> Documents
                   </h4>
                   {viewingSubmission.manuscript_url ? (
-                    <a href={viewingSubmission.manuscript_url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 border rounded-md hover:bg-slate-50 transition-colors">
+                    <a href={assetUrl(viewingSubmission.manuscript_url)} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 border rounded-md hover:bg-slate-50 transition-colors">
                       <div className="flex items-center gap-2">
                         <div className="bg-blue-100 p-2 rounded">
                           <Download className="w-4 h-4 text-blue-600" />
@@ -445,8 +445,8 @@ export default function AdminChapterPublications() {
                     {viewingSubmission.payment_screenshot_url && (
                       <div className="pt-2">
                         <span className="text-slate-500 block mb-2">Screenshot:</span>
-                        <a href={viewingSubmission.payment_screenshot_url} target="_blank" rel="noopener noreferrer">
-                          <img src={viewingSubmission.payment_screenshot_url} alt="Payment" className="w-full h-32 object-cover rounded border hover:opacity-90 transition-opacity" />
+                        <a href={assetUrl(viewingSubmission.payment_screenshot_url)} target="_blank" rel="noopener noreferrer">
+                          <img src={assetUrl(viewingSubmission.payment_screenshot_url)} alt="Payment" className="w-full h-32 object-cover rounded border hover:opacity-90 transition-opacity" />
                         </a>
                       </div>
                     )}
