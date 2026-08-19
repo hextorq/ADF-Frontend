@@ -85,7 +85,7 @@ export function SiteFooter() {
               fallback="An international publication house for peer-reviewed journals, edited volumes, literary works, and academic development programmes - committed to open access and global research dissemination."
               as="p"
               multiline
-              className="mt-5 text-sm leading-relaxed text-white/70"
+              className="mt-5 text-sm leading-relaxed text-white/70 hidden sm:block"
               label="Footer description"
             />
 
@@ -99,7 +99,7 @@ export function SiteFooter() {
                 fallback="Get journal CFPs, programme alerts, and open-access updates."
                 as="p"
                 multiline
-                className="mt-2 text-xs text-white/70"
+                className="mt-2 text-xs text-white/70 hidden sm:block"
                 label="Newsletter description"
               />
               <form className="mt-4 flex items-center gap-2">
@@ -118,7 +118,7 @@ export function SiteFooter() {
             </div>
           </div>
 
-          <div className="lg:col-span-8 grid gap-8 sm:grid-cols-2 md:grid-cols-4">
+          <div className="lg:col-span-8 grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-4">
             {COLUMNS.map((col) => (
               <div key={col.title}>
                 <EditableText
