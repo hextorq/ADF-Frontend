@@ -23,7 +23,8 @@ export default function AdminChapterPublications() {
     description: "",
     submission_deadline: "",
     pages: 0,
-    cover_url: ""
+    cover_url: "",
+    pdf_url: ""
   });
   const [editingVolumeId, setEditingVolumeId] = useState<string | null>(null);
   const [coverImage, setCoverImage] = useState<File | null>(null);
@@ -65,7 +66,7 @@ export default function AdminChapterPublications() {
         id: Date.now().toString(),
         title: `Chapter stage updated: ${stage}`,
         description: `Status changed to '${stage}' for submission ${id}`,
-        time: "Just now",
+        time: new Date().toISOString(),
         category: "Review",
         iconName: "CheckCircle",
         pinned: false,
@@ -94,7 +95,7 @@ export default function AdminChapterPublications() {
         id: Date.now().toString(),
         title: `Payment status updated: ${payment_status}`,
         description: `Payment status changed to '${payment_status}' for submission ${id}`,
-        time: "Just now",
+        time: new Date().toISOString(),
         category: "Payment",
         iconName: "FileText",
         pinned: false,
@@ -126,8 +127,8 @@ export default function AdminChapterPublications() {
       
       if (pdfFile) {
         formData.append("pdf_file", pdfFile);
-      } else if (newVolume.pdf_url) {
-        formData.append("pdf_url", newVolume.pdf_url);
+      } else if ((newVolume as any).pdf_url) {
+        formData.append("pdf_url", (newVolume as any).pdf_url);
       }
 
       const url = editingVolumeId 

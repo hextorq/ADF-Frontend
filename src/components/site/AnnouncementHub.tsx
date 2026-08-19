@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ArrowRight, Calendar, Tag, Activity, BookOpen, FileText, CheckCircle, Video, Trash2, MessageCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useCMSStore, Announcement, Publication, Activity as ActivityType } from "@/store/useCMSStore";
 import { EditableText } from "@/components/cms/EditableText";
