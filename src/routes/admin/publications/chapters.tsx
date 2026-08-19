@@ -603,6 +603,16 @@ export default function AdminChapterPublications() {
                           <p>{author.phone}</p>
                         </div>
                       </div>
+                      {(author.address || author.author_bio) && (
+                        <div className="mt-3 pt-3 border-t text-xs text-slate-600 space-y-2">
+                          {author.address && (
+                            <div><span className="font-semibold">Address:</span> {author.address}</div>
+                          )}
+                          {author.author_bio && (
+                            <div><span className="font-semibold">Bio:</span> {author.author_bio}</div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   ))}
                   {(!viewingSubmission.authors || viewingSubmission.authors.length === 0) && (

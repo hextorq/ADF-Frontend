@@ -14,12 +14,17 @@ interface Volume {
   title: string;
   theme?: string;
   status: string;
+  submission_deadline: string;
 }
 
 interface Author {
   name: string;
   email: string;
+  phone: string;
+  country: string;
   institution: string;
+  address: string;
+  bio: string;
   is_primary: boolean;
 }
 
@@ -46,14 +51,14 @@ export default function ChapterSubmit() {
   const [chapterTitle, setChapterTitle] = useState("");
   const [abstract, setAbstract] = useState("");
   const [keywords, setKeywords] = useState("");
-  const [authors, setAuthors] = useState<Author[]>([{ name: "", email: "", institution: "", is_primary: true }]);
+  const [authors, setAuthors] = useState<Author[]>([{ name: "", email: "", phone: "", country: "", institution: "", address: "", bio: "", is_primary: true }]);
   const [manuscript, setManuscript] = useState<File | null>(null);
   const [agreed, setAgreed] = useState(false);
   const [transactionId, setTransactionId] = useState("");
   const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
 
   const addCoAuthor = () => {
-    setAuthors([...authors, { name: "", email: "", institution: "", is_primary: false }]);
+    setAuthors([...authors, { name: "", email: "", phone: "", country: "", institution: "", address: "", bio: "", is_primary: false }]);
   };
 
   const removeAuthor = (index: number) => {
@@ -185,9 +190,25 @@ export default function ChapterSubmit() {
                         <label className="text-xs font-medium mb-1 block">Email</label>
                         <Input required type="email" value={author.email} onChange={e => updateAuthor(index, "email", e.target.value)} />
                       </div>
+                      <div>
+                        <label className="text-xs font-medium mb-1 block">Phone</label>
+                        <Input required value={author.phone} onChange={e => updateAuthor(index, "phone", e.target.value)} />
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium mb-1 block">Country</label>
+                        <Input required value={author.country} onChange={e => updateAuthor(index, "country", e.target.value)} />
+                      </div>
                       <div className="md:col-span-2">
                         <label className="text-xs font-medium mb-1 block">Institution</label>
                         <Input required value={author.institution} onChange={e => updateAuthor(index, "institution", e.target.value)} />
+                      </div>
+                      <div className="md:col-span-2">
+                        <label className="text-xs font-medium mb-1 block">Address</label>
+                        <Textarea required value={author.address} onChange={e => updateAuthor(index, "address", e.target.value)} rows={2} />
+                      </div>
+                      <div className="md:col-span-2">
+                        <label className="text-xs font-medium mb-1 block">Author Bio</label>
+                        <Textarea required value={author.bio} onChange={e => updateAuthor(index, "bio", e.target.value)} rows={3} />
                       </div>
                     </div>
                   </div>
