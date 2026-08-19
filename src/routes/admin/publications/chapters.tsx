@@ -27,6 +27,7 @@ export default function AdminChapterPublications() {
   });
   const [editingVolumeId, setEditingVolumeId] = useState<string | null>(null);
   const [coverImage, setCoverImage] = useState<File | null>(null);
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [viewingSubmission, setViewingSubmission] = useState<any | null>(null);
   const [paymentFilter, setPaymentFilter] = useState<string>("All");
 
@@ -106,36 +107,49 @@ export default function AdminChapterPublications() {
 
   const createVolume = async () => {
     try {
-      let finalCoverUrl = newVolume.cover_url || "";
+      const formData = new FormData();
+      formData.append("title", newVolume.title);
+      formData.append("theme", newVolume.theme);
+      formData.append("description", newVolume.description);
+      formData.append("submission_deadline", newVolume.submission_deadline);
+      formData.append("pages", String(newVolume.pages || 0));
+      
       if (coverImage) {
-        toast.info("Uploading cover...");
-        const res = await uploadImage(coverImage);
-        finalCoverUrl = res.url;
+        formData.append("cover_image", coverImage);
+      } else if (newVolume.cover_url) {
+        formData.append("cover_url", newVolume.cover_url);
+      }
+      
+      if (pdfFile) {
+        formData.append("pdf_file", pdfFile);
+      } else if (newVolume.pdf_url) {
+        formData.append("pdf_url", newVolume.pdf_url);
       }
 
-      const payload = {
-        title: newVolume.title,
-        theme: newVolume.theme,
-        description: newVolume.description,
-        submission_deadline: newVolume.submission_deadline,
-        pages: Number(newVolume.pages),
-        cover_url: finalCoverUrl
-      };
-
       const url = editingVolumeId 
-        ? `/publications/chapters/volumes/${editingVolumeId}`
-        : "/publications/chapters/volumes";
+        ? `/api/publications/chapters/volumes/${editingVolumeId}`
+        : "/api/publications/chapters/volumes";
       const method = editingVolumeId ? "PATCH" : "POST";
 
-      await apiFetch(url, {
+      const token = localStorage.getItem("adf_admin_token");
+      const res = await fetch(import.meta.env.VITE_API_BASE_URL ? import.meta.env.VITE_API_BASE_URL + url : url, {
         method,
-        body: JSON.stringify(payload)
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        body: formData
       });
+      
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || res.statusText);
+      }
       
       toast.success(`Volume ${editingVolumeId ? 'updated' : 'created'} successfully`);
       setIsDialogOpen(false);
-      setNewVolume({ title: "", theme: "", description: "", submission_deadline: "", pages: 0, cover_url: "" } as any);
+      setNewVolume({ title: "", theme: "", description: "", submission_deadline: "", pages: 0, cover_url: "", pdf_url: "" } as any);
       setCoverImage(null);
+      setPdfFile(null);
       setEditingVolumeId(null);
       fetchData();
     } catch (e: any) {
@@ -150,9 +164,12 @@ export default function AdminChapterPublications() {
       description: vol.description,
       submission_deadline: vol.submission_deadline.split('T')[0],
       pages: vol.pages || 0,
-      cover_url: vol.cover_url || ""
+      cover_url: vol.cover_url || "",
+      pdf_url: vol.pdf_url || ""
     });
     setEditingVolumeId(vol.id);
+    setCoverImage(null);
+    setPdfFile(null);
     setIsDialogOpen(true);
   };
 
@@ -237,9 +254,15 @@ export default function AdminChapterPublications() {
                   <Input type="number" value={newVolume.pages || ""} onChange={e => setNewVolume({...newVolume, pages: parseInt(e.target.value) || 0})} />
                 </div>
               </div>
-              <div className="grid gap-2">
-                <Label>Cover Image</Label>
-                <Input type="file" accept="image/*" onChange={e => setCoverImage(e.target.files?.[0] || null)} />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label>Cover Image</Label>
+                  <Input type="file" accept="image/*" onChange={e => setCoverImage(e.target.files?.[0] || null)} />
+                </div>
+                <div className="grid gap-2">
+                  <Label>Manuscript PDF</Label>
+                  <Input type="file" accept="application/pdf" onChange={e => setPdfFile(e.target.files?.[0] || null)} />
+                </div>
               </div>
             </div>
             <DialogFooter>

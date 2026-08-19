@@ -134,7 +134,7 @@ export default function ChapterSubmit() {
                       )}
                       {volumes.map(v => (
                         <SelectItem key={v.id} value={v.id.toString()}>
-                          {v.title} {v.theme ? `(${v.theme})` : ''}
+                          {v.title} {v.theme ? `(${v.theme})` : ''} - Deadline: {new Date(v.submission_deadline).toLocaleDateString()}
                         </SelectItem>
                       ))}
                     </SelectContent>

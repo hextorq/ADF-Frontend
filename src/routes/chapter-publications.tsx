@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { PageHeader } from "@/components/site/PageHeader";
 import { CheckCircle2, Download, FileText, BookOpen } from "lucide-react";
 import { EditableText } from "@/components/cms/EditableText";
+import { assetUrl } from "@/lib/api";
 import {
   Carousel,
   CarouselContent,
@@ -114,12 +115,14 @@ export default function Page() {
                       </p>
 
                       <a 
-                        href="#" 
-                        onClick={(e) => { e.preventDefault(); alert('PDF download would start here.'); }}
-                        className="group/btn w-full inline-flex items-center justify-center gap-2 bg-slate-50 hover:bg-[var(--primary)] text-[var(--primary)] hover:text-white border border-slate-200 hover:border-transparent px-4 py-3 rounded-lg font-semibold transition-all duration-300 shadow-sm"
+                        href={chapter.pdf_url ? assetUrl(chapter.pdf_url) : "#"} 
+                        target={chapter.pdf_url ? "_blank" : undefined}
+                        rel={chapter.pdf_url ? "noreferrer" : undefined}
+                        onClick={(e) => { if (!chapter.pdf_url) { e.preventDefault(); alert('PDF not available yet.'); } }}
+                        className={`group/btn w-full inline-flex items-center justify-center gap-2 bg-slate-50 border border-slate-200 px-4 py-3 rounded-lg font-semibold transition-all duration-300 shadow-sm ${chapter.pdf_url ? 'hover:bg-[var(--primary)] text-[var(--primary)] hover:text-white hover:border-transparent' : 'opacity-50 cursor-not-allowed text-slate-500'}`}
                       >
                         <Download className="w-4 h-4 group-hover/btn:-translate-y-0.5 transition-transform" />
-                        Download PDF
+                        {chapter.pdf_url ? 'Download PDF' : 'Coming Soon'}
                       </a>
                     </div>
                   </div>
