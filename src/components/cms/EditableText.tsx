@@ -39,7 +39,11 @@ export function EditableText({
 
   const effectiveMaxLength = maxLength ?? (multiline ? 2000 : 300);
 
-  if (!isAdmin) {
+  // Check if we are in preview mode
+  const searchParams = new URLSearchParams(window.location.search);
+  const isPreview = searchParams.get("preview") === "true";
+
+  if (!isAdmin || isPreview) {
     return <Tag className={className}>{value}</Tag>;
   }
 
@@ -151,7 +155,11 @@ export function EditableImage({
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
 
-  if (!isAdmin) {
+  // Check if we are in preview mode
+  const searchParams = new URLSearchParams(window.location.search);
+  const isPreview = searchParams.get("preview") === "true";
+
+  if (!isAdmin || isPreview) {
     return <img src={src} alt={alt} className={className} {...props} />;
   }
 

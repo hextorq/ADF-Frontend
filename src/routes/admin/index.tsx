@@ -31,7 +31,7 @@ const QUICK_ACTIONS = [
   {
     title: "Review public pages",
     description: "Check the visitor experience after making CMS edits.",
-    to: "/",
+    to: "/?preview=true",
     icon: Wand2,
     tone: "bg-[#faf8ff] text-[#7e22ce]",
     iconTone: "bg-[#f3e8ff] text-[#a855f7]",
