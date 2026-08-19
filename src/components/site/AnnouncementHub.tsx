@@ -7,6 +7,21 @@ import { useAuthStore } from "@/store/useAuthStore";
 import React, { useEffect } from "react";
 import { Clock, MapPin, Users, AlertTriangle } from "lucide-react";
 
+function getRelativeTime(timeStr: string) {
+  const d = new Date(timeStr);
+  if (isNaN(d.getTime())) return timeStr;
+  
+  const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+  const minutesDifference = Math.round((d.getTime() - Date.now()) / (1000 * 60));
+  const hoursDifference = Math.round((d.getTime() - Date.now()) / (1000 * 60 * 60));
+  const daysDifference = Math.round((d.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+  
+  if (Math.abs(daysDifference) > 0) return rtf.format(daysDifference, 'day');
+  if (Math.abs(hoursDifference) > 0) return rtf.format(hoursDifference, 'hour');
+  if (Math.abs(minutesDifference) > 0) return rtf.format(minutesDifference, 'minute');
+  return "Just now";
+}
+
 class HubErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, error: Error | null}> {
   constructor(props: {children: React.ReactNode}) {
     super(props);
@@ -54,6 +69,7 @@ function AnnouncementHubInner() {
   const allAnnouncements = useCMSStore(s => s.announcements) || [];
   const allPublications = useCMSStore(s => s.publications) || [];
   const allActivities = useCMSStore(s => s.activities) || [];
+  const [showAllActivities, setShowAllActivities] = useState(false);
   const journals = (useCMSStore(s => s.journals) || []).filter(j => j?.visible);
   
   const [programmes, setProgrammes] = useState<any[]>([]);
@@ -165,10 +181,18 @@ function AnnouncementHubInner() {
 
           {tab === "Recent Activity" && (
              <div className="space-y-4 max-w-3xl">
-               {activities?.map(it => (
+               {(showAllActivities ? activities : activities.slice(0, 4))?.map(it => (
                 <ActivityRow key={it?.id} item={it} />
                ))}
                {(!activities || activities.length === 0) && <EditableText contentKey="home.hub.empty.activities" fallback="No recent activities." as="p" className="text-slate-500" label="Empty state" />}
+               
+               {activities?.length > 4 && (
+                 <div className="text-center pt-2 border-t border-slate-100">
+                   <Button variant="ghost" className="text-[var(--primary)] hover:bg-[var(--primary)]/10" onClick={() => setShowAllActivities(!showAllActivities)}>
+                     {showAllActivities ? "Show Less" : "View All Activity"}
+                   </Button>
+                 </div>
+               )}
              </div>
           )}
           
@@ -368,7 +392,7 @@ function ActivityRow({ item }: { item: ActivityType }) {
       <div className="flex-1 pr-4">
         <div className="flex items-center justify-between">
           <EditableText contentKey={`activity.${item.id}.title`} fallback={item.title} as="h4" className="font-semibold text-slate-900" label="Activity title" />
-          <EditableText contentKey={`activity.${item.id}.time`} fallback={item.time} as="span" className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded" label="Activity time" />
+          <EditableText contentKey={`activity.${item.id}.time`} fallback={getRelativeTime(item.time)} as="span" className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded whitespace-nowrap" label="Activity time" />
         </div>
         <EditableText contentKey={`activity.${item.id}.description`} fallback={item.description} as="p" multiline className="text-sm text-slate-600 mt-1" label="Activity description" />
         <div className="mt-2 text-xs font-medium text-slate-400 uppercase tracking-wider">
