@@ -209,7 +209,6 @@ export default function AdminChapterPublications() {
       });
       setEditingVolumeId(vol.id);
     }
-    setCoverImage(null);
     setIsDialogOpen(true);
   };
 
