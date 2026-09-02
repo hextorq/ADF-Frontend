@@ -1,4 +1,4 @@
-import { Search, ChevronRight, Star, Filter, Heart, ShoppingCart, ArrowRight, CheckCircle, ShieldCheck, Truck, Globe, Download, PlayCircle, BookOpen, Trash2, PenTool, Users, Lightbulb, Leaf, Plus } from "lucide-react";
+﻿import { Search, ChevronRight, Star, Filter, Heart, ShoppingCart, ArrowRight, CheckCircle, ShieldCheck, Truck, Globe, Download, PlayCircle, BookOpen, Trash2, PenTool, Users, Lightbulb, Leaf, Plus } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,8 @@ import { QuickViewModal } from "@/components/store/QuickViewModal";
 import { MOCK_BOOKS, CATEGORIES, type Book } from "@/components/store/store-mock-data";
 import { cn } from "@/lib/utils";
 import { PageHeader } from "@/components/site/PageHeader";
+import { SEO } from "@/components/SEO";
+import { buildBreadcrumbSchema } from "@/lib/seo";
 
 import { useAuthStore } from "@/store/useAuthStore";
 
@@ -69,8 +71,45 @@ export default function BookStore() {
     });
   }, [searchQuery, activeCategory, localBooks]);
 
+  const bookstoreSchema = [
+    {
+      "@type": "CollectionPage",
+      "name": "Academic Bookstore & Published Volumes | Academic Development Forum",
+      "description": "Browse and order peer-reviewed academic books, edited volumes, monographs, and conference proceedings published by ADF.",
+      ...(localBooks.length > 0 ? {
+        "mainEntity": {
+          "@type": "ItemList",
+          "itemListElement": localBooks.slice(0, 10).map((b, i) => ({
+            "@type": "ListItem",
+            "position": i + 1,
+            "item": {
+              "@type": "Book",
+              "name": b.title,
+              "author": { "@type": "Person", "name": b.author },
+              ...(b.isbn && b.isbn !== "N/A" ? { "isbn": b.isbn } : {}),
+              ...(b.coverImage ? { "image": b.coverImage } : {})
+            }
+          }))
+        }
+      } : {})
+    },
+    buildBreadcrumbSchema([{ name: "Book Store", path: "/bookstore" }])
+  ];
+
+  const pageTitle = searchQuery 
+    ? `Search: "${searchQuery}" | ADF Bookstore` 
+    : (activeCategory !== "All Books" ? `${activeCategory} Books | ADF Bookstore` : "Academic Bookstore & Published Volumes | Academic Development Forum");
+
   return (
     <div className="bg-slate-50 min-h-screen pb-20">
+      <SEO
+        title={pageTitle}
+        description="Browse and order peer-reviewed academic books, edited volumes, monographs, and conference proceedings published by ADF."
+        keywords="academic bookstore, buy academic books, published volumes, monographs, conference proceedings, ADF books"
+        noindex={Boolean(searchQuery)}
+        structuredData={bookstoreSchema}
+      />
+
       {/* Quick View Modal */}
       {quickViewBook && (
         <QuickViewModal isOpen={true} book={quickViewBook} onClose={() => setQuickViewBook(null)} />
@@ -84,9 +123,6 @@ export default function BookStore() {
         description="Discover Knowledge That Shapes the Future. Explore our collection of premium academic and literary publications."
         crumbs={[{ label: "Book Store" }]}
       />
-
-
-
 
       {/* Browse Catalog */}
       <section id="browse-catalog" className="py-20 bg-slate-50">
@@ -145,7 +181,7 @@ export default function BookStore() {
                       className={cn(
                         "text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-all group flex justify-between items-center cursor-pointer",
                         activeCategory === category 
-                          ? "bg-[var(--primary)] text-white shadow-md"
+                          ? "bg-[var(--primary)] text-white shadow-md" 
                           : "text-gray-600 hover:bg-slate-100 hover:text-[var(--ink)]"
                       )}
                     >
@@ -219,113 +255,42 @@ export default function BookStore() {
                       <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform">
                         <Plus className="w-5 h-5 sm:w-6 sm:h-6" />
                       </div>
-                      <div className="text-[10px] sm:text-xs font-bold tracking-widest text-center leading-tight">
-                        YOUR BOOK<br/>HERE
-                      </div>
+                      <div className="text-xs font-bold tracking-wider text-center uppercase">Your Book</div>
+                      <div className="text-[9px] text-blue-400 mt-1 uppercase tracking-widest font-semibold">Publish Today</div>
                     </Link>
                   </div>
                   
-                  {/* The Wooden Shelf Base */}
-                  <div className="absolute bottom-0 translate-y-full left-0 w-full h-4 sm:h-5 bg-gradient-to-r from-[#e6c28f] via-[#f3dcb1] to-[#e6c28f] rounded-sm shadow-[0_20px_30px_-10px_rgba(0,0,0,0.4)] z-0">
-                    <div className="absolute bottom-0 w-full h-1/2 bg-black/10 rounded-b-sm"></div>
-                  </div>
+                  {/* Wooden Shelf Graphic */}
+                  <div className="w-full h-4 bg-[#b45309] rounded-sm shadow-md border-t border-amber-400/40 relative z-20"></div>
+                  <div className="w-[96%] mx-auto h-3 bg-[#78350f] rounded-b-sm shadow-lg opacity-90 relative z-10"></div>
+                  <div className="w-[90%] mx-auto h-4 bg-black/10 blur-sm rounded-full mt-1"></div>
                 </div>
 
-                {/* Steps */}
-                <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-10 mb-12 w-full max-w-3xl">
-                  <div className="flex items-center gap-4 text-left">
-                    <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center shrink-0">
-                      <PenTool className="w-5 h-5" />
+                {/* Submissions Open Banner */}
+                <div className="w-full max-w-3xl bg-slate-50 border border-slate-200 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 text-left">
+                  <div>
+                    <div className="inline-block bg-emerald-100 text-emerald-800 text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full mb-2">
+                      Submissions Open
                     </div>
-                    <div>
-                      <div className="font-semibold text-slate-900 text-sm">Submit</div>
-                      <div className="text-slate-500 text-sm">your manuscript</div>
+                    <div className="font-serif font-bold text-xl text-slate-900 mb-1">
+                      Are you an author, researcher, or poet?
                     </div>
-                  </div>
-                  <div className="hidden md:block w-px h-10 bg-slate-200"></div>
-                  <div className="flex items-center gap-4 text-left">
-                    <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center shrink-0">
-                      <Users className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-slate-900 text-sm">Get reviewed</div>
-                      <div className="text-slate-500 text-sm">by our editorial team</div>
+                    <div className="text-sm text-slate-600">
+                      We offer ISBN assignment, professional cover design, and international distribution.
                     </div>
                   </div>
-                  <div className="hidden md:block w-px h-10 bg-slate-200"></div>
-                  <div className="flex items-center gap-4 text-left">
-                    <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center shrink-0">
-                      <Globe className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-slate-900 text-sm">Reach readers</div>
-                      <div className="text-slate-500 text-sm">around the world</div>
-                    </div>
-                  </div>
+                  <Link to="/literary-publications/submit" className="whitespace-nowrap btn-primary px-6 py-3 font-semibold text-sm shadow-md hover:shadow-lg transition-all">
+                    Submit Manuscript
+                  </Link>
                 </div>
 
-                <Link 
-                  to="/literary-publications"
-                  className="bg-[#0b249a] text-white px-8 py-3.5 rounded-lg font-semibold hover:bg-blue-900 transition-all hover:shadow-lg hover:-translate-y-0.5 inline-flex items-center gap-3 mb-6"
-                >
-                  Submit Your Manuscript <ArrowRight className="w-4 h-4" />
-                </Link>
-
-                <div className="flex items-center justify-center gap-2 text-sm text-slate-500 font-medium">
-                  <ShieldCheck className="w-4 h-4" />
-                  Trusted by authors. Driven by purpose.
-                </div>
               </div>
+
             </div>
-
           </div>
         </div>
       </section>
-
-      {/* Why Buy From ADF */}
-
-      <section className="py-20 bg-white">
-        <div className="container-academic">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-serif font-bold text-[var(--ink)] mb-4">Why Buy From ADF Publications?</h2>
-            <p className="text-gray-500 max-w-2xl mx-auto">We are committed to delivering the highest quality academic and literary content with a seamless purchasing experience.</p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { icon: ShieldCheck, title: "Original Publications", desc: "100% authentic and peer-reviewed academic works." },
-              { icon: Globe, title: "Worldwide Access", desc: "Digital and physical delivery available globally." },
-              { icon: Truck, title: "Fast Delivery", desc: "Expedited shipping for physical paperback editions." },
-              { icon: PlayCircle, title: "Book Preview", desc: "Read the first chapter free before making a purchase." },
-            ].map((feature, i) => (
-              <div key={i} className="text-center p-6 rounded-2xl bg-slate-50 border border-slate-100">
-                <div className="w-16 h-16 mx-auto bg-blue-100 text-[var(--primary)] rounded-full flex items-center justify-center mb-6">
-                  <feature.icon className="h-8 w-8" />
-                </div>
-                <h3 className="text-xl font-bold text-[var(--ink)] mb-3">{feature.title}</h3>
-                <p className="text-gray-600">{feature.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Become an Author CTA */}
-      <section className="py-16 bg-[var(--secondary)]">
-        <div className="container-academic text-center max-w-3xl mx-auto">
-          <div className="eyebrow justify-center mb-4">Publishing Services</div>
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-[var(--ink)] mb-4">Have a manuscript?</h2>
-          <p className="text-lg text-[var(--ink-soft)] mb-8">
-            Join hundreds of authors who have successfully published their research, literature, and academic books with ADF.
-          </p>
-          <div className="flex justify-center gap-4">
-            <Link to="/literary-publications" className="btn-primary">
-              Publish with ADF
-            </Link>
-          </div>
-        </div>
-      </section>
-
     </div>
   );
 }
+

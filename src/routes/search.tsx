@@ -1,8 +1,9 @@
-import { Link, useSearchParams } from "react-router-dom";
+﻿import { Link, useSearchParams } from "react-router-dom";
 import { PageHeader } from "@/components/site/PageHeader";
 import { Search, ArrowRight } from "lucide-react";
 import { EditableText } from "@/components/cms/EditableText";
 import { useContentStore } from "@/store/useContentStore";
+import { SEO } from "@/components/SEO";
 
 const SEARCH_INDEX = [
   { id: "j1", type: "journals", title: "International Journal of English for Academic Excellence", desc: "Applied linguistics, academic writing, ELT, literature studies.", url: "/journals" },
@@ -36,8 +37,16 @@ export default function SearchPage() {
     return item.title.toLowerCase().includes(query) || item.desc.toLowerCase().includes(query);
   });
 
+  const pageTitle = query ? `Results for "${q}" | Search ADF` : "Search Publications & Research | Academic Development Forum";
+
   return (
     <>
+      <SEO
+        title={pageTitle}
+        description="Search across ADF research articles, published books, book chapters, literary works, and academic programmes."
+        noindex={true}
+        nofollow={false}
+      />
       <PageHeader
         cmsKey="page.search"
         eyebrow="Search"
@@ -58,41 +67,30 @@ export default function SearchPage() {
             </span>
           </div>
 
-          <div className="space-y-4">
-            {results.length > 0 ? (
-              results.map((r) => (
-                <div key={r.id} className="surface-card p-6 flex flex-col items-start hover:border-[var(--primary)] transition">
-                  <div className="inline-block px-2 py-1 rounded bg-[var(--secondary)] text-[var(--primary)] text-[10px] font-bold uppercase tracking-wider mb-3">
-                    {r.type}
+          {/* Results list */}
+          {results.length === 0 ? (
+            <div className="surface-card p-12 text-center text-[var(--ink-soft)]">
+              <p className="text-lg">No publications found matching your query.</p>
+              <Link to="/journals" className="btn-primary mt-4 inline-flex">Browse Journals</Link>
+            </div>
+          ) : (
+            <div className="divide-y divide-border surface-card overflow-hidden">
+              {results.map((r) => (
+                <article key={r.id} className="p-5 hover:bg-slate-50 transition flex items-start justify-between gap-4">
+                  <div>
+                    <span className="text-xs uppercase font-semibold text-[var(--primary)] tracking-wider">{r.type}</span>
+                    <h3 className="font-serif text-lg font-semibold text-[var(--ink)] mt-1">{r.title}</h3>
+                    <p className="text-sm text-[var(--ink-soft)] mt-1">{r.desc}</p>
                   </div>
-                  <h3 className="font-serif text-xl font-bold text-[var(--ink)]">
-                    <EditableText contentKey={`search.${r.id}.title`} fallback={r.title} as="span" label="Search result title" />
-                  </h3>
-                  <p className="mt-2 text-[var(--ink-soft)] text-sm">
-                    <EditableText contentKey={`search.${r.id}.description`} fallback={r.desc} as="span" label="Search result description" />
-                  </p>
-                  <Link to={r.url} className="mt-4 inline-flex items-center gap-1 font-semibold text-sm text-[var(--primary)] hover:underline">
-                    <EditableText contentKey="page.search.viewDetails" fallback="View details" as="span" label="Search button" /> <ArrowRight className="h-3.5 w-3.5" />
+                  <Link to={r.url} className="btn-outline !py-1.5 !px-3 !text-xs shrink-0 self-center inline-flex items-center gap-1">
+                    View <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
-                </div>
-              ))
-            ) : (
-              <div className="py-12 text-center">
-                <Search className="h-10 w-10 text-[var(--ink-soft)] mx-auto mb-4 opacity-50" />
-                <EditableText contentKey="page.search.noResults.title" fallback="No results found" as="h3" className="text-lg font-semibold text-[var(--ink)]" label="No results title" />
-                <EditableText contentKey="page.search.noResults.description" fallback={`We couldn't find any exact matches for "${q}". Try using different keywords or changing your search scope.`} as="p" multiline className="mt-2 text-sm text-[var(--ink-soft)]" label="No results description" />
-                <Link to="/search" className="mt-6 inline-block btn-outline">
-                  <EditableText contentKey="page.search.clear" fallback="Clear search" as="span" label="Clear search" />
-                </Link>
-              </div>
-            )}
-          </div>
+                </article>
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </>
   );
 }
-
-
-
-

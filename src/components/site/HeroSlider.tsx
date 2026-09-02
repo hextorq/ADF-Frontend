@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+﻿import { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { Link } from "react-router-dom";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
@@ -18,7 +18,7 @@ type Slide = {
 const SLIDES: Slide[] = [
   {
     key: "1",
-    eyebrow: "📖  Call for Chapters",
+    eyebrow: "Call for Chapters",
     title: "Shape the Future of Research",
     description:
       "Contribute your research to our bi-monthly edited volume series — Convergence: Multidisciplinary Perspectives in Contemporary Research.",
@@ -29,7 +29,7 @@ const SLIDES: Slide[] = [
   },
   {
     key: "2",
-    eyebrow: "🔬  Peer-Reviewed Journal",
+    eyebrow: "Peer-Reviewed Journal",
     title: "Share Your Research with the World",
     description:
       "Publish your original research in our peer-reviewed journal — discoverable, citable, and open to a global audience.",
@@ -39,7 +39,7 @@ const SLIDES: Slide[] = [
   },
   {
     key: "3",
-    eyebrow: "✍️  Literary Publishing",
+    eyebrow: "Literary Publishing",
     title: "Your Story Deserves to Be Published",
     description:
       "ADF publishes novels, novellas, poetry collections, short stories, and anthologies with full professional support.",
@@ -49,7 +49,7 @@ const SLIDES: Slide[] = [
   },
   {
     key: "4",
-    eyebrow: "🎓  Academic Programmes",
+    eyebrow: "Academic Programmes",
     title: "Nurture Your Academic Mind",
     description:
       "Join FDPs, workshops, and short-term courses on research methodology, academic writing, and publication ethics.",
@@ -59,7 +59,7 @@ const SLIDES: Slide[] = [
   },
   {
     key: "5",
-    eyebrow: "🌟  About ADF",
+    eyebrow: "About ADF",
     title: "Attitude Defines Future",
     description:
       "Academic Development Forum is a growing publication house committed to research, literature, and academic excellence.",
@@ -90,9 +90,9 @@ export function HeroSlider() {
   }, [embla]);
 
   return (
-    <section className="hero-gradient relative overflow-hidden text-white">
+    <section className="hero-gradient relative overflow-hidden text-white" aria-label="Featured Publications and Opportunities">
       {/* decorative network */}
-      <div className="pointer-events-none absolute inset-0 opacity-30">
+      <div className="pointer-events-none absolute inset-0 opacity-30" aria-hidden="true">
         <div className="absolute -top-32 -right-24 h-[520px] w-[520px] rounded-full border border-white/10 spin-slow" />
         <div className="absolute -top-10 right-40 h-[320px] w-[320px] rounded-full border border-white/10 spin-slow" />
         <div className="absolute -bottom-40 -left-20 h-[460px] w-[460px] rounded-full border border-white/10 spin-slow" />
@@ -115,7 +115,7 @@ export function HeroSlider() {
                   <EditableText
                     contentKey={`home.hero.slide.${s.key}.title`}
                     fallback={s.title}
-                    as="h1"
+                    as={i === 0 ? "h1" : "h2"}
                     className="mt-4 font-serif text-4xl md:text-6xl font-bold leading-[1.05]"
                     label="Slide Title"
                   />
@@ -163,11 +163,11 @@ export function HeroSlider() {
                         as="span"
                         label="Slide CTA"
                       />
-                      <ArrowRight className="h-4 w-4" />
+                      <ArrowRight className="h-4 w-4" aria-hidden="true" />
                     </Link>
                     <Link
                       to="/about"
-                      className="inline-flex items-center gap-2 rounded-md border border-white/30 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10"
+                      className="inline-flex items-center gap-2 rounded-md border border-white/30 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10 transition"
                     >
                       Learn more
                     </Link>
@@ -179,12 +179,12 @@ export function HeroSlider() {
         </div>
 
         {/* Sidebar quick facts */}
-        <aside className="lg:col-span-3 self-end space-y-2">
+        <aside className="lg:col-span-3 self-end space-y-2" aria-label="Key Publishing Identifiers">
           {[
-            { k: "ISSN", v: "Online" },
-            { k: "ISBN", v: "Assigned" },
+            { k: "ISSN", v: "Online Assigned" },
+            { k: "ISBN", v: "Volume Assigned" },
             { k: "Peer Review", v: "Double-Blind" },
-            { k: "Access", v: "Open · CC BY" },
+            { k: "Access", v: "Open Access — CC BY" },
           ].map((it) => (
             <div
               key={it.k}
@@ -199,12 +199,14 @@ export function HeroSlider() {
 
       {/* Controls */}
       <div className="container-academic relative pb-6 flex items-center justify-between">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2" role="tablist" aria-label="Slide Selection">
           {SLIDES.map((_, i) => (
             <button
               key={i}
               onClick={() => scrollTo(i)}
-              aria-label={`Slide ${i + 1}`}
+              aria-label={`Go to slide ${i + 1}`}
+              role="tab"
+              aria-selected={i === index}
               className={`h-1.5 rounded-full transition-all ${
                 i === index ? "w-10 bg-[var(--mint)]" : "w-5 bg-white/30 hover:bg-white/60"
               }`}
@@ -214,17 +216,17 @@ export function HeroSlider() {
         <div className="flex items-center gap-2">
           <button
             onClick={prev}
-            className="h-10 w-10 grid place-items-center rounded-full border border-white/20 hover:bg-white/10"
+            className="h-10 w-10 grid place-items-center rounded-full border border-white/20 hover:bg-white/10 transition"
             aria-label="Previous slide"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft className="h-5 w-5" aria-hidden="true" />
           </button>
           <button
             onClick={next}
-            className="h-10 w-10 grid place-items-center rounded-full border border-white/20 hover:bg-white/10"
+            className="h-10 w-10 grid place-items-center rounded-full border border-white/20 hover:bg-white/10 transition"
             aria-label="Next slide"
           >
-            <ChevronRight className="h-5 w-5" />
+            <ChevronRight className="h-5 w-5" aria-hidden="true" />
           </button>
         </div>
       </div>

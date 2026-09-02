@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+﻿import { useState, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Search, Filter, BookOpen } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -7,6 +7,7 @@ import { QuickViewModal } from "@/components/store/QuickViewModal";
 import { PageHeader } from "@/components/site/PageHeader";
 import { MOCK_BOOKS, CATEGORIES, type Book } from "@/components/store/store-mock-data";
 import { cn } from "@/lib/utils";
+import { SEO } from "@/components/SEO";
 
 export default function BookSearch() {
   const [searchParams] = useSearchParams();
@@ -28,8 +29,18 @@ export default function BookSearch() {
     });
   }, [searchQuery, activeCategory]);
 
+  const searchTitle = searchQuery 
+    ? `Search: "${searchQuery}" | ADF Bookstore` 
+    : "Search Bookstore Catalog | ADF";
+
   return (
     <div className="bg-slate-50 min-h-screen pb-12">
+      <SEO
+        title={searchTitle}
+        description="Search across ADF's published books, edited volumes, author monographs, and academic series."
+        noindex={true}
+        nofollow={false}
+      />
       {quickViewBook && (
         <QuickViewModal isOpen={true} book={quickViewBook} onClose={() => setQuickViewBook(null)} />
       )}
@@ -69,9 +80,9 @@ export default function BookSearch() {
                     key={category}
                     onClick={() => setActiveCategory(category)}
                     className={cn(
-                      "text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-all group flex justify-between items-center",
+                      "text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-all group flex justify-between items-center cursor-pointer",
                       activeCategory === category 
-                        ? "bg-[var(--primary)] text-white shadow-md"
+                        ? "bg-[var(--primary)] text-white shadow-md" 
                         : "text-gray-600 hover:bg-slate-100 hover:text-[var(--ink)]"
                     )}
                   >
@@ -80,63 +91,42 @@ export default function BookSearch() {
                 ))}
               </div>
             </div>
-            
-            {/* Additional filters (mock UI) */}
-            <div className="bg-white p-6 rounded-2xl border border-border shadow-sm">
-               <h3 className="font-serif text-lg font-bold text-[var(--ink)] mb-4">Price Range</h3>
-               <div className="space-y-4">
-                 <input type="range" className="w-full accent-[var(--primary)]" min="0" max="2000" />
-                 <div className="flex justify-between text-sm text-gray-500 font-medium">
-                   <span>₹0</span>
-                   <span>₹2000+</span>
-                 </div>
-               </div>
-            </div>
           </div>
 
-          {/* Books Grid */}
+          {/* Results Grid */}
           <div className="flex-1">
             <div className="flex items-center justify-between mb-8 bg-white p-4 rounded-2xl border border-border shadow-sm">
               <h2 className="font-serif text-xl font-bold text-[var(--ink)]">
                 {searchQuery ? `Results for "${searchQuery}"` : activeCategory}
               </h2>
-              <div className="flex items-center gap-4">
-                <span className="text-sm text-gray-500 font-medium">
-                  Showing <span className="text-[var(--ink)] font-bold">{filteredBooks.length}</span> results
-                </span>
-                <select className="text-sm border-gray-200 rounded-lg bg-slate-50 px-3 py-2 outline-none focus:ring-2 focus:ring-[var(--primary)]">
-                  <option>Sort by: Featured</option>
-                  <option>Price: Low to High</option>
-                  <option>Price: High to Low</option>
-                  <option>Newest Arrivals</option>
-                  <option>Best Sellers</option>
-                </select>
-              </div>
+              <span className="text-sm font-medium text-slate-500">
+                Showing {filteredBooks.length} results
+              </span>
             </div>
 
-            {filteredBooks.length > 0 ? (
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredBooks.map(book => (
-                  <div key={book.id}>
-                    <BookCard book={book} onQuickView={setQuickViewBook} />
-                  </div>
-                ))}
-              </div>
-            ) : (
+            {filteredBooks.length === 0 ? (
               <div className="bg-white rounded-2xl p-16 text-center border border-border shadow-sm">
-                <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <BookOpen className="h-10 w-10 text-gray-300" />
-                </div>
-                <h3 className="text-2xl font-bold text-[var(--ink)] mb-3">No books found</h3>
-                <p className="text-gray-500 max-w-md mx-auto">
-                  We couldn't find any books matching your current filters. Try adjusting your search or category selection.
+                <BookOpen className="h-12 w-12 text-slate-300 mx-auto mb-4" />
+                <h3 className="font-serif text-xl font-bold text-[var(--ink)] mb-2">No books found</h3>
+                <p className="text-slate-500 max-w-sm mx-auto mb-6">
+                  We couldn't find any books matching your criteria. Try adjusting your search query or category filter.
                 </p>
                 <button 
-                  onClick={() => {setSearchQuery(""); setActiveCategory("All Books");}}
-                  className="mt-8 bg-[var(--primary)] text-white px-6 py-2.5 rounded-full font-semibold hover:bg-blue-700 transition-colors shadow-md"
+                  onClick={() => { setSearchQuery(""); setActiveCategory("All Books"); }}
+                  className="btn-primary !py-2 !px-4 !text-sm"
                 >
-                  Clear all filters
+                  Clear Filters
                 </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredBooks.map(book => (
+                  <BookCard 
+                    key={book.id} 
+                    book={book} 
+                    onQuickView={(b) => setQuickViewBook(b)}
+                  />
+                ))}
               </div>
             )}
           </div>

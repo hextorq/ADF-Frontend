@@ -1,10 +1,32 @@
-import { PageHeader } from "@/components/site/PageHeader";
+﻿import { PageHeader } from "@/components/site/PageHeader";
 import { Mail, MapPin, Youtube, Linkedin, Instagram, MessageCircle } from "lucide-react";
 import { useState } from "react";
 import { EditableText } from "@/components/cms/EditableText";
 import { submitContact } from "@/lib/api";
+import { SEO } from "@/components/SEO";
+import { buildBreadcrumbSchema, SITE_CONFIG } from "@/lib/seo";
 
 export default function Page() {
+  const contactSchema = [
+    {
+      "@type": "ContactPage",
+      "name": "Contact ADF — Academic Development Forum Editorial Office",
+      "description": "Contact Academic Development Forum editorial office for publishing inquiries, manuscript queries, editorial board applications, and support.",
+      "mainEntity": {
+        "@type": "EducationalOrganization",
+        "@id": `${SITE_CONFIG.siteUrl}/#organization`,
+        "name": SITE_CONFIG.siteName,
+        "email": SITE_CONFIG.contactEmail,
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "email": SITE_CONFIG.contactEmail,
+          "contactType": "editorial office"
+        }
+      }
+    },
+    buildBreadcrumbSchema([{ name: "Contact", path: "/contact" }])
+  ];
+
   const [done, setDone] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,8 +52,15 @@ export default function Page() {
       setSubmitting(false);
     }
   }
+
   return (
     <>
+      <SEO
+        title="Contact ADF — Academic Development Forum Editorial Office"
+        description="Get in touch with Academic Development Forum for publication inquiries, journal submissions, editorial board applications, and support."
+        keywords="contact ADF, academic publishing inquiry, editorial office contact, journal submission help, academic partnership"
+        structuredData={contactSchema}
+      />
       <PageHeader
         cmsKey="page.contact"
         eyebrow="Contact"
@@ -79,7 +108,13 @@ export default function Page() {
             {done ? (
               <EditableText contentKey="page.contact.form.success" fallback="Thank you - we'll get back to you within 3 working days." as="div" className="rounded-lg bg-[var(--accent)]/10 text-[var(--accent)] p-3 text-sm" label="Success message" />
             ) : (
-              <button type="submit" disabled={submitting} className="btn-primary"><EditableText contentKey="page.contact.form.submit" fallback={submitting ? "Sending..." : "Send message"} as="span" label="Submit label" /></button>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="btn-primary"
+              >
+                {submitting ? "Sending..." : "Send message"}
+              </button>
             )}
           </form>
         </div>
@@ -88,14 +123,27 @@ export default function Page() {
   );
 }
 
-function Field({ label, ...rest }: { label: string } & React.InputHTMLAttributes<HTMLInputElement>) {
+function Field({
+  label,
+  name,
+  type = "text",
+  required,
+}: {
+  label: string;
+  name: string;
+  type?: string;
+  required?: boolean;
+}) {
   return (
     <label className="block">
-      <EditableText contentKey={`page.contact.form.${label}`} fallback={label} as="span" className="block text-xs font-semibold uppercase tracking-wider text-[var(--ink-soft)]" label="Form label" />
-      <input {...rest} className="mt-1 w-full rounded-md border border-border bg-white px-3 py-2 text-sm outline-none focus:border-[var(--primary)]" />
+      <EditableText contentKey={`page.contact.field.${name}.label`} fallback={label} as="span" className="block text-xs font-semibold uppercase tracking-wider text-[var(--ink-soft)]" label="Field label" />
+      <input
+        name={name}
+        type={type}
+        required={required}
+        className="mt-1 w-full rounded-md border border-border bg-white px-3 py-2 text-sm outline-none focus:border-[var(--primary)]"
+      />
     </label>
   );
 }
-
-
 

@@ -1,4 +1,4 @@
-import { Link, NavLink as RouterNavLink, useNavigate } from "react-router-dom";
+﻿import { Link, NavLink as RouterNavLink, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Menu, Search, X, Youtube, Linkedin, Instagram, ShoppingCart, Heart, Trash2, MessageCircle } from "lucide-react";
 import { EditableImage, EditableText } from "@/components/cms/EditableText";
@@ -144,7 +144,7 @@ export function SiteHeader() {
                         <div className="flex-1">
                           <h4 className="font-bold text-sm line-clamp-1">{book.title}</h4>
                           <p className="text-xs text-gray-500 mb-2">{book.author}</p>
-                          <div className="font-bold text-[var(--primary)]">₹{book.price}</div>
+                          <div className="font-bold text-[var(--primary)]">â‚¹{book.price}</div>
                         </div>
                         <button onClick={() => toggleWishlist(book)} className="text-gray-400 hover:text-red-500 p-2">
                           <Trash2 className="w-4 h-4" />
@@ -183,7 +183,7 @@ export function SiteHeader() {
                               <span className="px-2 text-sm font-medium">{item.quantity}</span>
                               <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="px-2 py-1 hover:bg-slate-100">+</button>
                             </div>
-                            <div className="font-bold text-[var(--mint)]">₹{item.price * item.quantity}</div>
+                            <div className="font-bold text-[var(--mint)]">â‚¹{item.price * item.quantity}</div>
                           </div>
                         </div>
                         <button onClick={() => removeFromCart(item.id)} className="text-gray-400 hover:text-red-500 p-2 self-start">
@@ -197,7 +197,7 @@ export function SiteHeader() {
                   <div className="border-t border-border pt-4 mt-4">
                     <div className="flex justify-between font-bold text-lg mb-4">
                       <span>Total:</span>
-                      <span>₹{cart.reduce((acc, item) => acc + item.price * item.quantity, 0)}</span>
+                      <span>â‚¹{cart.reduce((acc, item) => acc + item.price * item.quantity, 0)}</span>
                     </div>
                     <button className="w-full btn-primary py-3 cursor-pointer">Proceed to Checkout</button>
                   </div>
@@ -393,9 +393,10 @@ function Logo() {
     <EditableImage
       contentKey="site.logo.src"
       fallbackSrc="/logo.png"
-      alt="ADF Logo" 
+      alt="Academic Development Forum (ADF) Logo" 
       className="h-12 w-auto shrink-0 object-contain mix-blend-multiply"
       label="Site logo"
     />
   );
 }
+

@@ -1,5 +1,7 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { PageHeader } from "@/components/site/PageHeader";
+import { SEO } from "@/components/SEO";
+import { buildBreadcrumbSchema } from "@/lib/seo";
 import { EditableText } from "@/components/cms/EditableText";
 import { useAuthStore } from "@/store/useAuthStore";
 import { Trash2 } from "lucide-react";
@@ -261,6 +263,8 @@ export default function Page() {
     </>
   );
 }
+
+
 
 
 

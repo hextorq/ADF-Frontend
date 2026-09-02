@@ -3,15 +3,18 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-  <!-- Homepage -->
   <url>
     <loc>https://www.adf.ijeae.com/</loc>
     <lastmod>2026-09-02</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
-
-  <!-- Journals & Publications -->
+  <url>
+    <loc>https://www.adf.ijeae.com/about</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
   <url>
     <loc>https://www.adf.ijeae.com/journals</loc>
     <lastmod>2026-09-02</lastmod>
@@ -25,10 +28,22 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://www.adf.ijeae.com/chapter-publications/submit</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.adf.ijeae.com/literary-publications</loc>
     <lastmod>2026-09-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.adf.ijeae.com/literary-publications/submit</loc>
+    <lastmod>2026-09-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.adf.ijeae.com/academic-programmes</loc>
@@ -48,16 +63,14 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
-
-  <!-- Guidelines & Editorial -->
   <url>
-    <loc>https://www.adf.ijeae.com/guidelines/author</loc>
+    <loc>https://www.adf.ijeae.com/editorial-board</loc>
     <lastmod>2026-09-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.adf.ijeae.com/editorial-board</loc>
+    <loc>https://www.adf.ijeae.com/guidelines/author</loc>
     <lastmod>2026-09-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -79,12 +92,6 @@
     <lastmod>2026-09-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.adf.ijeae.com/about</loc>
-    <lastmod>2026-09-02</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.adf.ijeae.com/contact</loc>

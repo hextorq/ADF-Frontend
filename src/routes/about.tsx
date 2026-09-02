@@ -1,17 +1,28 @@
-import { Link } from "react-router-dom";
+﻿import { Link } from "react-router-dom";
 import { PageHeader } from "@/components/site/PageHeader";
 import { JourneyTimeline } from "@/components/site/JourneyTimeline";
 import { CoreValues } from "@/components/site/CoreValues";
 import { BookOpen, Compass, Eye, Quote, Rocket, Target } from "lucide-react";
 import { EditableText } from "@/components/cms/EditableText";
+import { SEO } from "@/components/SEO";
+import { buildOrganizationSchema, buildBreadcrumbSchema } from "@/lib/seo";
 
 export default function About() {
+  const aboutSchema = [
+    {
+      "@type": "AboutPage",
+      "name": "About Academic Development Forum (ADF)",
+      "description": "Learn about Academic Development Forum (ADF), an independent academic publishing organization dedicated to disseminating peer-reviewed research, edited volumes, and literary works.",
+      "mainEntity": buildOrganizationSchema(),
+    },
+    buildBreadcrumbSchema([{ name: "About Us", path: "/about" }])
+  ];
   return (
     <>
       <PageHeader
         cmsKey="page.about"
         eyebrow="About ADF"
-        title="A new academic publishing house — built on integrity and access"
+        title="A new academic publishing house â€” built on integrity and access"
         description="Academic Development Forum brings together peer-reviewed research, literary works, and academic development under one open, author-first home."
         crumbs={[{ label: "About Us" }]}
       />
@@ -149,6 +160,8 @@ function Pillar({ icon: Icon, title, children }: { icon: any; title: string; chi
     </div>
   );
 }
+
+
 
 
 

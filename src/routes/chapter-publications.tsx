@@ -1,9 +1,11 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { PageHeader } from "@/components/site/PageHeader";
 import { CheckCircle2, Download, FileText, BookOpen } from "lucide-react";
 import { EditableText } from "@/components/cms/EditableText";
 import { assetUrl } from "@/lib/api";
+import { SEO } from "@/components/SEO";
+import { buildBreadcrumbSchema } from "@/lib/seo";
 import {
   Carousel,
   CarouselContent,
@@ -36,8 +38,33 @@ export default function Page() {
       .catch(console.error);
   }, []);
 
+  const structuredData = [
+    {
+      "@type": "CollectionPage",
+      "name": "Book Chapter Publications — Convergence Series | ADF",
+      "description": "A bi-monthly edited volume series published with standard ISBN, double-blind peer review, and open-access distribution.",
+      ...(releasedChapters.length > 0 ? {
+        "hasPart": releasedChapters.map(c => ({
+          "@type": "Book",
+          "name": c.title,
+          "description": c.theme,
+          ...(c.cover_url ? { "image": c.cover_url } : {}),
+          "inLanguage": "en"
+        }))
+      } : {})
+    },
+    buildBreadcrumbSchema([{ name: "Chapter Publications", path: "/chapter-publications" }])
+  ];
+
   return (
     <>
+      <SEO
+        title="Book Chapter Publications — Convergence Series | ADF"
+        description="Submit your book chapter to ADF Convergence Series. Peer-reviewed edited volumes with ISBN, DOI, and international indexing."
+        keywords="book chapter publication, edited volume, call for chapters, ISBN book chapter, convergence series, scholarly chapters, research dissemination"
+        structuredData={structuredData}
+      />
+
       <PageHeader
         cmsKey="page.chapter-publications"
         eyebrow="Convergence Series"
@@ -74,18 +101,19 @@ export default function Page() {
                       {chapter.cover_url ? (
                         <img 
                           src={chapter.cover_url} 
-                          alt={chapter.title} 
+                          alt={`Cover for ${chapter.title}`} 
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          loading="lazy"
                         />
                       ) : (
-                         <BookOpen className="w-12 h-12 text-slate-300" />
+                         <BookOpen className="w-12 h-12 text-slate-300" aria-hidden="true" />
                       )}
                       {/* Dark overlay for text readability */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/40 pointer-events-none" />
                       
                       <div className="absolute top-4 inset-x-4 flex justify-between items-start z-10">
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-semibold border border-white/20 shadow-sm">
-                          <BookOpen className="w-3.5 h-3.5" />
+                          <BookOpen className="w-3.5 h-3.5" aria-hidden="true" />
                           Volume
                         </span>
                         <span className="text-white/90 text-xs font-semibold bg-black/40 px-2.5 py-1 rounded-md backdrop-blur-sm border border-white/10 shadow-sm">
@@ -93,20 +121,20 @@ export default function Page() {
                         </span>
                       </div>
                       
-                      <h4 className="absolute bottom-4 inset-x-4 z-10 font-serif font-bold text-xl text-white leading-tight drop-shadow-lg">
+                      <h3 className="absolute bottom-4 inset-x-4 z-10 font-serif font-bold text-xl text-white leading-tight drop-shadow-lg">
                         {chapter.title}
-                      </h4>
+                      </h3>
                     </div>
 
                     {/* Card Content */}
                     <div className="p-6 flex flex-col flex-grow">
                       <div className="flex items-center gap-3 text-xs text-[var(--ink-soft)] font-semibold mb-4">
                         <span className="flex items-center gap-1.5">
-                          <FileText className="w-3.5 h-3.5 text-slate-400" /> {chapter.pages || 0} Pages
+                          <FileText className="w-3.5 h-3.5 text-slate-400" aria-hidden="true" /> {chapter.pages || 0} Pages
                         </span>
                         <span className="w-1 h-1 rounded-full bg-slate-300" />
                         <span className="flex items-center gap-1.5 text-emerald-600">
-                          <CheckCircle2 className="w-3.5 h-3.5" /> Open Access
+                          <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" /> Open Access
                         </span>
                       </div>
                       
@@ -120,8 +148,9 @@ export default function Page() {
                         rel={chapter.pdf_url ? "noreferrer" : undefined}
                         onClick={(e) => { if (!chapter.pdf_url) { e.preventDefault(); alert('PDF not available yet.'); } }}
                         className={`group/btn w-full inline-flex items-center justify-center gap-2 bg-slate-50 border border-slate-200 px-4 py-3 rounded-lg font-semibold transition-all duration-300 shadow-sm ${chapter.pdf_url ? 'hover:bg-[var(--primary)] text-[var(--primary)] hover:text-white hover:border-transparent' : 'opacity-50 cursor-not-allowed text-slate-500'}`}
+                        aria-label={`Download PDF for ${chapter.title}`}
                       >
-                        <Download className="w-4 h-4 group-hover/btn:-translate-y-0.5 transition-transform" />
+                        <Download className="w-4 h-4 group-hover/btn:-translate-y-0.5 transition-transform" aria-hidden="true" />
                         {chapter.pdf_url ? 'Download PDF' : 'Coming Soon'}
                       </a>
                     </div>
@@ -130,8 +159,8 @@ export default function Page() {
               ))}
             </CarouselContent>
             <div className="flex items-center justify-center gap-2 mt-8">
-              <CarouselPrevious className="static transform-none h-10 w-10 bg-white border border-border hover:bg-slate-50" />
-              <CarouselNext className="static transform-none h-10 w-10 bg-white border border-border hover:bg-slate-50" />
+              <CarouselPrevious className="static transform-none h-10 w-10 bg-white border border-border hover:bg-slate-50" aria-label="Previous chapter volume" />
+              <CarouselNext className="static transform-none h-10 w-10 bg-white border border-border hover:bg-slate-50" aria-label="Next chapter volume" />
             </div>
           </Carousel>
         </div>
@@ -143,10 +172,10 @@ export default function Page() {
           <EditableText contentKey="page.chapter-publications.cta.title" fallback="Submit a Chapter to Convergence Vol. IV" as="h3" className="font-serif text-2xl font-bold" label="CTA title" />
           <EditableText contentKey="page.chapter-publications.cta.description" fallback="Open call - Closes 15 Sep 2026. Themes across sciences, humanities, social sciences, education, and management." as="p" multiline className="mt-2 text-white/80 max-w-2xl" label="CTA description" />
           <div className="mt-5 flex flex-wrap gap-3">
-            <Link to="/chapter-publications/submit" className="inline-flex items-center gap-2 rounded-md bg-[var(--mint)] px-5 py-3 text-sm font-semibold text-[var(--deep)] hover:bg-white">
+            <Link to="/chapter-publications/submit" className="inline-flex items-center gap-2 rounded-md bg-[var(--mint)] px-5 py-3 text-sm font-semibold text-[var(--deep)] hover:bg-white transition">
               Submit your chapter
             </Link>
-            <Link to="/contact" className="inline-flex items-center gap-2 rounded-md border border-white/30 px-5 py-3 text-sm font-semibold hover:bg-white/10">
+            <Link to="/contact" className="inline-flex items-center gap-2 rounded-md border border-white/30 px-5 py-3 text-sm font-semibold hover:bg-white/10 transition">
               Contact editor
             </Link>
           </div>
@@ -162,7 +191,7 @@ export default function Page() {
             { t: "Open Access", d: "CC BY 4.0 licensing by default." },
           ].map((it) => (
             <div key={it.t} className="surface-card p-6 bg-white">
-              <CheckCircle2 className="h-6 w-6 text-[var(--accent)]" />
+              <CheckCircle2 className="h-6 w-6 text-[var(--accent)]" aria-hidden="true" />
               <EditableText contentKey={`page.chapter-publications.feature.${it.t}.title`} fallback={it.t} as="h3" className="mt-3 font-serif text-lg font-semibold text-[var(--ink)]" label="Feature title" />
               <EditableText contentKey={`page.chapter-publications.feature.${it.t}.desc`} fallback={it.d} as="p" multiline className="mt-1 text-sm text-[var(--ink-soft)]" label="Feature description" />
             </div>
@@ -188,3 +217,4 @@ export default function Page() {
     </>
   );
 }
+

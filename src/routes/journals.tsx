@@ -1,35 +1,57 @@
-import { Link } from "react-router-dom";
+﻿import { Link } from "react-router-dom";
 import { PageHeader } from "@/components/site/PageHeader";
 import { ArrowRight, BookOpen, CheckCircle2, FileText, Globe2 } from "lucide-react";
 import { EditableText } from "@/components/cms/EditableText";
+import { SEO } from "@/components/SEO";
+import { buildJournalSchema } from "@/lib/seo";
 
 const JOURNALS = [
   {
     title: "International Journal of English for Academic Excellence",
     abbr: "IJEAE",
-    issn: "Online ISSN · Forthcoming",
+    issn: "Online ISSN — Forthcoming",
     scope: "Applied linguistics, academic writing, ELT, literature studies.",
     frequency: "Quarterly",
-    access: "Open Access · CC BY 4.0",
-    submitUrl: "https://ijeae.com/index.php/ijeae/submission"
+    access: "Open Access — CC BY 4.0",
+    submitUrl: "https://ijeae.com/index.php/ijeae/submission",
+    url: "https://ijeae.com/index.php/ijeae"
   },
 ];
 
 export default function Journals() {
+  const journalSchema = buildJournalSchema({
+    title: JOURNALS[0].title,
+    abbr: JOURNALS[0].abbr,
+    issn: "Forthcoming",
+    url: JOURNALS[0].url,
+    description: JOURNALS[0].scope
+  });
+
   return (
     <>
+      <SEO
+        title="Peer-Reviewed Open Access Journals | ADF — IJEAE"
+        description="Discover open-access, double-blind peer-reviewed journals published by ADF, including the International Journal of English for Academic Excellence (IJEAE). Submit manuscripts online."
+        keywords="academic journals, peer-reviewed journal, IJEAE, applied linguistics journal, ELT research, open access journal, double blind peer review, English for academic excellence"
+        structuredData={journalSchema}
+        citation={{
+          journalTitle: "International Journal of English for Academic Excellence",
+          issn: "Forthcoming",
+        }}
+      />
+
       <PageHeader
         cmsKey="page.journals"
         eyebrow="Journals"
         title="Peer-reviewed, open-access journals"
-        description="Discoverable, citable, and globally accessible. Authors retain copyright."
+        description="Discoverable, citable, and globally accessible. Authors retain copyright under Creative Commons attribution (CC BY 4.0)."
         crumbs={[{ label: "Journals" }]}
       />
 
       <section className="py-16 bg-white">
         <div className="container-academic grid gap-6 lg:grid-cols-3">
           {[
-            { icon: FileText, k: "Online ISSN", v: "Assigned per journal" },
+            { icon: FileText, k: "Online ISSN", v: "Assigned per journal (Forthcoming)" },
             { icon: Globe2, k: "Access", v: "Open Access — CC BY 4.0" },
             { icon: CheckCircle2, k: "Review", v: "Double-blind peer review" },
           ].map(({ icon: Icon, k, v }) => (
@@ -107,6 +129,3 @@ function Row({ k, v }: { k: string; v: string }) {
     </div>
   );
 }
-
-
-

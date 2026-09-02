@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+﻿import { Link } from "react-router-dom";
 import { Globe2, Mail, Send, Youtube, Linkedin, Instagram, MessageCircle } from "lucide-react";
 import { EditableImage, EditableText } from "@/components/cms/EditableText";
 
@@ -70,7 +70,7 @@ export function SiteFooter() {
                 <EditableImage
                   contentKey="site.logo.src"
                   fallbackSrc="/logo.png"
-                  alt="ADF Logo" 
+                  alt="Academic Development Forum (ADF) Logo" 
                   className="h-10 w-auto shrink-0 object-contain"
                   label="Footer logo"
                 />
@@ -150,7 +150,7 @@ export function SiteFooter() {
         <div className="mt-8 sm:mt-12 flex flex-col gap-4 border-t border-white/10 pt-4 sm:pt-6 md:flex-row md:items-center md:justify-between text-xs text-white/60">
           <div className="flex items-center gap-4">
             <Globe2 className="h-4 w-4 shrink-0" />
-            <span>© {new Date().getFullYear()} Academic Development Forum. All rights reserved.</span>
+            <span>Â© {new Date().getFullYear()} Academic Development Forum. All rights reserved.</span>
           </div>
           <div className="flex items-center flex-wrap gap-x-5 gap-y-3">
             <a href="mailto:contact@adf.org" className="inline-flex items-center gap-1.5 hover:text-white transition-colors">
@@ -180,3 +180,4 @@ export function SiteFooter() {
     </footer>
   );
 }
+
