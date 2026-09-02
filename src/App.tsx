@@ -38,27 +38,136 @@ import { useContentStore } from "@/store/useContentStore";
 import { AdminLiveToolbar } from "@/components/cms/AdminLiveToolbar";
 
 
-const TITLES: Record<string, string> = {
-  "/": "Academic Development Forum — Research, Literature & Programmes",
-  "/about": "About ADF — Academic Development Forum",
-  "/academic-programmes": "Academic Programmes — ADF",
-  "/announcements": "Announcements — ADF",
-  "/chapter-publications": "Chapter Publications — Convergence Series · ADF",
-  "/contact": "Contact — ADF",
-  "/editorial-board": "Editorial Board — ADF",
-  "/guidelines/author": "Author Guidelines — ADF",
-  "/guidelines/editor": "Editor Guidelines — ADF",
-  "/guidelines/reviewer": "Reviewer Guidelines — ADF",
-  "/journals": "Journals — Academic Development Forum",
-  "/literary-publications": "Literary Publications — ADF",
-  "/policies": "Publication Ethics & Policies — ADF",
-  "/search": "Search Results — ADF",
+interface PageSEO {
+  title: string;
+  description: string;
+  keywords?: string;
+}
+
+const PAGE_SEO: Record<string, PageSEO> = {
+  "/": {
+    title: "Academic Development Forum (ADF) — International Research, Journals & Book Publications",
+    description: "Academic Development Forum (ADF) is an international publication house publishing peer-reviewed journals, edited book chapters, literary works, and academic development programmes.",
+    keywords: "Academic Development Forum, ADF, peer-reviewed journals, open access, academic research, book chapters, literary publications",
+  },
+  "/about": {
+    title: "About Us — Academic Development Forum (ADF) | Mission & Vision",
+    description: "Learn about Academic Development Forum (ADF), our global mission, editorial standards, and commitment to open-access scholarly dissemination.",
+    keywords: "about ADF, Academic Development Forum, publishing mission, academic forum, scholarly dissemination",
+  },
+  "/academic-programmes": {
+    title: "Academic Programmes & Faculty Development (FDP) — ADF",
+    description: "International faculty development programmes, research workshops, capacity building seminars, and academic training by ADF.",
+    keywords: "academic programmes, faculty development programme, FDP, academic workshops, research seminars",
+  },
+  "/announcements": {
+    title: "Announcements & Call for Papers (CFP) — Academic Development Forum",
+    description: "Latest academic announcements, calls for papers, chapter submissions, journal releases, and event updates from ADF.",
+    keywords: "call for papers, CFP, academic announcements, submission deadlines, journal CFP",
+  },
+  "/chapter-publications": {
+    title: "Book Chapter Publications — Convergence Series | ADF",
+    description: "Submit your book chapter to ADF Convergence Series. Peer-reviewed edited volumes with ISBN, DOI, and international indexing.",
+    keywords: "book chapter publication, edited volume, call for chapters, ISBN book chapter, convergence series",
+  },
+  "/contact": {
+    title: "Contact ADF — Academic Development Forum Editorial Office",
+    description: "Get in touch with Academic Development Forum for publication inquiries, journal submissions, editorial board applications, and support.",
+    keywords: "contact ADF, academic publishing inquiry, editorial office contact, journal submission help",
+  },
+  "/editorial-board": {
+    title: "Editorial Board & Reviewers — Academic Development Forum",
+    description: "Distinguished international editorial board members, subject experts, and peer reviewers at Academic Development Forum.",
+    keywords: "editorial board, academic editors, peer review panel, journal editors, international editorial board",
+  },
+  "/guidelines/author": {
+    title: "Author Submission Guidelines & Manuscript Template — ADF",
+    description: "Complete author guidelines, manuscript preparation instructions, reference formatting, and checklist for submissions to ADF.",
+    keywords: "author guidelines, manuscript preparation, submission checklist, referencing style, academic publishing guidelines",
+  },
+  "/guidelines/editor": {
+    title: "Editor Guidelines & Responsibilities — Academic Development Forum",
+    description: "Roles, responsibilities, and ethical standards for editors managing peer review and volume curation at ADF.",
+    keywords: "editor guidelines, editorial responsibilities, peer review ethics, COPE guidelines",
+  },
+  "/guidelines/reviewer": {
+    title: "Peer Reviewer Guidelines & Evaluation Criteria — ADF",
+    description: "Evaluation checklist, ethical principles, and double-blind peer review instructions for reviewers at ADF.",
+    keywords: "reviewer guidelines, peer review criteria, manuscript evaluation, referee instructions",
+  },
+  "/journals": {
+    title: "Peer-Reviewed Open Access Journals — International Journal of English for Academic Excellence (IJEAE)",
+    description: "Discover open-access, double-blind peer-reviewed journals published by ADF, including the International Journal of English for Academic Excellence (IJEAE). Submit online.",
+    keywords: "academic journals, peer-reviewed journal, IJEAE, applied linguistics journal, ELT research, open access journal",
+  },
+  "/literary-publications": {
+    title: "Literary Publications & Creative Publishing — ADF",
+    description: "Submit and publish literary works, poetry collections, novels, and creative monographs with international distribution through ADF.",
+    keywords: "literary publications, poetry publishing, book publishing, creative writing, author publishing",
+  },
+  "/bookstore": {
+    title: "Bookstore & Published Volumes — Academic Development Forum",
+    description: "Browse and order peer-reviewed academic books, edited volumes, monographs, and conference proceedings published by ADF.",
+    keywords: "academic bookstore, published books, academic monographs, buy academic books",
+  },
+  "/policies": {
+    title: "Publication Ethics, Open Access & Plagiarism Policies — ADF",
+    description: "ADF publication ethics, COPE compliance, open-access policy, CC BY 4.0 licensing, retraction guidelines, and plagiarism criteria.",
+    keywords: "publication ethics, COPE compliance, open access policy, plagiarism policy, retraction policy",
+  },
+  "/search": {
+    title: "Search Publications & Journals — Academic Development Forum",
+    description: "Search research articles, book chapters, literary works, and academic programmes across ADF publications.",
+    keywords: "search publications, research search, journal search",
+  },
 };
 
 function PageEffects() {
   const { pathname } = useLocation();
   useEffect(() => {
-    document.title = TITLES[pathname] ?? "Academic Development Forum";
+    const seo = PAGE_SEO[pathname] ?? {
+      title: "Academic Development Forum — Research, Literature & Programmes",
+      description: "Academic Development Forum is an international publication house for peer-reviewed journals, edited book chapters, literary works, and academic development programmes.",
+      keywords: "Academic Development Forum, ADF, journals, research, books",
+    };
+
+    document.title = seo.title;
+
+    // Update meta description
+    let descMeta = document.querySelector('meta[name="description"]');
+    if (!descMeta) {
+      descMeta = document.createElement("meta");
+      descMeta.setAttribute("name", "description");
+      document.head.appendChild(descMeta);
+    }
+    descMeta.setAttribute("content", seo.description);
+
+    // Update meta keywords
+    if (seo.keywords) {
+      let keywordsMeta = document.querySelector('meta[name="keywords"]');
+      if (!keywordsMeta) {
+        keywordsMeta = document.createElement("meta");
+        keywordsMeta.setAttribute("name", "keywords");
+        document.head.appendChild(keywordsMeta);
+      }
+      keywordsMeta.setAttribute("content", seo.keywords);
+    }
+
+    // Update Open Graph tags
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) ogTitle.setAttribute("content", seo.title);
+    const ogDesc = document.querySelector('meta[property="og:description"]');
+    if (ogDesc) ogDesc.setAttribute("content", seo.description);
+
+    // Update canonical link
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement("link");
+      canonical.setAttribute("rel", "canonical");
+      document.head.appendChild(canonical);
+    }
+    canonical.setAttribute("href", `https://www.adf.ijeae.com${pathname}`);
+
     window.scrollTo({ top: 0, behavior: "auto" });
   }, [pathname]);
   return null;

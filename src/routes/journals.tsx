@@ -1,36 +1,21 @@
 import { Link } from "react-router-dom";
 import { PageHeader } from "@/components/site/PageHeader";
-import { useAuthStore } from "@/store/useAuthStore";
-import { useContentStore } from "@/store/useContentStore";
-import { useCMSStore, JournalInfo } from "@/store/useCMSStore";
-import { ArrowRight, BookOpen, CheckCircle2, FileText, Globe2, Plus, Trash2 } from "lucide-react";
+import { ArrowRight, BookOpen, CheckCircle2, FileText, Globe2 } from "lucide-react";
 import { EditableText } from "@/components/cms/EditableText";
 
+const JOURNALS = [
+  {
+    title: "International Journal of English for Academic Excellence",
+    abbr: "IJEAE",
+    issn: "Online ISSN · Forthcoming",
+    scope: "Applied linguistics, academic writing, ELT, literature studies.",
+    frequency: "Quarterly",
+    access: "Open Access · CC BY 4.0",
+    submitUrl: "https://ijeae.com/index.php/ijeae/submission"
+  },
+];
+
 export default function Journals() {
-  const isAdmin = useAuthStore((s) => s.isAdmin);
-  const contentItems = useContentStore((s) => s.items);
-  const journalList = useCMSStore((s) => s.journalList || []);
-  const setJournalList = useCMSStore((s) => s.setJournalList);
-
-  const handleAddJournal = () => {
-    const newJournal: JournalInfo = {
-      id: Math.random().toString(36).substring(7),
-      abbr: `JNL_${Math.floor(Math.random() * 1000)}`,
-      title: "New Journal Title",
-      issn: "To be announced",
-      scope: "Please provide the scope and details for this new journal.",
-      frequency: "To be determined",
-      access: "Open Access",
-    };
-    setJournalList([...journalList, newJournal]);
-  };
-
-  const handleDeleteJournal = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this journal card?")) {
-      setJournalList(journalList.filter(j => j.id !== id));
-    }
-  };
-
   return (
     <>
       <PageHeader
@@ -69,24 +54,8 @@ export default function Journals() {
           </div>
 
           <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {journalList.map((j) => {
-              // Hide the old hardcoded "NEW" placeholder from regular users, 
-              // but still allow the dynamic ones to be seen.
-              if (j.abbr === "NEW") {
-                const isSaved = !!contentItems[`journal.${j.abbr}.title`];
-                if (!isAdmin && !isSaved) return null;
-              }
-              return (
-                <article key={j.id} className="surface-card overflow-hidden group relative">
-                  {isAdmin && (
-                    <button
-                      onClick={() => handleDeleteJournal(j.id)}
-                      className="absolute top-3 right-3 z-10 grid h-8 w-8 place-items-center rounded-md bg-white/20 text-white backdrop-blur-sm transition hover:bg-red-500 hover:text-white opacity-0 group-hover:opacity-100"
-                      title="Delete Journal"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  )}
+            {JOURNALS.map((j) => (
+              <article key={j.abbr} className="surface-card overflow-hidden group">
                 <div className="hero-gradient p-5 text-white">
                   <div className="text-xs uppercase tracking-widest text-white/70">{j.abbr}</div>
                   <EditableText contentKey={`journal.${j.abbr}.title`} fallback={j.title} as="h3" className="mt-1 font-serif text-lg font-semibold leading-snug" label="Journal title" />
@@ -108,19 +77,7 @@ export default function Journals() {
                   </div>
                 </div>
               </article>
-            )})}
-            
-            {isAdmin && (
-              <button
-                onClick={handleAddJournal}
-                className="surface-card flex h-full min-h-[300px] flex-col items-center justify-center gap-3 border-2 border-dashed border-slate-300 bg-slate-50 text-slate-500 transition hover:border-slate-400 hover:bg-slate-100 hover:text-slate-700"
-              >
-                <div className="grid h-12 w-12 place-items-center rounded-full bg-white shadow-sm">
-                  <Plus className="h-6 w-6" />
-                </div>
-                <span className="font-medium">Add New Journal</span>
-              </button>
-            )}
+            ))}
           </div>
         </div>
       </section>

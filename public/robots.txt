@@ -1,0 +1,19 @@
+# Robots.txt for Academic Development Forum (ADF)
+# Allows search engines to crawl and index all public pages
+User-agent: *
+Allow: /
+
+# Disallow private and administrative routes to preserve crawl budget
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /api/*
+
+# Googlebot specific directives
+User-agent: Googlebot
+Allow: /
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /api/*
+
+# XML Sitemap location for search engines
+Sitemap: https://www.adf.ijeae.com/sitemap.xml
