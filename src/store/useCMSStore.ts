@@ -133,8 +133,21 @@ const INITIAL_STATISTICS: StatisticsData = {
 };
 const INITIAL_ACTIVITIES: Activity[] = [];
 const INITIAL_PUBLICATIONS: Publication[] = [];
-const INITIAL_JOURNALS: JournalRelease[] = [];
-const INITIAL_JOURNAL_LIST: JournalInfo[] = [];
+const INITIAL_JOURNALS: JournalRelease[] = [
+  { id: "j1", title: "International Journal of English for Academic Excellence", issn: "1234-5678", volume: "2", issue: "1", date: "June 2026", coverImage: "/placeholder-journal.jpg", to: "/journals", pinned: true, visible: true }
+];
+const INITIAL_JOURNAL_LIST: JournalInfo[] = [
+  {
+    id: "1",
+    title: "International Journal of English for Academic Excellence",
+    abbr: "IJEAE",
+    issn: "Online ISSN · Forthcoming",
+    scope: "Applied linguistics, academic writing, ELT, literature studies.",
+    frequency: "Quarterly",
+    access: "Open Access · CC BY 4.0",
+    submitUrl: "https://ijeae.com/index.php/ijeae/submission"
+  }
+];
 
 export const useCMSStore = create<CMSState>()(
   persist(
