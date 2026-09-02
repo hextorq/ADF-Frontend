@@ -1,23 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { PageHeader } from "@/components/site/PageHeader";
 import { toast } from "sonner";
 import { UploadCloud, CheckCircle2, Check, Download } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ManuscriptFormatter, FormattedManuscriptResult } from "@/components/formatter/ManuscriptFormatter";
 
-interface Package {
-  id: number;
-  name: string;
-  price: string;
-  features: string[];
-}
-
 export default function LiterarySubmit() {
-  const [packages, setPackages] = useState<Package[]>([]);
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -36,10 +27,11 @@ export default function LiterarySubmit() {
   const [synopsis, setSynopsis] = useState("");
   const [keywords, setKeywords] = useState("");
 
-  const [packageId, setPackageId] = useState("");
   const [manuscript, setManuscript] = useState<File | null>(null);
   const [formattedResult, setFormattedResult] = useState<FormattedManuscriptResult | null>(null);
   const [cover, setCover] = useState<File | null>(null);
+  const [transactionId, setTransactionId] = useState("");
+  const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
   
   const [agreed, setAgreed] = useState({
     original: false,
@@ -47,13 +39,6 @@ export default function LiterarySubmit() {
     not_published: false,
     policies: false
   });
-
-  useEffect(() => {
-    fetch("/api/literary-submissions/packages")
-      .then(res => res.json())
-      .then(data => setPackages(data))
-      .catch(console.error);
-  }, []);
 
   const handleFormatted = (res: FormattedManuscriptResult) => {
     setFormattedResult(res);
@@ -74,6 +59,8 @@ export default function LiterarySubmit() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!manuscript) return toast.error("Please upload your manuscript");
+    if (!transactionId) return toast.error("Please enter your Transaction ID / UTR");
+    if (!paymentScreenshot) return toast.error("Please upload your payment screenshot");
     if (!Object.values(agreed).every(Boolean)) return toast.error("You must agree to all declarations");
 
     setIsSubmitting(true);
@@ -92,9 +79,17 @@ export default function LiterarySubmit() {
     formData.append("synopsis", synopsis);
     formData.append("keywords", keywords);
     
-    if (packageId) formData.append("packageId", packageId);
     formData.append("manuscript", manuscript);
     if (cover) formData.append("coverImage", cover);
+    formData.append("transaction_id", transactionId);
+    if (paymentScreenshot) formData.append("payment_screenshot", paymentScreenshot);
+
+    if (formattedResult) {
+      formData.append("formatted_manuscript_url", formattedResult.formattedFileUrl);
+      formData.append("formatting_version", formattedResult.formattingVersion);
+      formData.append("formatting_issues", JSON.stringify(formattedResult.issues));
+      formData.append("author_confirmed_formatting", "true");
+    }
 
     formData.append("agreedOriginal", agreed.original.toString());
     formData.append("agreedCopyright", agreed.copyright.toString());
@@ -171,7 +166,7 @@ export default function LiterarySubmit() {
 
           {step === 3 && (
             <form onSubmit={handleSubmit} className="space-y-8">
-              <h2 className="text-2xl font-serif font-bold text-[var(--ink)] mb-6">Manuscript Standardization & Publishing Package</h2>
+              <h2 className="text-2xl font-serif font-bold text-[var(--ink)] mb-6">Manuscript Upload & Payment</h2>
 
               {/* INTEGRATED ADF MANUSCRIPT FORMATTER */}
               <div className="space-y-4">
@@ -194,33 +189,56 @@ export default function LiterarySubmit() {
                 </label>
               </div>
 
-              {/* Package Selection */}
-              <div className="pt-6 border-t">
-                <h3 className="text-lg font-serif font-bold text-[var(--ink)] mb-4">Choose a Publishing Package</h3>
-                <div className="grid md:grid-cols-3 gap-4">
-                  {packages.map(pkg => (
-                    <div 
-                      key={pkg.id} 
-                      onClick={() => setPackageId(pkg.id.toString())}
-                      className={`p-5 rounded-xl border-2 cursor-pointer transition-all flex flex-col justify-between ${packageId === pkg.id.toString() ? 'border-[var(--primary)] bg-blue-50/20' : 'border-slate-200 hover:border-slate-300'}`}
-                    >
-                      <div>
-                        <div className="flex justify-between items-center mb-2">
-                          <h4 className="font-bold text-lg text-[var(--ink)]">{pkg.name}</h4>
-                          {packageId === pkg.id.toString() && <CheckCircle2 className="w-5 h-5 text-[var(--primary)]" />}
-                        </div>
-                        <div className="text-2xl font-serif font-bold text-[var(--primary)] mb-4">₹{Number(pkg.price).toLocaleString()}</div>
-                        <ul className="text-xs space-y-2 text-slate-600">
-                          {pkg.features.map((feat, i) => (
-                            <li key={i} className="flex items-center gap-1.5">
-                              <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                              <span>{feat}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  ))}
+              {/* REVERTED TO OLD 500 RUPEE GPAY QR CODE PAYMENT SECTION */}
+              <div className="bg-slate-50 text-slate-800 p-6 rounded-xl border border-slate-200 mt-6 shadow-sm">
+                <h3 className="font-bold text-lg mb-2 flex items-center gap-2 text-slate-900">
+                  <span className="bg-emerald-100 text-emerald-700 p-1.5 rounded-lg">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M9 15v2"/><path d="M15 9h2"/><path d="M15 15h2"/></svg>
+                  </span>
+                  Publication Processing Fee
+                </h3>
+                <p className="text-sm text-slate-600 mb-6 leading-relaxed">
+                  A submission and processing fee of <strong>₹500</strong> is required to publish your manuscript. Scan the QR code below using Google Pay (GPay), PhonePe, Paytm, or any UPI app to complete the payment.
+                </p>
+
+                <div className="flex flex-col sm:flex-row items-center gap-6 bg-white p-6 rounded-xl border border-slate-200">
+                  <div className="bg-white p-2 border rounded-lg shadow-sm shrink-0">
+                    <img 
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent("upi://pay?pa=7502398680@sbi&pn=ATTRAIT DOVIN FEDRICK SELVARAJ&cu=INR&am=500")}`} 
+                      alt="Payment QR Code" 
+                      className="w-36 h-36 rounded-lg object-contain"
+                    />
+                  </div>
+                  <div className="space-y-2 text-sm text-slate-600 text-center sm:text-left flex-1">
+                    <div className="font-semibold text-slate-800 text-base">UPI / GPay Payment Details</div>
+                    <div>UPI ID: <span className="font-mono font-medium text-slate-900 bg-slate-100 px-2 py-0.5 rounded">7502398680@sbi</span></div>
+                    <div>Beneficiary: <span className="font-medium text-slate-900">ATTRAIT DOVIN FEDRICK SELVARAJ</span></div>
+                    <div>Amount: <span className="font-bold text-lg text-[var(--primary)]">₹500.00</span></div>
+                    <div className="text-xs text-amber-600 font-medium">Please enter your 12-digit transaction ID / UTR and upload the payment screenshot for verification.</div>
+                  </div>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4 mt-6">
+                  <div>
+                    <label className="text-xs font-semibold text-slate-700 block mb-1">Transaction ID / UTR Number *</label>
+                    <Input 
+                      required 
+                      placeholder="e.g. 312345678901" 
+                      value={transactionId}
+                      onChange={e => setTransactionId(e.target.value)}
+                      className="bg-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-slate-700 block mb-1">Upload Payment Screenshot *</label>
+                    <Input 
+                      type="file" 
+                      accept="image/*"
+                      required
+                      onChange={e => setPaymentScreenshot(e.target.files?.[0] || null)}
+                      className="bg-white"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -235,7 +253,7 @@ export default function LiterarySubmit() {
                 
                 <div className="flex items-start gap-2">
                   <Checkbox id="copyright" checked={agreed.copyright} onCheckedChange={c => setAgreed({ ...agreed, copyright: !!c })} />
-                  <label htmlFor="copyright" className="text-xs text-slate-600">I agree that ADF will hold publication rights as per the chosen package agreements.</label>
+                  <label htmlFor="copyright" className="text-xs text-slate-600">I agree that ADF will hold publication rights as per the publication policy.</label>
                 </div>
 
                 <div className="flex items-start gap-2">
@@ -252,7 +270,7 @@ export default function LiterarySubmit() {
               <div className="pt-6 flex gap-4">
                 <Button type="button" variant="outline" onClick={() => setStep(2)}>Back</Button>
                 <Button type="submit" disabled={isSubmitting || !manuscript} className="flex-1 bg-[var(--primary)]">
-                  {isSubmitting ? "Submitting..." : "Submit Manuscript for Publishing"}
+                  {isSubmitting ? "Processing Payment & Submitting..." : "Pay ₹500 & Submit Manuscript"}
                 </Button>
               </div>
             </form>
@@ -265,7 +283,7 @@ export default function LiterarySubmit() {
               </div>
               <h2 className="text-2xl font-serif font-bold text-[var(--ink)]">Manuscript Successfully Submitted!</h2>
               <p className="text-slate-600 max-w-md mx-auto text-sm leading-relaxed">
-                Thank you for choosing ADF. Our editorial team will review your manuscript and formatted specifications and get back to you within 3–5 business days.
+                Thank you for choosing ADF. Your payment and manuscript have been received. Our editorial team will review your manuscript and formatted specifications and get back to you within 3–5 business days.
               </p>
               {formattedResult && (
                 <div className="pt-2 pb-4">
