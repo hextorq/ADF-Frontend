@@ -16,4 +16,4 @@ Disallow: /admin/*
 Disallow: /api/*
 
 # XML Sitemap location for search engines
-Sitemap: https://academicdevelopmentforum.org/sitemap.xml
+Sitemap: https://www.adf.ijeae.com/sitemap.xml

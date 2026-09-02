@@ -166,7 +166,7 @@ function PageEffects() {
       canonical.setAttribute("rel", "canonical");
       document.head.appendChild(canonical);
     }
-    canonical.setAttribute("href", `https://academicdevelopmentforum.org${pathname}`);
+    canonical.setAttribute("href", `https://www.adf.ijeae.com${pathname}`);
 
     window.scrollTo({ top: 0, behavior: "auto" });
   }, [pathname]);
