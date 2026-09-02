@@ -4,9 +4,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { PageHeader } from "@/components/site/PageHeader";
 import { toast } from "sonner";
-import { UploadCloud, CheckCircle2, Check } from "lucide-react";
+import { UploadCloud, CheckCircle2, Check, Download } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { ManuscriptFormatter, FormattedManuscriptResult } from "@/components/formatter/ManuscriptFormatter";
 
 interface Package {
   id: number;
@@ -37,6 +38,7 @@ export default function LiterarySubmit() {
 
   const [packageId, setPackageId] = useState("");
   const [manuscript, setManuscript] = useState<File | null>(null);
+  const [formattedResult, setFormattedResult] = useState<FormattedManuscriptResult | null>(null);
   const [cover, setCover] = useState<File | null>(null);
   
   const [agreed, setAgreed] = useState({
@@ -52,6 +54,22 @@ export default function LiterarySubmit() {
       .then(data => setPackages(data))
       .catch(console.error);
   }, []);
+
+  const handleFormatted = (res: FormattedManuscriptResult) => {
+    setFormattedResult(res);
+    if (!bookTitle && res.detectedStructure.title) {
+      setBookTitle(res.detectedStructure.title);
+    }
+    if (!wordCount && res.stats.wordCount) {
+      setWordCount(res.stats.wordCount.toString());
+    }
+    if (!keywords && res.detectedStructure.keywords.length > 0) {
+      setKeywords(res.detectedStructure.keywords.join(", "));
+    }
+    if (!synopsis && res.detectedStructure.abstract) {
+      setSynopsis(res.detectedStructure.abstract);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,33 +92,30 @@ export default function LiterarySubmit() {
     formData.append("synopsis", synopsis);
     formData.append("keywords", keywords);
     
-    if (packageId) {
-      formData.append("packageId", packageId);
-    }
-    
-    formData.append("agreedOriginal", String(agreed.original));
-    formData.append("agreedCopyright", String(agreed.copyright));
-    formData.append("agreedNotPublished", String(agreed.not_published));
-    formData.append("agreedPolicies", String(agreed.policies));
-
+    if (packageId) formData.append("packageId", packageId);
     formData.append("manuscript", manuscript);
     if (cover) formData.append("coverImage", cover);
+
+    formData.append("agreedOriginal", agreed.original.toString());
+    formData.append("agreedCopyright", agreed.copyright.toString());
+    formData.append("agreedNotPublished", agreed.not_published.toString());
+    formData.append("agreedPolicies", agreed.policies.toString());
 
     try {
       const res = await fetch("/api/literary-submissions", {
         method: "POST",
         body: formData
       });
+
       const data = await res.json();
-      
       if (res.ok) {
         toast.success(`Submission Successful! ID: ${data.id}`);
-        setStep(4);
+        setStep(4); // Success step
       } else {
         toast.error(data.error || "Submission failed");
       }
     } catch (err) {
-      toast.error("An error occurred");
+      toast.error("An error occurred during submission");
     } finally {
       setIsSubmitting(false);
     }
@@ -110,14 +125,15 @@ export default function LiterarySubmit() {
     <div className="bg-slate-50 min-h-screen pb-16">
       <PageHeader
         cmsKey="page.literary.submit"
-        eyebrow="Literary Publications"
+        eyebrow="Publish With ADF"
         title="Submit Your Manuscript"
-        description="Begin your publishing journey with ADF."
+        description="Begin your journey as a published author with ADF. Fill out the form below to submit your manuscript for review."
         crumbs={[{ label: "Literary Publications", to: "/literary-publications" }, { label: "Submit" }]}
       />
 
-      <div className="container-academic max-w-3xl mt-12">
-        <div className="bg-white rounded-xl shadow-sm border p-8">
+      <div className="container-academic max-w-4xl mt-12">
+        <div className="bg-white rounded-xl shadow-sm border p-6 sm:p-10">
+          
           {step === 1 && (
             <form onSubmit={() => setStep(2)} className="space-y-6">
               <h2 className="text-2xl font-serif font-bold text-[var(--ink)] mb-6">Author Details</h2>
@@ -148,75 +164,128 @@ export default function LiterarySubmit() {
               </div>
               <div className="pt-6 flex gap-4">
                 <Button type="button" variant="outline" onClick={() => setStep(1)}>Back</Button>
-                <Button type="submit" className="flex-1 bg-[var(--primary)]">Continue to Upload & Package</Button>
+                <Button type="submit" className="flex-1 bg-[var(--primary)]">Continue to Upload & Formatter</Button>
               </div>
             </form>
           )}
 
           {step === 3 && (
             <form onSubmit={handleSubmit} className="space-y-8">
-              <h2 className="text-2xl font-serif font-bold text-[var(--ink)] mb-6">Upload & Package</h2>
+              <h2 className="text-2xl font-serif font-bold text-[var(--ink)] mb-6">Manuscript Standardization & Publishing Package</h2>
 
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Upload Manuscript (Required)</label>
-                  <label className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-slate-500 cursor-pointer hover:bg-slate-50 relative transition-colors">
-                    <UploadCloud className="w-8 h-8 mb-2" />
-                    <span className="text-sm font-medium">Choose file</span>
-                    <span className="text-xs mt-1">{manuscript ? manuscript.name : 'No file chosen'}</span>
-                    <input type="file" required onChange={e => setManuscript(e.target.files?.[0] || null)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept=".doc,.docx,.pdf" />
-                  </label>
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Upload Cover (Optional)</label>
-                  <label className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-slate-500 cursor-pointer hover:bg-slate-50 relative transition-colors">
-                    <UploadCloud className="w-8 h-8 mb-2" />
-                    <span className="text-sm font-medium">Choose file</span>
-                    <span className="text-xs mt-1">{cover ? cover.name : 'No file chosen'}</span>
-                    <input type="file" onChange={e => setCover(e.target.files?.[0] || null)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*" />
-                  </label>
+              {/* INTEGRATED ADF MANUSCRIPT FORMATTER */}
+              <div className="space-y-4">
+                <ManuscriptFormatter
+                  embedded={true}
+                  initialFile={manuscript}
+                  onFileChange={(f) => setManuscript(f)}
+                  onFormatted={handleFormatted}
+                />
+              </div>
+
+              {/* Cover Upload */}
+              <div className="pt-4 border-t">
+                <label className="text-sm font-medium mb-2 block">Upload Cover Image (Optional)</label>
+                <label className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-slate-500 cursor-pointer hover:bg-slate-50 relative transition-colors max-w-sm">
+                  <UploadCloud className="w-8 h-8 mb-2" />
+                  <span className="text-sm font-medium">Choose Cover Image</span>
+                  <span className="text-xs mt-1">{cover ? cover.name : 'No file chosen'}</span>
+                  <input type="file" onChange={e => setCover(e.target.files?.[0] || null)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*" />
+                </label>
+              </div>
+
+              {/* Package Selection */}
+              <div className="pt-6 border-t">
+                <h3 className="text-lg font-serif font-bold text-[var(--ink)] mb-4">Choose a Publishing Package</h3>
+                <div className="grid md:grid-cols-3 gap-4">
+                  {packages.map(pkg => (
+                    <div 
+                      key={pkg.id} 
+                      onClick={() => setPackageId(pkg.id.toString())}
+                      className={`p-5 rounded-xl border-2 cursor-pointer transition-all flex flex-col justify-between ${packageId === pkg.id.toString() ? 'border-[var(--primary)] bg-blue-50/20' : 'border-slate-200 hover:border-slate-300'}`}
+                    >
+                      <div>
+                        <div className="flex justify-between items-center mb-2">
+                          <h4 className="font-bold text-lg text-[var(--ink)]">{pkg.name}</h4>
+                          {packageId === pkg.id.toString() && <CheckCircle2 className="w-5 h-5 text-[var(--primary)]" />}
+                        </div>
+                        <div className="text-2xl font-serif font-bold text-[var(--primary)] mb-4">₹{Number(pkg.price).toLocaleString()}</div>
+                        <ul className="text-xs space-y-2 text-slate-600">
+                          {pkg.features.map((feat, i) => (
+                            <li key={i} className="flex items-center gap-1.5">
+                              <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                              <span>{feat}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              <div className="bg-slate-50 text-slate-800 p-5 rounded-xl border border-slate-200">
-                <h3 className="font-semibold mb-2">Publishing Packages & Payment</h3>
-                <p className="text-sm">
-                  We are currently accepting initial sample submissions. Once our editorial team reviews your manuscript, we will contact you via email to discuss the suitable publishing packages and payment options for your book.
-                </p>
-              </div>
+              {/* Declarations */}
+              <div className="pt-6 border-t space-y-3">
+                <h3 className="text-lg font-serif font-bold text-[var(--ink)] mb-2">Author Declarations</h3>
+                
+                <div className="flex items-start gap-2">
+                  <Checkbox id="original" checked={agreed.original} onCheckedChange={c => setAgreed({ ...agreed, original: !!c })} />
+                  <label htmlFor="original" className="text-xs text-slate-600">I confirm that this manuscript is my original work and does not infringe upon any copyright.</label>
+                </div>
+                
+                <div className="flex items-start gap-2">
+                  <Checkbox id="copyright" checked={agreed.copyright} onCheckedChange={c => setAgreed({ ...agreed, copyright: !!c })} />
+                  <label htmlFor="copyright" className="text-xs text-slate-600">I agree that ADF will hold publication rights as per the chosen package agreements.</label>
+                </div>
 
-              <div className="space-y-3 pt-4 border-t">
-                {Object.keys(agreed).map((key) => (
-                  <div key={key} className="flex items-start gap-2">
-                    <Checkbox id={key} checked={agreed[key as keyof typeof agreed]} onCheckedChange={(c) => setAgreed(prev => ({ ...prev, [key]: !!c }))} />
-                    <label htmlFor={key} className="text-sm text-slate-600 leading-tight">
-                      I agree to the {key.replace('_', ' ')} declaration.
-                    </label>
-                  </div>
-                ))}
+                <div className="flex items-start gap-2">
+                  <Checkbox id="not_published" checked={agreed.not_published} onCheckedChange={c => setAgreed({ ...agreed, not_published: !!c })} />
+                  <label htmlFor="not_published" className="text-xs text-slate-600">I confirm that this book has not been previously published elsewhere in print or digital format.</label>
+                </div>
+
+                <div className="flex items-start gap-2">
+                  <Checkbox id="policies" checked={agreed.policies} onCheckedChange={c => setAgreed({ ...agreed, policies: !!c })} />
+                  <label htmlFor="policies" className="text-xs text-slate-600">I agree to all ADF editorial, formatting, and payment policies.</label>
+                </div>
               </div>
 
               <div className="pt-6 flex gap-4">
                 <Button type="button" variant="outline" onClick={() => setStep(2)}>Back</Button>
-                <Button type="submit" disabled={isSubmitting} className="flex-1 bg-[var(--primary)]">
-                  {isSubmitting ? "Submitting..." : "Submit Manuscript"}
+                <Button type="submit" disabled={isSubmitting || !manuscript} className="flex-1 bg-[var(--primary)]">
+                  {isSubmitting ? "Submitting..." : "Submit Manuscript for Publishing"}
                 </Button>
               </div>
             </form>
           )}
 
           {step === 4 && (
-            <div className="text-center py-12">
-              <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                <UploadCloud className="w-8 h-8" />
+            <div className="text-center py-12 space-y-4">
+              <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle2 className="w-8 h-8" />
               </div>
-              <h2 className="text-3xl font-serif font-bold text-[var(--ink)] mb-4">Submission Received!</h2>
-              <p className="text-slate-600 mb-8 max-w-md mx-auto">
-                Your manuscript has been submitted. Our editorial team will review it and get back to you shortly.
+              <h2 className="text-2xl font-serif font-bold text-[var(--ink)]">Manuscript Successfully Submitted!</h2>
+              <p className="text-slate-600 max-w-md mx-auto text-sm leading-relaxed">
+                Thank you for choosing ADF. Our editorial team will review your manuscript and formatted specifications and get back to you within 3–5 business days.
               </p>
-              <Button onClick={() => window.location.href = '/'} className="bg-[var(--primary)]">Return Home</Button>
+              {formattedResult && (
+                <div className="pt-2 pb-4">
+                  <a
+                    href={formattedResult.formattedFileUrl}
+                    download={formattedResult.formattedFilename}
+                    className="btn-outline !py-2.5 !px-5 text-xs font-semibold inline-flex items-center gap-2"
+                  >
+                    <Download className="w-4 h-4" /> Download ADF Formatted Copy (.docx)
+                  </a>
+                </div>
+              )}
+              <div className="pt-4">
+                <Button onClick={() => window.location.href = "/literary-publications"} variant="outline">
+                  Return to Literary Publications
+                </Button>
+              </div>
             </div>
           )}
+
         </div>
       </div>
     </div>

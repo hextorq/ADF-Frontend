@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
-import { ArrowUpRight, Eye, LayoutDashboard, LogOut, ShieldCheck, BookOpen, Users, ShoppingCart, ChevronsLeft, Headset, ArrowRight, UserCircle } from "lucide-react";
+import { ArrowUpRight, Eye, LayoutDashboard, LogOut, ShieldCheck, BookOpen, Users, ShoppingCart, ChevronsLeft, Headset, ArrowRight, UserCircle, FileText } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 
 const NAV_LINKS = [
@@ -134,3 +134,4 @@ export default function AdminLayout() {
     </div>
   );
 }
+

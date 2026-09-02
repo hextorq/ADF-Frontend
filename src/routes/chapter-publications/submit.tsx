@@ -4,10 +4,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { PageHeader } from "@/components/site/PageHeader";
 import { toast } from "sonner";
-import { Plus, Trash2, UploadCloud, Download, FileText } from "lucide-react";
+import { Plus, Trash2, UploadCloud, Download, FileText, CheckCircle2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useCMSStore } from "@/store/useCMSStore";
+import { ManuscriptFormatter, FormattedManuscriptResult } from "@/components/formatter/ManuscriptFormatter";
 
 interface Volume {
   id: string | number;
@@ -36,7 +37,6 @@ export default function ChapterSubmit() {
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
-          // Only show open volumes
           setVolumes(data.filter(v => v.status === 'open' || v.status === 'open'));
         }
       })
@@ -53,6 +53,7 @@ export default function ChapterSubmit() {
   const [keywords, setKeywords] = useState("");
   const [authors, setAuthors] = useState<Author[]>([{ name: "", email: "", phone: "", country: "", institution: "", address: "", bio: "", is_primary: true }]);
   const [manuscript, setManuscript] = useState<File | null>(null);
+  const [formattedResult, setFormattedResult] = useState<FormattedManuscriptResult | null>(null);
   const [agreed, setAgreed] = useState(false);
   const [transactionId, setTransactionId] = useState("");
   const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
@@ -71,9 +72,23 @@ export default function ChapterSubmit() {
     setAuthors(newAuthors);
   };
 
+  const handleFormatted = (result: FormattedManuscriptResult) => {
+    setFormattedResult(result);
+    // Optionally autofill title/abstract/keywords if empty
+    if (!chapterTitle && result.detectedStructure.title) {
+      setChapterTitle(result.detectedStructure.title);
+    }
+    if (!abstract && result.detectedStructure.abstract) {
+      setAbstract(result.detectedStructure.abstract);
+    }
+    if (!keywords && result.detectedStructure.keywords.length > 0) {
+      setKeywords(result.detectedStructure.keywords.join(", "));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!manuscript) return toast.error("Please upload your manuscript");
+    if (!manuscript) return toast.error("Please upload and format your manuscript");
     if (!agreed) return toast.error("You must agree to the policies");
 
     setIsSubmitting(true);
@@ -85,12 +100,19 @@ export default function ChapterSubmit() {
     formData.append("authors", JSON.stringify(authors));
     formData.append("manuscript", manuscript);
     formData.append("transaction_id", transactionId);
+    
+    if (formattedResult) {
+      formData.append("formatted_manuscript_url", formattedResult.formattedFileUrl);
+      formData.append("formatting_version", formattedResult.formattingVersion);
+      formData.append("formatting_issues", JSON.stringify(formattedResult.issues));
+      formData.append("author_confirmed_formatting", "true");
+    }
+
     if (paymentScreenshot) {
       formData.append("payment_screenshot", paymentScreenshot);
     }
 
     try {
-      // Step 1: Submit Form
       const res = await fetch("/api/publications/chapters/submit", {
         method: "POST",
         body: formData
@@ -104,7 +126,7 @@ export default function ChapterSubmit() {
         toast.error(data.error || "Submission failed");
       }
     } catch (err) {
-      toast.error("An error occurred");
+      toast.error("An error occurred during submission");
     } finally {
       setIsSubmitting(false);
     }
@@ -120,8 +142,8 @@ export default function ChapterSubmit() {
         crumbs={[{ label: "Chapter Publications", to: "/chapter-publications" }, { label: "Submit" }]}
       />
 
-      <div className="container-academic max-w-3xl mt-12">
-        <div className="bg-white rounded-xl shadow-sm border p-8">
+      <div className="container-academic max-w-4xl mt-12">
+        <div className="bg-white rounded-xl shadow-sm border p-6 sm:p-10">
           {step === 1 && (
             <form onSubmit={() => setStep(2)} className="space-y-6">
               <h2 className="text-2xl font-serif font-bold text-[var(--ink)] mb-6">Chapter Details</h2>
@@ -138,9 +160,7 @@ export default function ChapterSubmit() {
                         <SelectItem value="none" disabled>No open volumes available</SelectItem>
                       )}
                       {volumes.map(v => (
-                        <SelectItem key={v.id} value={v.id.toString()}>
-                          {v.title} {v.theme ? `(${v.theme})` : ''} - Deadline: {new Date(v.submission_deadline).toLocaleDateString()}
-                        </SelectItem>
+                        <SelectItem key={v.id} value={v.id.toString()}>{v.title}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -148,29 +168,50 @@ export default function ChapterSubmit() {
 
                 <div>
                   <label className="text-sm font-medium mb-1 block">Chapter Title</label>
-                  <Input required value={chapterTitle} onChange={e => setChapterTitle(e.target.value)} />
+                  <Input 
+                    required 
+                    placeholder="e.g., Artificial Intelligence in Higher Education" 
+                    value={chapterTitle}
+                    onChange={e => setChapterTitle(e.target.value)}
+                    className="h-12 border-slate-300"
+                  />
                 </div>
 
                 <div>
                   <label className="text-sm font-medium mb-1 block">Abstract</label>
-                  <Textarea required className="min-h-[120px]" value={abstract} onChange={e => setAbstract(e.target.value)} />
+                  <Textarea 
+                    required 
+                    placeholder="Provide an overview of your chapter (150-250 words)..."
+                    value={abstract}
+                    onChange={e => setAbstract(e.target.value)}
+                    rows={5}
+                    className="border-slate-300"
+                  />
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Keywords (comma separated)</label>
-                  <Input required value={keywords} onChange={e => setKeywords(e.target.value)} />
+                  <label className="text-sm font-medium mb-1 block">Keywords</label>
+                  <Input 
+                    required 
+                    placeholder="Comma separated keywords (e.g., AI, Education, Pedagogy)" 
+                    value={keywords}
+                    onChange={e => setKeywords(e.target.value)}
+                    className="h-12 border-slate-300"
+                  />
                 </div>
               </div>
 
-              <div className="pt-6">
-                <Button type="submit" className="w-full bg-[var(--primary)]">Continue to Authors</Button>
+              <div className="flex justify-end pt-4">
+                <Button type="submit" className="btn-primary px-8">
+                  Next: Authors & Manuscript Formatter
+                </Button>
               </div>
             </form>
           )}
 
           {step === 2 && (
             <form onSubmit={handleSubmit} className="space-y-8">
-              <h2 className="text-2xl font-serif font-bold text-[var(--ink)] mb-6">Authors & Upload</h2>
+              <h2 className="text-2xl font-serif font-bold text-[var(--ink)] mb-6">Authors & Manuscript Submission</h2>
 
               <div className="space-y-6">
                 {authors.map((author, index) => (
@@ -219,21 +260,26 @@ export default function ChapterSubmit() {
                 </Button>
               </div>
 
+              {/* INTEGRATED ADF MANUSCRIPT FORMATTER */}
               <div className="pt-6 border-t space-y-4">
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Upload Manuscript (Word/PDF)</label>
-                  <label className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-slate-500 cursor-pointer hover:bg-slate-50 relative transition-colors">
-                    <UploadCloud className="w-8 h-8 mb-2" />
-                    <span className="text-sm font-medium">Choose file</span>
-                    <span className="text-xs mt-1">{manuscript ? manuscript.name : 'No file chosen'}</span>
-                    <input type="file" required onChange={e => setManuscript(e.target.files?.[0] || null)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept=".doc,.docx,.pdf" />
-                  </label>
-                </div>
+                <label className="text-base font-bold text-slate-900 font-serif block">
+                  Manuscript Upload & Standardization
+                </label>
+                
+                <ManuscriptFormatter
+                  embedded={true}
+                  initialFile={manuscript}
+                  onFileChange={(f) => setManuscript(f)}
+                  onFormatted={handleFormatted}
+                />
+              </div>
 
-                <div className="flex items-start gap-2 pt-4">
+              {/* Declarations & Payment */}
+              <div className="pt-6 border-t space-y-4">
+                <div className="flex items-start gap-2 pt-2">
                   <Checkbox id="policies" checked={agreed} onCheckedChange={(c) => setAgreed(c as boolean)} />
                   <label htmlFor="policies" className="text-sm text-slate-600 leading-tight">
-                    I agree to the publisher policies and confirm this is my original work.
+                    I agree to the publisher policies, author guidelines, and confirm this is my original work.
                   </label>
                 </div>
 
@@ -245,67 +291,50 @@ export default function ChapterSubmit() {
                     Payment Instructions
                   </h3>
                   <p className="text-sm text-slate-600 mb-6 leading-relaxed">
-                    A permanent submission and processing fee of <strong>₹500</strong> is required to publish your chapter in this volume. Scan the QR code below using any UPI app (GPay, PhonePe, Paytm, etc.) to complete the payment.
+                    A permanent submission and processing fee of <strong>₹1500</strong> is required to publish your chapter in this volume. Scan the QR code below using any UPI app (GPay, PhonePe, Paytm, etc.) to complete the payment.
                   </p>
 
-                  <div className="flex flex-col md:flex-row gap-6 items-center bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
-                    <div className="bg-white p-3 rounded-2xl border-2 border-slate-100 shadow-sm shrink-0">
-                      <img 
-                        src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent("upi://pay?pa=7502398680@sbi&pn=ATTRAIT DOVIN FEDRICK SELVARAJ&cu=INR&am=500")}`} 
-                        alt="Payment QR Code" 
-                        className="w-40 h-40 rounded-lg"
-                      />
+                  <div className="flex flex-col sm:flex-row items-center gap-6 bg-white p-6 rounded-xl border border-slate-200">
+                    <div className="bg-white p-2 border rounded-lg shadow-sm">
+                      <img src="/qr.png" alt="Payment QR" className="w-36 h-36 object-contain" />
                     </div>
-                    
-                    <div className="flex-1 space-y-4 w-full">
-                      <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">UPI ID</label>
-                        <div className="font-mono text-slate-700 font-medium bg-slate-50 p-2 rounded-md border flex justify-between items-center">
-                          7502398680@sbi
-                          <button type="button" onClick={() => {navigator.clipboard.writeText('7502398680@sbi'); toast.success('UPI ID copied!');}} className="text-slate-400 hover:text-[var(--primary)] p-1 transition-colors">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-                          </button>
-                        </div>
-                      </div>
-                      <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Receiver Name</label>
-                        <div className="text-sm font-medium text-slate-700">
-                          ATTRAIT DOVIN FEDRICK SELVARAJ
-                        </div>
-                      </div>
-                      <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Amount</label>
-                        <div className="text-xl font-bold text-[var(--primary)]">
-                          ₹500.00
-                        </div>
-                      </div>
+                    <div className="space-y-2 text-sm text-slate-600 text-center sm:text-left">
+                      <div className="font-semibold text-slate-800 text-base">UPI Payment Details</div>
+                      <div>UPI ID: <span className="font-mono font-medium text-slate-900 bg-slate-100 px-2 py-0.5 rounded">9361665487@okbizaxis</span></div>
+                      <div>Beneficiary: <span className="font-medium text-slate-900">Academic Development Forum</span></div>
+                      <div className="text-xs text-amber-600 font-medium">Please save your Transaction ID and Payment Screenshot for verification.</div>
                     </div>
                   </div>
 
-                  <div className="mt-6 space-y-5">
+                  <div className="grid md:grid-cols-2 gap-4 mt-6">
                     <div>
-                      <label className="text-sm font-medium mb-1 block">Transaction Reference ID (UTR / UPI Ref Number)</label>
-                      <Input required placeholder="e.g. 312345678901" value={transactionId} onChange={e => setTransactionId(e.target.value)} className="bg-white border-slate-200" />
-                      <p className="text-xs text-slate-500 mt-1">Please enter the 12-digit reference number after making the payment.</p>
+                      <label className="text-xs font-semibold text-slate-700 block mb-1">Transaction ID / UTR Number *</label>
+                      <Input 
+                        required 
+                        placeholder="e.g., 4212XXXXXXXX" 
+                        value={transactionId}
+                        onChange={e => setTransactionId(e.target.value)}
+                        className="bg-white"
+                      />
                     </div>
-                    
                     <div>
-                      <label className="text-sm font-medium mb-2 block">Upload Payment Screenshot</label>
-                      <label className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-slate-500 cursor-pointer hover:bg-white relative transition-colors bg-white/50 border-slate-200">
-                        <UploadCloud className="w-6 h-6 mb-2 text-slate-400" />
-                        <span className="text-sm font-medium text-slate-600">Choose screenshot</span>
-                        <span className="text-xs mt-1 text-slate-400">{paymentScreenshot ? paymentScreenshot.name : 'No file chosen'}</span>
-                        <input type="file" required onChange={e => setPaymentScreenshot(e.target.files?.[0] || null)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*" />
-                      </label>
-                      <p className="text-xs text-slate-500 mt-2">Please upload a clear screenshot of your successful transaction.</p>
+                      <label className="text-xs font-semibold text-slate-700 block mb-1">Upload Payment Screenshot (Optional)</label>
+                      <Input 
+                        type="file" 
+                        accept="image/*"
+                        onChange={e => setPaymentScreenshot(e.target.files?.[0] || null)}
+                        className="bg-white"
+                      />
                     </div>
                   </div>
                 </div>
 
-                <div className="flex gap-4 pt-4">
-                  <Button type="button" variant="outline" onClick={() => setStep(1)}>Back</Button>
-                  <Button type="submit" disabled={isSubmitting} className="flex-1 bg-[var(--primary)]">
-                    {isSubmitting ? "Processing Payment & Submitting..." : "Pay ₹500 & Submit Chapter"}
+                <div className="flex justify-between pt-6">
+                  <Button type="button" variant="outline" onClick={() => setStep(1)}>
+                    Back to Details
+                  </Button>
+                  <Button type="submit" disabled={isSubmitting || !manuscript} className="btn-primary px-8">
+                    {isSubmitting ? "Submitting..." : "Confirm & Submit Chapter"}
                   </Button>
                 </div>
               </div>
@@ -313,15 +342,30 @@ export default function ChapterSubmit() {
           )}
 
           {step === 3 && (
-            <div className="text-center py-12">
-              <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle className="w-8 h-8" />
+            <div className="text-center py-12 space-y-4">
+              <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle2 className="w-8 h-8" />
               </div>
-              <h2 className="text-3xl font-serif font-bold text-[var(--ink)] mb-4">Submission Received!</h2>
-              <p className="text-slate-600 mb-8 max-w-md mx-auto">
-                Your chapter has been submitted successfully. Our editorial team will begin the review process shortly.
+              <h2 className="text-2xl font-serif font-bold text-[var(--ink)]">Chapter Successfully Submitted!</h2>
+              <p className="text-slate-600 max-w-md mx-auto text-sm leading-relaxed">
+                Thank you for your submission. Your manuscript has been standardized to ADF requirements and queued for double-blind editorial peer review.
               </p>
-              <Button onClick={() => window.location.href = '/'} className="bg-[var(--primary)]">Return Home</Button>
+              {formattedResult && (
+                <div className="pt-2 pb-4">
+                  <a
+                    href={formattedResult.formattedFileUrl}
+                    download={formattedResult.formattedFilename}
+                    className="btn-outline !py-2.5 !px-5 text-xs font-semibold inline-flex items-center gap-2"
+                  >
+                    <Download className="w-4 h-4" /> Download ADF Formatted Copy (.docx)
+                  </a>
+                </div>
+              )}
+              <div className="pt-4">
+                <Button onClick={() => window.location.href = "/chapter-publications"} variant="outline">
+                  Return to Chapter Publications
+                </Button>
+              </div>
             </div>
           )}
         </div>
@@ -329,6 +373,3 @@ export default function ChapterSubmit() {
     </div>
   );
 }
-
-// Just importing CheckCircle inside component or from lucide-react above.
-import { CheckCircle } from "lucide-react";

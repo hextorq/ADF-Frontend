@@ -1,4 +1,4 @@
-﻿import { Component, type ErrorInfo, type ReactNode, useEffect } from "react";
+import { Component, type ErrorInfo, type ReactNode, useEffect } from "react";
 import { Link, Route, Routes, useLocation } from "react-router-dom";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
@@ -31,6 +31,7 @@ import AdminAuthorManagement from "@/routes/admin/bookstore/authors";
 import AdminOrderManagement from "@/routes/admin/bookstore/orders";
 import AdminChapterPublications from "@/routes/admin/publications/chapters";
 import AdminLiteraryPublications from "@/routes/admin/publications/literary";
+import AdminManuscriptFormatter from "@/routes/admin/publications/AdminManuscriptFormatter";
 import AdminProgrammes from "@/routes/admin/programmes/index";
 import { Toaster } from "@/components/ui/sonner";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -368,6 +369,7 @@ export default function App() {
               <Route path="orders" element={<AdminOrderManagement />} />
               <Route path="publications/chapters" element={<AdminChapterPublications />} />
               <Route path="publications/literary" element={<AdminLiteraryPublications />} />
+              <Route path="manuscript-formatter" element={<AdminManuscriptFormatter />} />
               <Route path="programmes" element={<AdminProgrammes />} />
             </Route>
           </Route>
@@ -378,3 +380,4 @@ export default function App() {
     </ErrorBoundary>
   );
 }
+
