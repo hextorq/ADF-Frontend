@@ -11,7 +11,7 @@ export const SITE_CONFIG = {
   defaultKeywords: "Academic Development Forum, ADF, peer-reviewed journals, International Journal of English for Academic Excellence, IJEAE, call for book chapters, literary publications, academic conferences, scholarly publishing, open access journals, research dissemination",
   defaultImage: "https://www.adf.ijeae.com/logo.png",
   googleSiteVerification: import.meta.env.VITE_GOOGLE_SITE_VERIFICATION || "c4bfc8ee12cbb204",
-  contactEmail: "contact@adf.org",
+  contactEmail: "academicdevelopmentforum24@gmail.com",
   founder: "Dr. Attrait Dovin Fedrick",
   foundingDate: "2025",
   address: {

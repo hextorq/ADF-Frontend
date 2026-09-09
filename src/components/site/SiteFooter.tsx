@@ -1,4 +1,4 @@
-﻿import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Globe2, Mail, Send, Youtube, Linkedin, Instagram, MessageCircle } from "lucide-react";
 import { EditableImage, EditableText } from "@/components/cms/EditableText";
 
@@ -153,9 +153,10 @@ export function SiteFooter() {
             <span>Â© {new Date().getFullYear()} Academic Development Forum. All rights reserved.</span>
           </div>
           <div className="flex items-center flex-wrap gap-x-5 gap-y-3">
-            <a href="mailto:contact@adf.org" className="inline-flex items-center gap-1.5 hover:text-white transition-colors">
-              <Mail className="h-3.5 w-3.5" /> contact@adf.org
+            <a href="mailto:academicdevelopmentforum24@gmail.com" className="inline-flex items-center gap-1.5 hover:text-white transition-colors">
+              <Mail className="h-3.5 w-3.5" /> academicdevelopmentforum24@gmail.com
             </a>
+
             <div className="h-3 w-px bg-white/20 hidden sm:block" />
             <div className="flex items-center gap-4">
               <a href="https://www.youtube.com/@adf_publisher" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 hover:text-[#ff0000] transition-colors" aria-label="ADF Publisher YouTube Channel">

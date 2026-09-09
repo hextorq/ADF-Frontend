@@ -1,4 +1,5 @@
-﻿import { PageHeader } from "@/components/site/PageHeader";
+
+import { PageHeader } from "@/components/site/PageHeader";
 import { Mail, MapPin, Youtube, Linkedin, Instagram, MessageCircle } from "lucide-react";
 import { useState } from "react";
 import { EditableText } from "@/components/cms/EditableText";
@@ -72,7 +73,8 @@ export default function Page() {
         <div className="container-academic grid lg:grid-cols-5 gap-8">
           <div className="lg:col-span-2 space-y-4">
             {[
-              { icon: Mail, k: "Email", v: <a href="mailto:contact@adf.org" className="hover:text-[var(--primary)] hover:underline"><EditableText contentKey="page.contact.email.label" fallback="contact@adf.org" as="span" label="Email text" /></a> },
+              { icon: Mail, k: "Email", v: <a href="mailto:academicdevelopmentforum24@gmail.com" className="hover:text-[var(--primary)] hover:underline break-all"><EditableText contentKey="page.contact.email.label" fallback="academicdevelopmentforum24@gmail.com" as="span" label="Email text" /></a> },
+
               { icon: Youtube, k: "YouTube", v: <a href="https://www.youtube.com/@adf_publisher" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--primary)] hover:underline"><EditableText contentKey="page.contact.youtube.label" fallback="@adf_publisher" as="span" label="YouTube text" /></a> },
               { icon: Linkedin, k: "LinkedIn", v: <a href="https://www.linkedin.com/in/academic-development-forum-adf-8a4651418" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--primary)] hover:underline"><EditableText contentKey="page.contact.linkedin.label" fallback="Academic Development Forum" as="span" label="LinkedIn text" /></a> },
               { icon: Instagram, k: "Instagram", v: <a href="https://www.instagram.com/adf_publisher" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--primary)] hover:underline"><EditableText contentKey="page.contact.instagram.label" fallback="@adf_publisher" as="span" label="Instagram text" /></a> },
