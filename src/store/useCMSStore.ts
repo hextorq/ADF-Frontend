@@ -143,7 +143,7 @@ const INITIAL_JOURNAL_LIST: JournalInfo[] = [
     abbr: "IJEAE",
     issn: "Online ISSN · Forthcoming",
     scope: "Applied linguistics, academic writing, ELT, literature studies.",
-    frequency: "Quarterly",
+    frequency: "Bi-Monthly",
     access: "Open Access · CC BY 4.0",
     submitUrl: "https://ijeae.com/index.php/ijeae/submission"
   }

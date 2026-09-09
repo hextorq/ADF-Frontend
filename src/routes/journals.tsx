@@ -1,4 +1,4 @@
-﻿import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { PageHeader } from "@/components/site/PageHeader";
 import { ArrowRight, BookOpen, CheckCircle2, FileText, Globe2 } from "lucide-react";
 import { EditableText } from "@/components/cms/EditableText";
@@ -11,7 +11,7 @@ const JOURNALS = [
     abbr: "IJEAE",
     issn: "Online ISSN — Forthcoming",
     scope: "Applied linguistics, academic writing, ELT, literature studies.",
-    frequency: "Quarterly",
+    frequency: "Bi-Monthly",
     access: "Open Access — CC BY 4.0",
     submitUrl: "https://ijeae.com/index.php/ijeae/submission",
     url: "https://ijeae.com/index.php/ijeae"

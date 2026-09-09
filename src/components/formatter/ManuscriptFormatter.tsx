@@ -8,7 +8,6 @@ import {
   ShieldCheck,
   Eye,
   RefreshCw,
-  Sparkles,
   ArrowRight,
   Check,
   FileCheck,
@@ -178,7 +177,7 @@ export function ManuscriptFormatter({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/20 text-blue-200 text-xs font-semibold uppercase tracking-wider mb-2 border border-blue-400/30">
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+              <FileCheck className="w-3.5 h-3.5 text-blue-200" />
               ADF Manuscript Formatter
             </div>
             <h2 className="text-xl sm:text-2xl font-serif font-bold tracking-tight">

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Academic Development Forum (ADF) - Comprehensive SEO Configuration & Utilities
  */
 
@@ -118,7 +118,7 @@ export function buildJournalSchema(opts?: {
   const abbr = opts?.abbr || "IJEAE";
   const issn = opts?.issn || "Forthcoming";
   const url = opts?.url || "https://ijeae.com/index.php/ijeae";
-  const description = opts?.description || "An open-access, double-blind peer-reviewed quarterly academic journal dedicated to applied linguistics, ELT, and scholarly writing.";
+  const description = opts?.description || "An open-access, double-blind peer-reviewed bi-monthly academic journal dedicated to applied linguistics, ELT, and scholarly writing.";
 
   return {
     "@type": "Periodical",

@@ -1,4 +1,4 @@
-import { ArrowRight, BookOpen, Sparkles, Star, Heart, ShoppingCart, Gift, Globe, Medal, BarChart3, Feather, Lightbulb } from "lucide-react";
+import { ArrowRight, BookOpen, Star, Heart, ShoppingCart, Gift, Globe, Medal, BarChart3, Feather, Lightbulb } from "lucide-react";
 import { Link } from "react-router-dom";
 import { MOCK_BOOKS } from "@/components/store/store-mock-data";
 import { useStoreStore } from "@/store/useStoreStore";
@@ -220,7 +220,7 @@ export function BookstoreShowcase() {
           {/* Left Content Pane */}
           <div className="max-w-xl">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] text-sm font-semibold mb-8">
-              <Sparkles className="w-4 h-4 text-[var(--primary)]" />
+              <BookOpen className="w-4 h-4 text-[var(--primary)]" />
               <span>ADF Publications</span>
             </div>
             

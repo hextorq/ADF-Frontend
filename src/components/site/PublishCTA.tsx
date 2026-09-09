@@ -1,4 +1,4 @@
-import { ArrowRight, BookOpen, PenTool, Globe, Award, Sparkles } from "lucide-react";
+import { ArrowRight, BookOpen, PenTool, Globe, Award } from "lucide-react";
 import { Link } from "react-router-dom";
 import { EditableText } from "@/components/cms/EditableText";
 import { useEffect, useState } from "react";
@@ -25,7 +25,7 @@ export default function PublishCTA() {
           {/* Left Content Pane */}
           <div className={`max-w-xl transition-all duration-1000 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-[var(--mint)] text-xs font-bold uppercase tracking-widest mb-8 backdrop-blur-md">
-              <Sparkles className="w-4 h-4" />
+              <PenTool className="w-4 h-4" />
               <span>Author Journey</span>
             </div>
             

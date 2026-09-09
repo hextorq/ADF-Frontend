@@ -47,6 +47,53 @@ class HubErrorBoundary extends React.Component<{children: React.ReactNode}, {has
   }
 }
 
+const CAMPAIGN_ANNOUNCEMENT: Announcement & { badgeText?: string } = {
+  id: "announcement-adf-first-call",
+  title: "Art, Dreams & Fusion: An Anthology Celebrating Everyday Voices — Volume I",
+  excerpt: "ADF announces the inaugural publication of Art, Dreams & Fusion: An Anthology Celebrating Everyday Voices — Volume I. Welcoming short stories, poems, drawings, photographs, quotes, and essays. Completely FREE submission & publication.",
+  category: "Literary Publication",
+  priority: "High",
+  badgeText: "FIRST CALL",
+  date: "Open · Deadline 20 Sept 2026",
+  to: "/#adf-first-call",
+  pinned: true,
+  visible: true,
+  type: "Announcement"
+};
+
+const CAMPAIGN_ACTIVITIES: ActivityType[] = [
+  {
+    id: "act-campaign-1",
+    title: "New Literary Submission",
+    description: "New literary submission received for Art, Dreams & Fusion — Volume I",
+    time: new Date(Date.now() - 1000 * 60 * 35).toISOString(),
+    category: "Literary Publication",
+    iconName: "BookOpen",
+    pinned: true,
+    visible: true
+  },
+  {
+    id: "act-campaign-2",
+    title: "Poetry Submissions Update",
+    description: "3 new poetry submissions received today for Volume I",
+    time: new Date(Date.now() - 1000 * 60 * 160).toISOString(),
+    category: "Submissions",
+    iconName: "FileText",
+    pinned: false,
+    visible: true
+  },
+  {
+    id: "act-campaign-3",
+    title: "Artwork Contribution",
+    description: "New artwork submitted to Volume I",
+    time: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
+    category: "Anthology",
+    iconName: "CheckCircle",
+    pinned: false,
+    visible: true
+  }
+];
+
 const TABS = [
   "Announcements",
   "Recent Publications",
@@ -84,9 +131,15 @@ function AnnouncementHubInner() {
       .catch(console.error);
   }, []);
   
-  const announcements = allAnnouncements.filter(a => a?.visible);
+  const hasCampaignAnnouncement = allAnnouncements.some(a => a?.id === "announcement-adf-first-call");
+  const announcementsList = hasCampaignAnnouncement ? allAnnouncements : [CAMPAIGN_ANNOUNCEMENT, ...allAnnouncements];
+  const announcements = announcementsList.filter(a => a?.visible);
+  
   const publications = allPublications.filter(p => p?.visible);
-  const activities = allActivities.filter(a => a?.visible);
+  
+  const hasCampaignActivities = allActivities.some(a => a?.id?.startsWith("act-campaign-"));
+  const activitiesList = hasCampaignActivities ? allActivities : [...CAMPAIGN_ACTIVITIES, ...allActivities];
+  const activities = activitiesList.filter(a => a?.visible);
   
   // Fetch latest published chapters from backend
   const [publishedChapters, setPublishedChapters] = useState<any[]>([]);
@@ -349,6 +402,11 @@ function AnnouncementCard({ item }: { item: any }) {
             : item.priority === "New" ? "bg-emerald-50 text-emerald-700"
             : "bg-slate-100 text-slate-700"
         }`}>{item.priority}</span>
+        {item.badgeText && (
+          <span className="inline-flex items-center rounded-full px-2.5 py-0.5 font-extrabold bg-amber-100 text-amber-900 border border-amber-300 text-[10px] tracking-wider shadow-sm">
+            {item.badgeText}
+          </span>
+        )}
         <span className="inline-flex items-center gap-1 text-[var(--ink-soft)]">
           <Tag className="h-3 w-3" /> <EditableText contentKey={`announcement.${item.id}.category`} fallback={item.category} as="span" label="Announcement category" />
         </span>
@@ -364,7 +422,7 @@ function AnnouncementCard({ item }: { item: any }) {
           <EditableText contentKey={`announcement.${item.id}.date`} fallback={item.date} as="span" label="Announcement date" />
         </span>
         <Link to={item.to} className="inline-flex items-center gap-1 font-semibold text-[var(--primary)] hover:underline">
-          <EditableText contentKey="home.hub.readMore" fallback="Read more" as="span" label="Read more" /> <ArrowRight className="h-3.5 w-3.5" />
+          <EditableText contentKey={`announcement.${item.id}.cta`} fallback={item.badgeText ? "View Call" : "Read more"} as="span" label="Announcement CTA" /> <ArrowRight className="h-3.5 w-3.5" />
         </Link>
       </div>
     </article>

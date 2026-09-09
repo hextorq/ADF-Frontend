@@ -1,4 +1,5 @@
 import { HeroSlider } from "@/components/site/HeroSlider";
+import { AdfFirstCallCampaign } from "@/components/campaign/AdfFirstCallCampaign";
 import { AnnouncementHub } from "@/components/site/AnnouncementHub";
 import { WhyChooseADF } from "@/components/site/WhyChooseADF";
 import { BookstoreShowcase } from "@/components/site/BookstoreShowcase";
@@ -11,6 +12,7 @@ export default function Index() {
   return (
     <>
       <HeroSlider />
+      <AdfFirstCallCampaign />
       <AnnouncementHub />
       <FeaturedVideo />
       <Statistics />

@@ -1,13 +1,13 @@
 import { Link } from "react-router-dom";
 import { PageHeader } from "@/components/site/PageHeader";
-import { BookHeart, Brush, Feather, Headphones, ScrollText, Sparkles } from "lucide-react";
+import { BookHeart, BookOpen, Brush, Feather, Headphones, ScrollText, PenLine } from "lucide-react";
 import { EditableText } from "@/components/cms/EditableText";
 
 const GENRES = [
   { icon: BookHeart, t: "Novels", d: "Long-form fiction across literary, commercial, and crossover." },
   { icon: ScrollText, t: "Novellas", d: "Short, focused fiction with print and digital release." },
   { icon: Feather, t: "Poetry", d: "Single-author collections and curated chapbooks." },
-  { icon: Sparkles, t: "Short Stories", d: "Single-author and themed collections." },
+  { icon: PenLine, t: "Short Stories", d: "Single-author and themed collections." },
   { icon: Headphones, t: "Anthologies", d: "Editor-curated volumes around themes or movements." },
   { icon: Brush, t: "Hybrid & Experimental", d: "Works that cross genre and form." },
 ];
@@ -22,6 +22,40 @@ export default function Page() {
         description="Professional editing, cover design, ISBN assignment, and print + digital distribution for novelists, poets, and storytellers."
         crumbs={[{ label: "Literary Publications" }]}
       />
+
+      {/* Featured Campaign Banner: Art, Dreams & Fusion - Volume I */}
+      <section className="bg-gradient-to-r from-[#eef2ff] via-[#f7f9ff] to-[#f0fdf4] border-y border-indigo-200 py-6">
+        <div className="container-academic flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-start gap-3.5">
+            <div className="p-2.5 rounded-xl bg-[var(--primary)]/10 text-[var(--primary)] shrink-0 hidden sm:block">
+              <BookOpen className="h-6 w-6" />
+            </div>
+            <div>
+              <h2 className="font-serif text-2xl md:text-3xl font-bold text-[var(--ink)]">
+                Art, Dreams & Fusion — Volume I
+              </h2>
+              <p className="text-[var(--ink-soft)] text-xs sm:text-sm mt-1 max-w-2xl">
+                An Anthology Celebrating Everyday Voices. Welcoming Short Stories, Poems, Drawings, Photographs, Quotes & Essays. Deadline: 20 September 2026.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 shrink-0 w-full md:w-auto">
+            <Link
+              to="/literary-publications/submit?campaign=art-dreams-fusion-vol-1"
+              className="btn-primary text-xs sm:text-sm font-semibold !py-2.5 !px-5 !rounded-xl text-center flex-1 md:flex-initial shadow-sm"
+            >
+              Submit to Anthology (Free)
+            </Link>
+            <Link
+              to="/#adf-first-call"
+              className="btn-outline text-xs sm:text-sm font-medium !py-2.5 !px-4 !rounded-xl text-center"
+            >
+              View Call Details
+            </Link>
+          </div>
+        </div>
+      </section>
 
       <section className="py-16 bg-white">
         <div className="container-academic">

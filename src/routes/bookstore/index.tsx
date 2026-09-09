@@ -1,4 +1,4 @@
-﻿import { Search, ChevronRight, Star, Filter, Heart, ShoppingCart, ArrowRight, CheckCircle, ShieldCheck, Truck, Globe, Download, PlayCircle, BookOpen, Trash2, PenTool, Users, Lightbulb, Leaf, Plus } from "lucide-react";
+import { Search, ChevronRight, Star, Filter, Heart, ShoppingCart, ArrowRight, CheckCircle, ShieldCheck, Truck, Globe, Download, PlayCircle, BookOpen, Trash2, PenTool, Users, Lightbulb, Leaf, Plus } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -201,9 +201,6 @@ export default function BookStore() {
               </div>
               
               <div className="bg-white rounded-[2rem] p-10 lg:p-20 text-center shadow-[0_8px_40px_rgb(0,0,0,0.06)] border border-slate-100 flex flex-col items-center overflow-hidden relative">
-                {/* Decorative sparkles */}
-                <div className="absolute top-16 left-1/2 -translate-x-32 w-2 h-2 text-yellow-400 rotate-45 border-t border-r border-yellow-400"></div>
-                <div className="absolute top-24 left-1/2 translate-x-24 w-3 h-3 text-yellow-400 rotate-45 border-t border-r border-yellow-400"></div>
 
                 <BookOpen className="w-12 h-12 text-[#1e3a8a] mb-6" />
                 <div className="text-sm font-bold text-[#1e3a8a] tracking-[0.25em] uppercase mb-4">ADF Bookstore</div>

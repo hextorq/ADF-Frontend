@@ -37,6 +37,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useContentStore } from "@/store/useContentStore";
 import { AdminLiveToolbar } from "@/components/cms/AdminLiveToolbar";
+import { FloatingCampaignBadge } from "@/components/campaign/FloatingCampaignBadge";
 import { SITE_CONFIG, buildCanonicalUrl, buildBreadcrumbSchema } from "@/lib/seo";
 
 interface PageSEO {
@@ -338,6 +339,7 @@ export default function App() {
         <AppBootstrap />
         <Toaster />
         <AdminLiveToolbar />
+        <FloatingCampaignBadge />
         <Routes>
           {/* Public routes */}
           <Route path="/" element={<><SiteHeader /><main className="flex-1"><Home /></main><SiteFooter /></>} />

@@ -1,8 +1,8 @@
-import { BookOpen, Compass, Feather, GraduationCap, Globe2, Sparkles } from "lucide-react";
+import { BookOpen, Compass, Feather, GraduationCap, Globe2, Landmark } from "lucide-react";
 import { EditableText } from "@/components/cms/EditableText";
 
 const ITEMS = [
-  { year: "2025", title: "ADF Founded", desc: "Academic Development Forum established as an international publication initiative.", icon: Sparkles },
+  { year: "2025", title: "ADF Founded", desc: "Academic Development Forum established as an international publication initiative.", icon: Landmark },
   { year: "2025", title: "International Journal of English for Academic Excellence", desc: "Flagship peer-reviewed journal launched with open-access mandate.", icon: BookOpen },
   { year: "2026", title: "Convergence Book Chapter Series", desc: "Bi-monthly edited volumes covering multidisciplinary research.", icon: Compass },
   { year: "2026", title: "Literary Publishing Division", desc: "Novels, novellas, poetry, short stories, and anthologies imprint launched.", icon: Feather },

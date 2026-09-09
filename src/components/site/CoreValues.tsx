@@ -1,4 +1,4 @@
-import { BookCheck, HeartHandshake, Lightbulb, ShieldCheck, Sparkles, Users } from "lucide-react";
+import { BookCheck, Feather, HeartHandshake, Lightbulb, ShieldCheck, Users } from "lucide-react";
 import { EditableText } from "@/components/cms/EditableText";
 
 const VALUES = [
@@ -7,7 +7,7 @@ const VALUES = [
   { icon: HeartHandshake, title: "Accessibility", desc: "Open access by default — knowledge available to every reader." },
   { icon: Lightbulb, title: "Innovation", desc: "Modern publishing tools, formats, and discovery." },
   { icon: Users, title: "Inclusivity", desc: "A welcoming home for scholars from every region and tradition." },
-  { icon: Sparkles, title: "Author First", desc: "Authors retain copyright; we exist to amplify their work." },
+  { icon: Feather, title: "Author First", desc: "Authors retain copyright; we exist to amplify their work." },
 ];
 
 export function CoreValues() {
