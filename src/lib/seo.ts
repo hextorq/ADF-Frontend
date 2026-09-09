@@ -116,7 +116,7 @@ export function buildJournalSchema(opts?: {
 }) {
   const title = opts?.title || "International Journal of English for Academic Excellence";
   const abbr = opts?.abbr || "IJEAE";
-  const issn = opts?.issn || "Forthcoming";
+  const issn = opts?.issn || "3049-2912";
   const url = opts?.url || "https://ijeae.com/index.php/ijeae";
   const description = opts?.description || "An open-access, double-blind peer-reviewed bi-monthly academic journal dedicated to applied linguistics, ELT, and scholarly writing.";
 

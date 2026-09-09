@@ -9,7 +9,7 @@ const JOURNALS = [
   {
     title: "International Journal of English for Academic Excellence",
     abbr: "IJEAE",
-    issn: "Online ISSN — Forthcoming",
+    issn: "E-ISSN (Online): 3049-2912",
     scope: "Applied linguistics, academic writing, ELT, literature studies.",
     frequency: "Bi-Monthly",
     access: "Open Access — CC BY 4.0",
@@ -22,7 +22,7 @@ export default function Journals() {
   const journalSchema = buildJournalSchema({
     title: JOURNALS[0].title,
     abbr: JOURNALS[0].abbr,
-    issn: "Forthcoming",
+    issn: "3049-2912",
     url: JOURNALS[0].url,
     description: JOURNALS[0].scope
   });
@@ -36,7 +36,7 @@ export default function Journals() {
         structuredData={journalSchema}
         citation={{
           journalTitle: "International Journal of English for Academic Excellence",
-          issn: "Forthcoming",
+          issn: "3049-2912",
         }}
       />
 
@@ -51,7 +51,7 @@ export default function Journals() {
       <section className="py-16 bg-white">
         <div className="container-academic grid gap-6 lg:grid-cols-3">
           {[
-            { icon: FileText, k: "Online ISSN", v: "Assigned per journal (Forthcoming)" },
+            { icon: FileText, k: "E-ISSN (Online)", v: "3049-2912" },
             { icon: Globe2, k: "Access", v: "Open Access — CC BY 4.0" },
             { icon: CheckCircle2, k: "Review", v: "Double-blind peer review" },
           ].map(({ icon: Icon, k, v }) => (
@@ -63,6 +63,7 @@ export default function Journals() {
                 <div className="text-xs uppercase tracking-wider text-[var(--ink-soft)]">{k}</div>
                 <div className="font-semibold text-[var(--ink)]">{v}</div>
               </div>
+
             </div>
           ))}
         </div>

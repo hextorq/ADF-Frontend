@@ -15,9 +15,14 @@ import {
   Lock,
   MonitorPlay,
   Wand2,
+  Mail,
+  Send,
+  AlertCircle,
+  RefreshCw,
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
-import { fetchRecentContentEdits, type ContentAuditLog } from "@/lib/api";
+import { fetchRecentContentEdits, checkSmtpStatus, sendTestEmailApi, type ContentAuditLog } from "@/lib/api";
+
 
 const QUICK_ACTIONS = [
   {
@@ -68,6 +73,66 @@ export default function AdminDashboard() {
   const logout = useAuthStore((s) => s.logout);
   const [recentEdits, setRecentEdits] = useState<ContentAuditLog[]>([]);
   const [recentEditsStatus, setRecentEditsStatus] = useState<"loading" | "ready" | "error">("loading");
+
+  // SMTP Mail Status & Testing State
+  const [smtpInfo, setSmtpInfo] = useState<{
+    configured: boolean;
+    user: string | null;
+    host: string;
+    port: string;
+    receiver: string;
+    ok: boolean;
+    message: string;
+  } | null>(null);
+  const [checkingSmtp, setCheckingSmtp] = useState(false);
+  const [testEmailTo, setTestEmailTo] = useState("academicdevelopmentforum24@gmail.com");
+  const [sendingTest, setSendingTest] = useState(false);
+  const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null);
+
+  const checkConnection = async () => {
+    setCheckingSmtp(true);
+    setTestResult(null);
+    try {
+      const res = await checkSmtpStatus();
+      setSmtpInfo(res);
+    } catch (err: any) {
+      setSmtpInfo({
+        configured: true,
+        user: "academicdevelopmentforum24@gmail.com",
+        host: "smtp.gmail.com",
+        port: "465",
+        receiver: "academicdevelopmentforum24@gmail.com",
+        ok: false,
+        message: err.message || "Failed to reach SMTP endpoint",
+      });
+    } finally {
+      setCheckingSmtp(false);
+    }
+  };
+
+  const handleSendTestEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!testEmailTo) return;
+    setSendingTest(true);
+    setTestResult(null);
+    try {
+      const res = await sendTestEmailApi(testEmailTo);
+      if (res.success) {
+        setTestResult({ success: true, message: `Email sent successfully! Message ID: ${res.messageId || "OK"}` });
+      } else {
+        setTestResult({ success: false, message: res.error || "SMTP send failed" });
+      }
+    } catch (err: any) {
+      setTestResult({ success: false, message: err.message || "Network error while sending test email" });
+    } finally {
+      setSendingTest(false);
+    }
+  };
+
+  useEffect(() => {
+    checkConnection();
+  }, []);
+
 
   useEffect(() => {
     let isMounted = true;
@@ -262,8 +327,133 @@ export default function AdminDashboard() {
         </div>
       </section>
 
+      {/* SMTP Mail Service Diagnostics & Testing */}
+      <section className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm mt-4">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-5">
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+              <Mail className="h-6 w-6" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-slate-900">ADF Mail &amp; SMTP Configuration</h3>
+              <p className="text-xs text-slate-500">Official email dispatch for Contact Us inquiries, acknowledgments &amp; notifications.</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={checkConnection}
+              disabled={checkingSmtp}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 disabled:opacity-50"
+            >
+              <RefreshCw className={`h-3.5 w-3.5 ${checkingSmtp ? "animate-spin" : ""}`} />
+              {checkingSmtp ? "Checking..." : "Re-check Connection"}
+            </button>
+          </div>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-6 pt-6">
+          {/* Status & Connection Details */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/70 p-4">
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Connection Status</span>
+              {smtpInfo?.ok ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700 border border-emerald-200">
+                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                  SMTP Ready &amp; Connected
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-800 border border-amber-200">
+                  <span className="h-2 w-2 rounded-full bg-amber-500" />
+                  App Password Recommended
+                </span>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 text-xs">
+              <div className="rounded-xl border border-slate-100 p-3 bg-white">
+                <span className="text-slate-400 font-medium block mb-1">SMTP User</span>
+                <span className="font-bold text-slate-800 truncate block">{smtpInfo?.user || "academicdevelopmentforum24@gmail.com"}</span>
+              </div>
+              <div className="rounded-xl border border-slate-100 p-3 bg-white">
+                <span className="text-slate-400 font-medium block mb-1">Server &amp; Port</span>
+                <span className="font-bold text-slate-800">{smtpInfo?.host || "smtp.gmail.com"}:{smtpInfo?.port || "465"} (SSL)</span>
+              </div>
+              <div className="rounded-xl border border-slate-100 p-3 bg-white col-span-2">
+                <span className="text-slate-400 font-medium block mb-1">Contact Inquiries Routed To</span>
+                <span className="font-bold text-blue-700">{smtpInfo?.receiver || "academicdevelopmentforum24@gmail.com"}</span>
+              </div>
+            </div>
+
+            {smtpInfo && !smtpInfo.ok && (
+              <div className="rounded-xl border border-amber-200 bg-amber-50/70 p-4 text-xs text-amber-900 space-y-1.5">
+                <div className="flex items-center gap-2 font-bold text-amber-900">
+                  <AlertCircle className="h-4 w-4 shrink-0 text-amber-600" />
+                  Gmail App Password Notice
+                </div>
+                <p className="text-amber-800 leading-relaxed">
+                  Google disables plain passwords for SMTP. To enable direct email sending, generate a 16-character Google App Password in your account:
+                </p>
+                <ol className="list-decimal list-inside pl-1 text-[11px] text-amber-800 space-y-0.5">
+                  <li>Go to <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener noreferrer" className="underline font-bold">Google App Passwords</a>.</li>
+                  <li>Enable 2-Step Verification if not active.</li>
+                  <li>Create an App Password under "Mail / Other".</li>
+                  <li>Set <code className="bg-amber-100/80 px-1 py-0.5 rounded font-mono">SMTP_PASS=xxxx xxxx xxxx xxxx</code> in <code className="bg-amber-100/80 px-1 py-0.5 rounded font-mono">ADF-Backend/.env</code>.</li>
+                </ol>
+                <p className="text-[11px] text-slate-500 italic mt-1">
+                  * Note: All Contact Us messages are always 100% saved into the database regardless of email delivery status.
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Test Email Dispatch Form */}
+          <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-5 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Send className="h-4 w-4 text-blue-600" />
+                <h4 className="text-sm font-bold text-slate-900">Send Test Email</h4>
+              </div>
+              <p className="text-xs text-slate-500 mb-4">
+                Verify SMTP transport by sending a test message to an address of your choice.
+              </p>
+
+              <form onSubmit={handleSendTestEmail} className="space-y-3">
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Recipient Address</label>
+                  <input
+                    type="email"
+                    value={testEmailTo}
+                    onChange={(e) => setTestEmailTo(e.target.value)}
+                    required
+                    placeholder="recipient@example.com"
+                    className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-900 focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={sendingTest}
+                  className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50 transition"
+                >
+                  <Send className="h-3.5 w-3.5" />
+                  {sendingTest ? "Sending Test Message..." : "Dispatch Test Email"}
+                </button>
+              </form>
+            </div>
+
+            {testResult && (
+              <div className={`mt-4 rounded-lg p-3 text-xs ${testResult.success ? "bg-emerald-50 text-emerald-800 border border-emerald-200" : "bg-red-50 text-red-800 border border-red-200"}`}>
+                <div className="font-bold mb-0.5">{testResult.success ? "Success" : "Failed to Send"}</div>
+                <div className="break-all">{testResult.message}</div>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
       {/* Keep existing recent edits underneath */}
       <section className="rounded-2xl border border-slate-200 bg-white shadow-sm mt-4">
+
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-8 py-6">
           <div>
             <h3 className="text-lg font-bold text-slate-900">Recent edits</h3>

@@ -291,43 +291,63 @@ export default function ChapterSubmit() {
                     Payment Instructions
                   </h3>
                   <p className="text-sm text-slate-600 mb-6 leading-relaxed">
-                    A permanent submission and processing fee of <strong>₹1500</strong> is required to publish your chapter in this volume. Scan the QR code below using any UPI app (GPay, PhonePe, Paytm, etc.) to complete the payment.
+                    A permanent submission and processing fee of <strong>₹500</strong> is required to publish your chapter in this volume. Scan the QR code below using any UPI app (GPay, PhonePe, Paytm, etc.) to complete the payment.
                   </p>
 
-                  <div className="flex flex-col sm:flex-row items-center gap-6 bg-white p-6 rounded-xl border border-slate-200">
-                    <div className="bg-white p-2 border rounded-lg shadow-sm">
-                      <img src="/qr.png" alt="Payment QR" className="w-36 h-36 object-contain" />
+                  <div className="flex flex-col md:flex-row gap-6 items-center bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+                    <div className="bg-white p-3 rounded-2xl border-2 border-slate-100 shadow-sm shrink-0">
+                      <img 
+                        src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent("upi://pay?pa=7502398680@sbi&pn=ATTRAIT DOVIN FEDRICK SELVARAJ&cu=INR&am=500")}`} 
+                        alt="Payment QR Code" 
+                        className="w-40 h-40 rounded-lg"
+                      />
                     </div>
-                    <div className="space-y-2 text-sm text-slate-600 text-center sm:text-left">
-                      <div className="font-semibold text-slate-800 text-base">UPI Payment Details</div>
-                      <div>UPI ID: <span className="font-mono font-medium text-slate-900 bg-slate-100 px-2 py-0.5 rounded">9361665487@okbizaxis</span></div>
-                      <div>Beneficiary: <span className="font-medium text-slate-900">Academic Development Forum</span></div>
-                      <div className="text-xs text-amber-600 font-medium">Please save your Transaction ID and Payment Screenshot for verification.</div>
+                    
+                    <div className="flex-1 space-y-4 w-full">
+                      <div className="space-y-1">
+                        <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">UPI ID</label>
+                        <div className="font-mono text-slate-700 font-medium bg-slate-50 p-2 rounded-md border flex justify-between items-center">
+                          7502398680@sbi
+                          <button type="button" onClick={() => {navigator.clipboard.writeText('7502398680@sbi'); toast.success('UPI ID copied!');}} className="text-slate-400 hover:text-[var(--primary)] p-1 transition-colors">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                          </button>
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Receiver Name</label>
+                        <div className="text-sm font-medium text-slate-700">
+                          ATTRAIT DOVIN FEDRICK SELVARAJ
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Amount</label>
+                        <div className="text-xl font-bold text-[var(--primary)]">
+                          ₹500.00
+                        </div>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="grid md:grid-cols-2 gap-4 mt-6">
+                  <div className="mt-6 space-y-5">
                     <div>
-                      <label className="text-xs font-semibold text-slate-700 block mb-1">Transaction ID / UTR Number *</label>
-                      <Input 
-                        required 
-                        placeholder="e.g., 4212XXXXXXXX" 
-                        value={transactionId}
-                        onChange={e => setTransactionId(e.target.value)}
-                        className="bg-white"
-                      />
+                      <label className="text-sm font-medium mb-1 block">Transaction Reference ID (UTR / UPI Ref Number) *</label>
+                      <Input required placeholder="e.g. 312345678901" value={transactionId} onChange={e => setTransactionId(e.target.value)} className="bg-white border-slate-200" />
+                      <p className="text-xs text-slate-500 mt-1">Please enter the 12-digit reference number after making the payment.</p>
                     </div>
+                    
                     <div>
-                      <label className="text-xs font-semibold text-slate-700 block mb-1">Upload Payment Screenshot (Optional)</label>
-                      <Input 
-                        type="file" 
-                        accept="image/*"
-                        onChange={e => setPaymentScreenshot(e.target.files?.[0] || null)}
-                        className="bg-white"
-                      />
+                      <label className="text-sm font-medium mb-2 block">Upload Payment Screenshot</label>
+                      <label className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-slate-500 cursor-pointer hover:bg-white relative transition-colors bg-white/50 border-slate-200">
+                        <UploadCloud className="w-6 h-6 mb-2 text-slate-400" />
+                        <span className="text-sm font-medium text-slate-600">Choose screenshot</span>
+                        <span className="text-xs mt-1 text-slate-400">{paymentScreenshot ? paymentScreenshot.name : 'No file chosen'}</span>
+                        <input type="file" onChange={e => setPaymentScreenshot(e.target.files?.[0] || null)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*" />
+                      </label>
+                      <p className="text-xs text-slate-500 mt-2">Please upload a clear screenshot of your successful transaction.</p>
                     </div>
                   </div>
                 </div>
+
 
                 <div className="flex justify-between pt-6">
                   <Button type="button" variant="outline" onClick={() => setStep(1)}>

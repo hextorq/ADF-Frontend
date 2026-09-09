@@ -153,3 +153,27 @@ export async function uploadImage(file: File) {
   const parsed = (await res.json()) as { url: string };
   return { url: assetUrl(parsed.url) };
 }
+
+export function checkSmtpStatus() {
+  return apiFetch<{
+    configured: boolean;
+    user: string | null;
+    host: string;
+    port: string;
+    receiver: string;
+    ok: boolean;
+    message: string;
+  }>("/forms/smtp-status");
+}
+
+export function sendTestEmailApi(to?: string) {
+  return apiFetch<{
+    success: boolean;
+    messageId?: string;
+    error?: string;
+  }>("/forms/test-email", {
+    method: "POST",
+    body: JSON.stringify({ to }),
+  });
+}
+
