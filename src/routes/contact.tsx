@@ -47,9 +47,11 @@ export default function Page() {
       });
       setDone(true);
       e.currentTarget.reset();
-    } catch {
-      setError("Could not send your message. Please try again.");
+    } catch (err: any) {
+      console.error("Contact form submission error:", err);
+      setError(err?.message || "Could not send your message. Please try again.");
     } finally {
+
       setSubmitting(false);
     }
   }
