@@ -34,9 +34,10 @@ export default function Page() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const formElement = e.currentTarget;
+    const form = new FormData(formElement);
     setSubmitting(true);
     setError(null);
-    const form = new FormData(e.currentTarget);
     try {
       await submitContact({
         fullName: String(form.get("fullName") ?? ""),
@@ -46,15 +47,16 @@ export default function Page() {
         message: String(form.get("message") ?? ""),
       });
       setDone(true);
-      e.currentTarget.reset();
+      setError(null);
+      formElement.reset();
     } catch (err: any) {
       console.error("Contact form submission error:", err);
       setError(err?.message || "Could not send your message. Please try again.");
     } finally {
-
       setSubmitting(false);
     }
   }
+
 
   return (
     <>
