@@ -7,7 +7,6 @@ import { PageHeader } from "@/components/site/PageHeader";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 import { UploadCloud, CheckCircle2, Download, BookOpen, Image as ImageIcon, Globe2, AlertCircle } from "lucide-react";
-import { ManuscriptFormatter, FormattedManuscriptResult } from "@/components/formatter/ManuscriptFormatter";
 
 const CAMPAIGN_CATEGORIES = [
   { name: "Short Story", desc: "Up to 5 pages / below 2000 words (A4 | TNR 12 | 1.5)" },
@@ -45,7 +44,6 @@ export default function LiterarySubmit() {
   const [keywords, setKeywords] = useState("");
 
   const [manuscript, setManuscript] = useState<File | null>(null);
-  const [formattedResult, setFormattedResult] = useState<FormattedManuscriptResult | null>(null);
   const [cover, setCover] = useState<File | null>(null);
   const [agreed, setAgreed] = useState({
     original: false,
@@ -60,21 +58,6 @@ export default function LiterarySubmit() {
     }
   }, [categoryParam]);
 
-  const handleFormatted = (res: FormattedManuscriptResult) => {
-    setFormattedResult(res);
-    if (!bookTitle && res.detectedStructure.title) {
-      setBookTitle(res.detectedStructure.title);
-    }
-    if (!wordCount && res.stats.wordCount) {
-      setWordCount(res.stats.wordCount.toString());
-    }
-    if (!keywords && res.detectedStructure.keywords.length > 0) {
-      setKeywords(res.detectedStructure.keywords.join(", "));
-    }
-    if (!synopsis && res.detectedStructure.abstract) {
-      setSynopsis(res.detectedStructure.abstract);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -115,12 +98,6 @@ export default function LiterarySubmit() {
       formData.append("transaction_id", "FREE-SUBMISSION");
     }
 
-    if (formattedResult) {
-      formData.append("formatted_manuscript_url", formattedResult.formattedFileUrl);
-      formData.append("formatting_version", formattedResult.formattingVersion);
-      formData.append("formatting_issues", JSON.stringify(formattedResult.issues));
-      formData.append("author_confirmed_formatting", "true");
-    }
 
     formData.append("agreedOriginal", agreed.original.toString());
     formData.append("agreedCopyright", agreed.copyright.toString());
@@ -444,24 +421,63 @@ export default function LiterarySubmit() {
                 {isCampaign ? "Upload & Submission Confirmation" : "Manuscript Upload & Payment"}
               </h2>
 
-              {/* INTEGRATED ADF MANUSCRIPT FORMATTER */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between mb-1">
-                  <label className="text-sm font-semibold text-slate-800">
-                    Upload Your Work File (Document / Image / PDF) *
+              {/* Creative Work / Manuscript File Upload */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-bold text-slate-900 font-serif">
+                    Upload Your Creative Work (Document / Image / PDF) *
                   </label>
-                  {isCampaign && (
-                    <span className="text-xs text-emerald-600 font-medium">
-                      Accepts DOCX, PDF, JPEG, PNG
-                    </span>
-                  )}
+                  <span className="text-xs text-slate-500 font-medium">
+                    DOCX, DOC, PDF, JPEG, PNG, TXT (Max 50MB)
+                  </span>
                 </div>
-                <ManuscriptFormatter
-                  embedded={true}
-                  initialFile={manuscript}
-                  onFileChange={(f) => setManuscript(f)}
-                  onFormatted={handleFormatted}
-                />
+
+                <label
+                  className={`border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-all relative ${
+                    manuscript
+                      ? "border-emerald-500 bg-emerald-50/40 text-emerald-950"
+                      : "border-slate-300 hover:border-[#071a8c] hover:bg-slate-50/80 text-slate-600"
+                  }`}
+                >
+                  <input
+                    type="file"
+                    required
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] || null;
+                      setManuscript(file);
+                    }}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    accept=".docx,.doc,.pdf,.jpg,.jpeg,.png,.txt"
+                  />
+
+                  {manuscript ? (
+                    <div className="space-y-2 pointer-events-none">
+                      <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto shadow-xs">
+                        <CheckCircle2 className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-sm text-slate-900">{manuscript.name}</p>
+                        <p className="text-xs text-slate-500">
+                          {(manuscript.size / (1024 * 1024)).toFixed(2)} MB · Click to choose a different file
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-2 pointer-events-none">
+                      <div className="w-12 h-12 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center mx-auto">
+                        <UploadCloud className="w-6 h-6 text-slate-500" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-sm text-slate-900">
+                          Click to select or drag and drop your creative work
+                        </p>
+                        <p className="text-xs text-slate-500 mt-1">
+                          Short stories, poems, essays (.docx, .pdf) or artwork, drawing & photos (.jpg, .png)
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </label>
               </div>
 
               {/* Optional Cover Upload */}
@@ -611,17 +627,6 @@ export default function LiterarySubmit() {
                   : "Thank you for choosing ADF. Your manuscript has been received. Our editorial team will review your manuscript and formatted specifications and get back to you within 3–5 business days."}
               </p>
 
-              {formattedResult && (
-                <div className="pt-2 pb-2">
-                  <a
-                    href={formattedResult.formattedFileUrl}
-                    download={formattedResult.formattedFilename}
-                    className="btn-outline !py-2.5 !px-5 text-xs font-semibold inline-flex items-center gap-2"
-                  >
-                    <Download className="w-4 h-4" /> Download ADF Formatted Copy (.docx)
-                  </a>
-                </div>
-              )}
 
               <div className="pt-4 flex flex-wrap justify-center gap-3">
                 <Link to="/" className="btn-primary">
