@@ -156,10 +156,48 @@ check(
   'vercel.json contains 301/permanent redirect from adf.ijeae.com to www.adf.ijeae.com',
   hasHostRedirect
 );
+check('vercel.json cleanUrls is true (prevents .html in URLs and serves static pages directly)', vercelJson.cleanUrls === true);
+check('vercel.json trailingSlash is false (prevents slash redirects)', vercelJson.trailingSlash === false);
 const hasSecurityHeaders = (vercelJson.headers || []).some(
   (h) => h.headers && h.headers.some((header) => header.key === 'X-Content-Type-Options')
 );
 check('vercel.json contains security headers (X-Content-Type-Options, etc.)', hasSecurityHeaders);
+
+
+// 5. Validate Sitemap URLs vs Canonical in Pre-rendered Dist Files
+console.log('\n5. Checking Dist Pre-rendered HTML Canonical Alignment:');
+const distDir = path.join(rootDir, 'dist');
+if (fs.existsSync(distDir)) {
+  let canonicalMismatches = 0;
+  let missingFiles = 0;
+  for (const m of locMatches) {
+    const routePath = m[1] || '/';
+    const sitemapUrl = `https://www.adf.ijeae.com${routePath === '/' ? '/' : routePath}`;
+    const cleanHtmlFile = routePath === '/' ? path.join(distDir, 'index.html') : path.join(distDir, `${routePath}.html`);
+    if (!fs.existsSync(cleanHtmlFile)) {
+      missingFiles++;
+      console.error(`  Missing pre-rendered file: ${cleanHtmlFile}`);
+      continue;
+    }
+    const html = fs.readFileSync(cleanHtmlFile, 'utf-8');
+    const canonMatch = html.match(/<link\s+rel=["']canonical["']\s+href=["']([^"']+)["']/i);
+    const pageCanonical = canonMatch ? canonMatch[1] : null;
+    if (pageCanonical !== sitemapUrl) {
+      canonicalMismatches++;
+      console.error(`  Canonical mismatch on ${routePath}: sitemap has ${sitemapUrl} but page has ${pageCanonical}`);
+    }
+  }
+  check(
+    `All ${locMatches.length} sitemap URLs have matching pre-rendered files in dist (missing: ${missingFiles})`,
+    missingFiles === 0
+  );
+  check(
+    `100% exact canonical match between sitemap.xml and HTML <head> for all ${locMatches.length} pages (0 mismatches)`,
+    canonicalMismatches === 0
+  );
+} else {
+  console.log('  (dist directory not found, run npm run build to validate pre-rendered pages)');
+}
 
 
 // 5. Validate PAGE_SEO in App.tsx
