@@ -186,11 +186,13 @@ export function InteractiveSidePoster() {
             {/* Header Bar */}
             <div className="flex items-center justify-between px-4 sm:px-6 py-3 bg-[#071a8c] text-white border-b border-indigo-950">
               <div className="flex items-center gap-3 min-w-0">
-                <img
-                  src="/logo.png"
-                  alt="Academic Development Forum Seal"
-                  className="h-7 w-auto object-contain brightness-0 invert shrink-0"
-                />
+                <div className="h-9 w-9 rounded-lg bg-white p-1 flex items-center justify-center shadow-xs shrink-0">
+                  <img
+                    src="/logo.png"
+                    alt="Academic Development Forum Seal"
+                    className="h-full w-full object-contain"
+                  />
+                </div>
                 <div className="border-l border-white/20 pl-3 min-w-0">
                   <span className="text-[10px] font-bold tracking-wider uppercase text-blue-200 block leading-tight">
                     Academic Development Forum
@@ -313,3 +315,4 @@ export function InteractiveSidePoster() {
     </>
   );
 }
+
