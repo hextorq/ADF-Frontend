@@ -37,7 +37,6 @@ import { Toaster } from "@/components/ui/sonner";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useContentStore } from "@/store/useContentStore";
 import { AdminLiveToolbar } from "@/components/cms/AdminLiveToolbar";
-import { LandingPosterModal } from "@/components/campaign/LandingPosterModal";
 import { InteractiveSidePoster } from "@/components/campaign/InteractiveSidePoster";
 import { SITE_CONFIG, buildCanonicalUrl, buildBreadcrumbSchema } from "@/lib/seo";
 
@@ -341,7 +340,6 @@ export default function App() {
         <AppBootstrap />
         <Toaster />
         <AdminLiveToolbar />
-        <LandingPosterModal />
         <InteractiveSidePoster />
         <Routes>
 
