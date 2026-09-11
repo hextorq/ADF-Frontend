@@ -31,6 +31,7 @@ const NAV: NavItem[] = [
     key: "resources",
     label: "Resources",
     children: [
+      { key: "guidelines", label: "Publishing Guidelines", to: "/guidelines" },
       { key: "guidelines.author", label: "Author Guidelines", to: "/guidelines/author" },
       { key: "guidelines.reviewer", label: "Reviewer Guidelines", to: "/guidelines/reviewer" },
       { key: "guidelines.editor", label: "Editor Guidelines", to: "/guidelines/editor" },
@@ -67,7 +68,9 @@ export function SiteHeader() {
         <div className="container-academic flex items-center justify-between py-2">
           <EditableText contentKey="header.utility.tagline" fallback="International Academic Publication House - ISSN - ISBN - DOI" as="span" className="tracking-wide" label="Header tagline" />
           <div className="flex items-center gap-5">
+            <Link to="/guidelines" className="hover:text-white"><EditableText contentKey="header.utility.guidelines" fallback="Guidelines" as="span" label="Header link" /></Link>
             <Link to="/guidelines/author" className="hover:text-white"><EditableText contentKey="header.utility.authors" fallback="For Authors" as="span" label="Header link" /></Link>
+            <Link to="/guidelines/editor" className="hover:text-white"><EditableText contentKey="header.utility.editors" fallback="For Editors" as="span" label="Header link" /></Link>
             <Link to="/guidelines/reviewer" className="hover:text-white"><EditableText contentKey="header.utility.reviewers" fallback="For Reviewers" as="span" label="Header link" /></Link>
             <Link to="/editorial-board" className="hover:text-white"><EditableText contentKey="header.utility.board" fallback="Editorial Board" as="span" label="Header link" /></Link>
             <div className="h-3 w-px bg-white/20" />
@@ -297,19 +300,24 @@ function NavLink({ item }: { item: NavItem }) {
         >
           <EditableText contentKey={navLabelKey(item.key)} fallback={item.label} as="span" label="Nav Label" /> <ChevronDown className="h-3.5 w-3.5" />
         </span>
-        {open && (
-          <div className="absolute left-0 top-full z-30 min-w-[230px] surface-card !rounded-md py-2">
-            {item.children.map((c) => (
-              <Link
-                key={c.to}
-                to={c.to}
-                className="block px-4 py-2 text-sm text-[var(--ink)] hover:bg-[var(--secondary)] hover:text-[var(--primary)] whitespace-nowrap"
-              >
-                <EditableText contentKey={navLabelKey(c.key)} fallback={c.label} as="span" label="Nav Label" />
-              </Link>
-            ))}
-          </div>
-        )}
+        <div
+          className={`absolute left-0 top-full z-30 min-w-[230px] surface-card !rounded-md py-2 transition-all duration-150 ${
+            open
+              ? "opacity-100 visible translate-y-0"
+              : "opacity-0 invisible -translate-y-1 pointer-events-none"
+          }`}
+          aria-hidden={!open}
+        >
+          {item.children.map((c) => (
+            <Link
+              key={c.to}
+              to={c.to}
+              className="block px-4 py-2 text-sm text-[var(--ink)] hover:bg-[var(--secondary)] hover:text-[var(--primary)] whitespace-nowrap"
+            >
+              <EditableText contentKey={navLabelKey(c.key)} fallback={c.label} as="span" label="Nav Label" />
+            </Link>
+          ))}
+        </div>
       </div>
     );
   }

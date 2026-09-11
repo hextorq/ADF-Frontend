@@ -83,7 +83,7 @@ export default function Page() {
           )
         },
       ]}
-      crumbs={[{ label: "Guidelines" }, { label: "Author" }]}
+      crumbs={[{ label: "Guidelines", to: "/guidelines" }, { label: "Author Guidelines" }]}
       actionCard={{
         eyebrow: "FOR AUTHORS",
         title: "Ready to submit your manuscript?",

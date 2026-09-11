@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { PageHeader } from "@/components/site/PageHeader";
 import { BookOpen } from "lucide-react";
 import { EditableText } from "@/components/cms/EditableText";
@@ -15,7 +16,7 @@ export function GuidelinesPage({
   title: string;
   lead: string;
   sections: { h: string; t?: string; content?: React.ReactNode }[];
-  crumbs: { label: string }[];
+  crumbs: { label: string; to?: string }[];
   cmsKey?: string;
   actionCard?: {
     eyebrow: string;
@@ -32,20 +33,114 @@ export function GuidelinesPage({
       <section className="py-16 bg-white">
         <div className="container-academic grid lg:grid-cols-4 gap-8">
           <aside className="hidden lg:block">
-            <div className="sticky top-32 surface-card p-4">
-              <EditableText contentKey={`${key}.toc.title`} fallback="On this page" as="div" className="text-xs uppercase font-semibold tracking-wider text-[var(--ink-soft)]" label="Table of contents title" />
-              <ul className="mt-3 space-y-2 text-sm">
-                {sections.map((s, i) => (
-                  <li key={i}>
-                    <a href={`#s-${i}`} className="text-[var(--ink)] hover:text-[var(--primary)]">
-                      <EditableText contentKey={`${key}.section.${i}.heading`} fallback={s.h} as="span" label="Section link" />
-                    </a>
+            <div className="sticky top-32 space-y-4">
+              {/* Guidelines Directory Navigation */}
+              <div className="surface-card p-4">
+                <div className="text-xs uppercase font-semibold tracking-wider text-[var(--ink-soft)] mb-2 flex items-center justify-between">
+                  <span>Guidelines</span>
+                  <Link to="/guidelines" className="text-[var(--primary)] hover:underline text-[11px] font-medium">
+                    all &rarr;
+                  </Link>
+                </div>
+                <ul className="space-y-1.5 text-sm">
+                  <li>
+                    <Link
+                      to="/guidelines/author"
+                      className={`block px-2.5 py-1.5 rounded-md transition font-medium text-xs ${
+                        key.includes("author")
+                          ? "bg-blue-50 text-[var(--primary)] font-bold"
+                          : "text-[var(--ink)] hover:bg-slate-100"
+                      }`}
+                    >
+                      Author Guidelines
+                    </Link>
                   </li>
-                ))}
-              </ul>
+                  <li>
+                    <Link
+                      to="/guidelines/editor"
+                      className={`block px-2.5 py-1.5 rounded-md transition font-medium text-xs ${
+                        key.includes("editor")
+                          ? "bg-blue-50 text-[var(--primary)] font-bold"
+                          : "text-[var(--ink)] hover:bg-slate-100"
+                      }`}
+                    >
+                      Editor Guidelines
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/guidelines/reviewer"
+                      className={`block px-2.5 py-1.5 rounded-md transition font-medium text-xs ${
+                        key.includes("reviewer")
+                          ? "bg-blue-50 text-[var(--primary)] font-bold"
+                          : "text-[var(--ink)] hover:bg-slate-100"
+                      }`}
+                    >
+                      Reviewer Guidelines
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="surface-card p-4">
+                <EditableText contentKey={`${key}.toc.title`} fallback="On this page" as="div" className="text-xs uppercase font-semibold tracking-wider text-[var(--ink-soft)]" label="Table of contents title" />
+                <ul className="mt-3 space-y-2 text-sm">
+                  {sections.map((s, i) => (
+                    <li key={i}>
+                      <a href={`#s-${i}`} className="text-[var(--ink)] hover:text-[var(--primary)]">
+                        <EditableText contentKey={`${key}.section.${i}.heading`} fallback={s.h} as="span" label="Section link" />
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </aside>
           <div className="lg:col-span-3 space-y-8">
+            {/* Quick Guidelines Directory Navigation */}
+            <nav aria-label="Guidelines Directory" className="surface-card p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <div className="text-xs font-bold uppercase tracking-wider text-[var(--ink-soft)] mb-2.5">
+                Explore Guidelines Directory:
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Link
+                  to="/guidelines"
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:border-[var(--primary)] transition"
+                >
+                  All Guidelines Hub
+                </Link>
+                <Link
+                  to="/guidelines/author"
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition border ${
+                    key.includes("author")
+                      ? "bg-[var(--primary)] text-white border-[var(--primary)]"
+                      : "bg-white border-slate-200 text-slate-700 hover:border-[var(--primary)]"
+                  }`}
+                >
+                  Author Guidelines
+                </Link>
+                <Link
+                  to="/guidelines/editor"
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition border ${
+                    key.includes("editor")
+                      ? "bg-[var(--primary)] text-white border-[var(--primary)]"
+                      : "bg-white border-slate-200 text-slate-700 hover:border-[var(--primary)]"
+                  }`}
+                >
+                  Editor Guidelines
+                </Link>
+                <Link
+                  to="/guidelines/reviewer"
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition border ${
+                    key.includes("reviewer")
+                      ? "bg-[var(--primary)] text-white border-[var(--primary)]"
+                      : "bg-white border-slate-200 text-slate-700 hover:border-[var(--primary)]"
+                  }`}
+                >
+                  Reviewer Guidelines
+                </Link>
+              </div>
+            </nav>
             {sections.map((s, i) => (
               <article id={`s-${i}`} key={i} className="surface-card p-6">
                 <EditableText

@@ -17,7 +17,7 @@ export default function Page() {
         { h: "Ethics", t: "Investigate suspected misconduct following COPE guidelines." },
         { h: "Confidentiality", t: "Protect author and reviewer identities and unpublished material." },
       ]}
-      crumbs={[{ label: "Guidelines" }, { label: "Editor" }]}
+      crumbs={[{ label: "Guidelines", to: "/guidelines" }, { label: "Editor Guidelines" }]}
       actionCard={{
         eyebrow: "FOR EDITORS",
         title: "Ready to join the Editorial Board?",

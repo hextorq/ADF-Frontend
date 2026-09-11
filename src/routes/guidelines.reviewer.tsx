@@ -17,7 +17,7 @@ export default function Page() {
         { h: "Tone", t: "Be specific, constructive, and respectful. Critique work, not the author." },
         { h: "Recommendation", t: "Accept, Minor Revisions, Major Revisions, or Reject — with clear justification." },
       ]}
-      crumbs={[{ label: "Guidelines" }, { label: "Reviewer" }]}
+      crumbs={[{ label: "Guidelines", to: "/guidelines" }, { label: "Reviewer Guidelines" }]}
       actionCard={{
         eyebrow: "FOR REVIEWERS",
         title: "Ready to join the Reviewer Network?",

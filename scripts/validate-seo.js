@@ -124,6 +124,26 @@ check(
   !sitemapXml.match(/<loc>https?:\/\/adf\.ijeae\.com/i)
 );
 
+// Check that all sitemap routes are discoverable in index.html crawlable skeleton
+const locMatches = [...sitemapXml.matchAll(/<loc>https:\/\/www\.adf\.ijeae\.com([^<]*)<\/loc>/g)];
+let allSitemapRoutesDiscovered = true;
+let missingRoutes = [];
+for (const m of locMatches) {
+  const routePath = m[1] || '/';
+  const found = routePath === '/'
+    ? (indexHtml.includes('href="/"') || indexHtml.includes('href="https://www.adf.ijeae.com/"'))
+    : indexHtml.includes(`href="${routePath}"`);
+  if (!found) {
+    allSitemapRoutesDiscovered = false;
+    missingRoutes.push(routePath);
+  }
+}
+check(
+  `All sitemap URLs (${locMatches.length}) discoverable via internal links in HTML skeleton (zero orphans)`,
+  allSitemapRoutesDiscovered,
+  `Missing: ${missingRoutes.join(', ')}`
+);
+
 
 // 4. Validate vercel.json
 console.log('\n4. Checking vercel.json:');

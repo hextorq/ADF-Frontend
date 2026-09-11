@@ -1,4 +1,4 @@
-﻿import fs from "fs";
+import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -21,6 +21,7 @@ const PUBLIC_ROUTES = [
   { loc: "/bookstore", priority: "0.8", changefreq: "weekly" },
   { loc: "/announcements", priority: "0.8", changefreq: "daily" },
   { loc: "/editorial-board", priority: "0.8", changefreq: "monthly" },
+  { loc: "/guidelines", priority: "0.8", changefreq: "monthly" },
   { loc: "/guidelines/author", priority: "0.8", changefreq: "monthly" },
   { loc: "/guidelines/editor", priority: "0.7", changefreq: "monthly" },
   { loc: "/guidelines/reviewer", priority: "0.7", changefreq: "monthly" },

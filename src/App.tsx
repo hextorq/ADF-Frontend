@@ -12,6 +12,7 @@ import EditorialBoard from "@/routes/editorial-board";
 import AuthorGuidelines from "@/routes/guidelines.author";
 import EditorGuidelines from "@/routes/guidelines.editor";
 import ReviewerGuidelines from "@/routes/guidelines.reviewer";
+import GuidelinesIndex from "@/routes/guidelines/index";
 import Journals from "@/routes/journals";
 import BookStore from "@/routes/bookstore";
 import BookSearch from "@/routes/bookstore/search";
@@ -118,23 +119,29 @@ const PAGE_SEO: Record<string, PageSEO> = {
     keywords: "editorial board, academic editors, peer review panel, journal editors, international editorial board",
     crumbs: [{ name: "Editorial Board", path: "/editorial-board" }],
   },
+  "/guidelines": {
+    title: "Publishing Guidelines | Academic Development Forum",
+    description: "Official guidelines for authors, editors, and peer reviewers at Academic Development Forum. Access manuscript templates, workflow standards, and ethical criteria.",
+    keywords: "publishing guidelines, author guidelines, editor guidelines, reviewer guidelines, manuscript submission",
+    crumbs: [{ name: "Guidelines", path: "/guidelines" }],
+  },
   "/guidelines/author": {
     title: "Author Submission Guidelines | ADF",
     description: "Complete author guidelines, manuscript preparation instructions, reference formatting, and checklist for submissions to Academic Development Forum.",
     keywords: "author guidelines, manuscript preparation, submission checklist, referencing style, academic publishing guidelines",
-    crumbs: [{ name: "Author Guidelines", path: "/guidelines/author" }],
+    crumbs: [{ name: "Guidelines", path: "/guidelines" }, { name: "Author Guidelines", path: "/guidelines/author" }],
   },
   "/guidelines/editor": {
     title: "Editor Guidelines & Responsibilities | ADF",
     description: "Editorial roles, responsibilities, and COPE-aligned ethical standards for editors managing peer review and volume curation at Academic Development Forum.",
     keywords: "editor guidelines, editorial responsibilities, peer review ethics, COPE guidelines",
-    crumbs: [{ name: "Editor Guidelines", path: "/guidelines/editor" }],
+    crumbs: [{ name: "Guidelines", path: "/guidelines" }, { name: "Editor Guidelines", path: "/guidelines/editor" }],
   },
   "/guidelines/reviewer": {
     title: "Reviewer Guidelines & Evaluation Criteria | ADF",
     description: "Evaluation checklist, ethical principles, and double-blind peer review instructions for academic reviewers at Academic Development Forum.",
     keywords: "reviewer guidelines, peer review criteria, manuscript evaluation, referee instructions",
-    crumbs: [{ name: "Reviewer Guidelines", path: "/guidelines/reviewer" }],
+    crumbs: [{ name: "Guidelines", path: "/guidelines" }, { name: "Reviewer Guidelines", path: "/guidelines/reviewer" }],
   },
   "/journals": {
     title: "Academic Journals | IJEAE | Academic Development Forum",
@@ -360,6 +367,7 @@ export default function App() {
             <Route path="/literary-publications/submit" element={<><SiteHeader /><main className="flex-1"><LiterarySubmit /></main><SiteFooter /></>} />
             <Route path="/contact" element={<><SiteHeader /><main className="flex-1"><Contact /></main><SiteFooter /></>} />
             <Route path="/editorial-board" element={<><SiteHeader /><main className="flex-1"><EditorialBoard /></main><SiteFooter /></>} />
+            <Route path="/guidelines" element={<><SiteHeader /><main className="flex-1"><GuidelinesIndex /></main><SiteFooter /></>} />
             <Route path="/guidelines/author" element={<><SiteHeader /><main className="flex-1"><AuthorGuidelines /></main><SiteFooter /></>} />
             <Route path="/guidelines/editor" element={<><SiteHeader /><main className="flex-1"><EditorGuidelines /></main><SiteFooter /></>} />
             <Route path="/guidelines/reviewer" element={<><SiteHeader /><main className="flex-1"><ReviewerGuidelines /></main><SiteFooter /></>} />

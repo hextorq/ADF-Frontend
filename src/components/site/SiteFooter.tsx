@@ -39,7 +39,7 @@ const COLUMNS = [
       { label: "Editorial Board", to: "/editorial-board" },
       { label: "Announcements", to: "/announcements" },
       { label: "Contact Us", to: "/contact" },
-      { label: "Submission Guidelines", to: "/guidelines/author" },
+      { label: "Publishing Guidelines", to: "/guidelines" },
     ],
   },
 ];
