@@ -96,6 +96,7 @@ check('JSON-LD schema present in index.html', indexHtml.includes('application/ld
 check('EducationalOrganization schema included', indexHtml.includes('EducationalOrganization'));
 check('WebSite schema included', indexHtml.includes('"@type": "WebSite"'));
 check('SearchAction included', indexHtml.includes('"@type": "SearchAction"'));
+check('Google tag (gtag.js) present with ID G-N0YXEK5PCP', indexHtml.includes('https://www.googletagmanager.com/gtag/js?id=G-N0YXEK5PCP') && indexHtml.includes('G-N0YXEK5PCP'));
 
 
 // 2. Validate robots.txt
