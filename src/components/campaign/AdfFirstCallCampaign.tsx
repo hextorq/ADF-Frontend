@@ -1,18 +1,18 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { 
-  Clock, 
-  CheckCircle2, 
-  ArrowRight, 
-  Award, 
-  BookMarked, 
-  BookOpen, 
-  Feather, 
-  Palette, 
-  Camera, 
-  Quote, 
-  FileText, 
-  Eye, 
+import {
+  Clock,
+  CheckCircle2,
+  ArrowRight,
+  Award,
+  BookMarked,
+  BookOpen,
+  Feather,
+  Palette,
+  Camera,
+  Quote,
+  FileText,
+  Eye,
   Globe2,
   Calendar
 } from "lucide-react";
@@ -77,13 +77,13 @@ export function AdfFirstCallCampaign() {
   return (
     <section id="adf-first-call" className="py-10 bg-slate-100/60 border-b border-slate-200/80">
       <div className="container-academic">
-        
+
         {/* Main Highlighted Card: Blends with ADF Royal & Mint palette */}
         <div className="relative rounded-2xl bg-gradient-to-br from-[#eef2ff] via-[#f7f9ff] to-[#f0fdf4] border-2 border-indigo-200/90 shadow-lg shadow-indigo-950/5 p-6 sm:p-8 overflow-hidden">
-          
+
           {/* Top Decorative Brand Gradient Stripe */}
           <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[var(--primary)] via-[#22c55e] to-[var(--primary)]" />
-          
+
           {/* Subtle Ambient Glows */}
           <div className="absolute -top-20 -right-20 w-72 h-72 bg-blue-400/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-emerald-400/10 rounded-full blur-3xl pointer-events-none" />
@@ -104,7 +104,7 @@ export function AdfFirstCallCampaign() {
 
           {/* Two-Column Content: Left Details & Right Poster */}
           <div className="grid lg:grid-cols-12 gap-8 items-center pt-6 relative z-10">
-            
+
             {/* Left Column: Details (8 cols) */}
             <div className="lg:col-span-8 space-y-5">
               <div>
@@ -124,10 +124,10 @@ export function AdfFirstCallCampaign() {
                 <div className="text-xs uppercase tracking-wider text-slate-600 font-bold mb-2 flex items-center justify-between">
                   <span>Welcome Works (Click to select):</span>
                   <span className="text-[11px] text-[var(--primary)] font-semibold hidden sm:inline">
-                    Languages: English & Tamil (Latha Font)
+                    Languages: English & Tamil
                   </span>
                 </div>
-                
+
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {CATEGORIES.map((cat) => {
                     const Icon = cat.icon;
@@ -136,11 +136,10 @@ export function AdfFirstCallCampaign() {
                       <button
                         key={cat.name}
                         onClick={() => setActiveCategory(cat.name)}
-                        className={`text-left p-3 rounded-xl border transition-all text-xs flex flex-col justify-between cursor-pointer ${
-                          isActive
+                        className={`text-left p-3 rounded-xl border transition-all text-xs flex flex-col justify-between cursor-pointer ${isActive
                             ? "bg-[var(--primary)] border-[var(--primary)] shadow-sm text-white ring-2 ring-[var(--primary)]/20"
                             : "bg-white/95 border-indigo-100/90 hover:border-indigo-300 text-slate-800 shadow-xs hover:bg-white"
-                        }`}
+                          }`}
                       >
                         <div className="flex items-center gap-1.5 font-semibold">
                           <Icon className={`h-3.5 w-3.5 ${isActive ? "text-amber-300" : "text-[var(--primary)]"}`} />

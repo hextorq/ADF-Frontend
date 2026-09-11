@@ -1,6 +1,17 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { X, ArrowRight, Eye, Pause, Play, Sparkles } from "lucide-react";
+import { 
+  X, 
+  ArrowRight, 
+  Maximize2, 
+  Download, 
+  CheckCircle2, 
+  Calendar, 
+  BookMarked, 
+  Award, 
+  Pause,
+  Play
+} from "lucide-react";
 import { ART_DREAMS_FUSION_VOL_1 } from "@/data/campaigns";
 import { PosterModal } from "./PosterModal";
 
@@ -19,20 +30,18 @@ export function LandingPosterModal({ forceOpen = false, onCloseCallback }: Landi
   const [isPaused, setIsPaused] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Check if we should show the modal on the landing page
   useEffect(() => {
-    // Only auto-trigger on the root landing page "/"
+    // Only trigger on root landing page "/" unless explicitly forced
     if (!forceOpen && location.pathname !== "/") {
       return;
     }
 
-    // Check if user already saw or skipped the welcome poster in this session
+    // Check session storage so returning visitors aren't interrupted
     const seen = sessionStorage.getItem("adf_landing_poster_seen");
     if (!forceOpen && seen === "true") {
       return;
     }
 
-    // Small delay of 400ms for smooth page transition
     const initTimer = setTimeout(() => {
       setIsOpen(true);
       setSecondsRemaining(5);
@@ -64,7 +73,7 @@ export function LandingPosterModal({ forceOpen = false, onCloseCallback }: Landi
     };
   }, [isOpen, isPaused, isFullPosterOpen]);
 
-  // Handle escape key
+  // ESC key to dismiss
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen && !isFullPosterOpen) {
@@ -100,17 +109,16 @@ export function LandingPosterModal({ forceOpen = false, onCloseCallback }: Landi
     );
   }
 
-  // Calculate circular progress (5s total)
+  // Progress percentage for visual timer
   const progressPercent = ((5 - secondsRemaining) / 5) * 100;
-  const strokeDashoffset = 100 - progressPercent;
 
   return (
     <>
       <div
         role="dialog"
         aria-modal="true"
-        aria-label="Welcome Announcement Poster"
-        className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 backdrop-blur-md p-3 sm:p-4 md:p-6 animate-in fade-in duration-300 select-none"
+        aria-label="Official Publication Call — Art, Dreams & Fusion"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-2 sm:p-4 md:p-6 animate-in fade-in duration-200"
         onClick={(e) => {
           if (e.target === e.currentTarget) handleClose();
         }}
@@ -118,120 +126,136 @@ export function LandingPosterModal({ forceOpen = false, onCloseCallback }: Landi
         <div
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
-          className="relative flex flex-col items-center bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 border border-indigo-500/30 rounded-2xl sm:rounded-3xl shadow-2xl shadow-indigo-950/60 max-w-lg w-full max-h-[92vh] overflow-hidden transition-all duration-300"
+          className="relative flex flex-col bg-white rounded-2xl shadow-2xl border border-slate-200/90 max-w-2xl lg:max-w-3xl w-full max-h-[96vh] overflow-hidden transition-all duration-300"
         >
-          {/* Top Header Bar */}
-          <div className="w-full flex items-center justify-between px-4 py-3 bg-slate-950/80 border-b border-slate-800 text-white z-20">
-            <div className="flex items-center gap-2">
-              <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-200 tracking-wide">
-                <Sparkles className="h-3.5 w-3.5 text-amber-400" />
-                <span>Special Call · {campaign.volume}</span>
+          {/* Top Hairline Progress Bar */}
+          <div className="w-full h-1 bg-slate-100 overflow-hidden relative">
+            <div
+              className={`h-full bg-gradient-to-r from-blue-700 via-indigo-600 to-amber-500 transition-all ${
+                isPaused ? "duration-0" : "duration-1000 ease-linear"
+              }`}
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+
+          {/* Institutional Header Bar */}
+          <div className="flex items-center justify-between px-4 sm:px-6 py-3 bg-slate-50/95 border-b border-slate-200/80">
+            <div className="flex items-center gap-3">
+              <img
+                src="/logo.png"
+                alt="Academic Development Forum Seal"
+                className="h-8 w-auto object-contain shrink-0"
+              />
+              <div className="border-l border-slate-300 pl-3">
+                <span className="text-[11px] font-bold tracking-wider uppercase text-slate-900 block leading-tight">
+                  Academic Development Forum
+                </span>
+                <span className="text-[10px] text-slate-500 font-medium block">
+                  Official Publication Call · {campaign.volume}
+                </span>
               </div>
-              <span className="hidden sm:inline-block text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                ₹0 Free
-              </span>
             </div>
 
-            {/* Skip Button with Animated Progress Indicator */}
+            {/* Skip & Timer Controls */}
             <div className="flex items-center gap-2">
               {isPaused ? (
-                <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-300/90 bg-amber-950/40 px-2 py-0.5 rounded-md border border-amber-500/20">
-                  <Pause className="h-3 w-3" /> Paused
+                <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-800 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-200">
+                  <Pause className="h-3 w-3 text-amber-600" /> Paused (Reading)
                 </span>
               ) : (
-                <div className="relative flex items-center justify-center w-6 h-6">
-                  <svg className="w-6 h-6 -rotate-90" viewBox="0 0 36 36">
-                    <path
-                      className="text-slate-800"
-                      strokeWidth="3.5"
-                      stroke="currentColor"
-                      fill="none"
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    />
-                    <path
-                      className="text-emerald-400 transition-all duration-1000 ease-linear"
-                      strokeDasharray="100, 100"
-                      strokeDashoffset={strokeDashoffset}
-                      strokeWidth="3.5"
-                      strokeLinecap="round"
-                      stroke="currentColor"
-                      fill="none"
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    />
-                  </svg>
-                  <span className="absolute text-[10px] font-bold text-slate-300 font-mono">
-                    {secondsRemaining}
-                  </span>
-                </div>
+                <span className="text-[11px] font-mono font-medium text-slate-400 hidden sm:inline">
+                  Closing in {secondsRemaining}s
+                </span>
               )}
 
               <button
                 onClick={handleClose}
-                className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/90 hover:bg-rose-900/60 text-slate-300 hover:text-white border border-slate-700/80 hover:border-rose-700/80 text-xs font-semibold transition-all shadow-sm"
-                title="Skip poster and continue to website"
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-300 text-xs font-semibold transition-colors shadow-xs"
+                title="Skip announcement and proceed to site"
               >
                 <span>Skip</span>
-                <span className="text-slate-400 group-hover:text-rose-300">({secondsRemaining}s)</span>
-                <X className="h-3.5 w-3.5 ml-0.5" />
+                <span className="text-slate-400 font-mono">({secondsRemaining}s)</span>
+                <X className="h-3.5 w-3.5 ml-0.5 text-slate-500" />
               </button>
             </div>
           </div>
 
-          {/* Poster Image Stage */}
-          <div className="relative flex-1 w-full overflow-hidden p-3 sm:p-4 flex items-center justify-center bg-slate-950/40">
+          {/* Poster Showcase Section (The True Hero) */}
+          <div className="relative flex-1 bg-gradient-to-b from-slate-100/70 to-slate-200/40 p-3 sm:p-5 flex flex-col items-center justify-center overflow-y-auto min-h-0">
             <div
               onClick={handleOpenFullPoster}
-              className="relative group cursor-pointer max-h-[64vh] rounded-xl overflow-hidden shadow-2xl border-2 border-indigo-400/20 hover:border-indigo-400/60 transition-all duration-300"
-              title="Click to view full poster with zoom"
+              className="group relative cursor-pointer rounded-xl overflow-hidden shadow-xl border border-slate-300/80 bg-white hover:shadow-2xl transition-all duration-300 max-h-[64vh] sm:max-h-[68vh]"
+              title="Click to view full poster with zoom and inspection tools"
             >
               <img
                 src={campaign.posterUrl}
-                alt="Art, Dreams & Fusion Official Poster"
-                className="max-h-[64vh] w-auto object-contain block mx-auto transition-transform duration-300 group-hover:scale-[1.02]"
+                alt="Art, Dreams & Fusion - Official Publication Poster"
+                className="max-h-[62vh] sm:max-h-[66vh] w-auto object-contain block mx-auto transition-transform duration-300 group-hover:scale-[1.01]"
               />
-
-              {/* Hover overlay hint */}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/30 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-3">
-                <span className="self-end inline-flex items-center gap-1 bg-slate-900/90 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full border border-slate-700 shadow">
-                  <Eye className="h-3 w-3" /> Click to Zoom
-                </span>
-                <span className="self-center text-xs font-bold text-white bg-slate-900/90 px-4 py-1.5 rounded-lg border border-slate-700">
-                  Full High-Resolution Poster
+              
+              {/* Subtle hover overlay for inspection */}
+              <div className="absolute inset-0 bg-slate-950/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/95 text-slate-900 text-xs font-bold shadow-lg">
+                  <Maximize2 className="h-4 w-4 text-blue-700" /> Inspect &amp; Zoom High-Res
                 </span>
               </div>
+            </div>
+
+            {/* Quick Metadata Pill Strip */}
+            <div className="mt-2.5 flex flex-wrap items-center justify-center gap-2 text-xs">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200 font-semibold text-[11px]">
+                <CheckCircle2 className="h-3 w-3 text-emerald-600" /> ₹0 Free Submission
+              </span>
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-blue-50 text-blue-800 border border-blue-200 font-semibold text-[11px]">
+                <BookMarked className="h-3 w-3 text-blue-600" /> ISBN Registered
+              </span>
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200 font-semibold text-[11px]">
+                <Award className="h-3 w-3 text-amber-600" /> Certificate Honored
+              </span>
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 border border-slate-200 font-semibold text-[11px]">
+                <Calendar className="h-3 w-3 text-slate-500" /> Deadline: {campaign.deadlineFormatted}
+              </span>
             </div>
           </div>
 
-          {/* Bottom Action Strip */}
-          <div className="w-full px-4 py-3 bg-slate-950 border-t border-slate-800/90 flex flex-col sm:flex-row items-center justify-between gap-2.5 z-20">
-            <div className="text-center sm:text-left">
-              <div className="text-xs font-bold text-slate-200 truncate">
-                {campaign.title} · {campaign.subtitle}
-              </div>
-              <div className="text-[11px] text-emerald-400 font-medium">
-                Deadline: {campaign.deadlineFormatted} · ISBN Registered
-              </div>
+          {/* Action Bar */}
+          <div className="px-4 sm:px-6 py-3.5 bg-white border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="text-left hidden sm:block">
+              <span className="font-serif text-sm font-bold text-slate-900 block leading-tight">
+                {campaign.title} — {campaign.volume}
+              </span>
+              <span className="text-xs text-slate-500 block">
+                Open to all creators · English &amp; Tamil accepted
+              </span>
             </div>
 
-            <div className="flex items-center gap-2 w-full sm:w-auto">
-              <button
-                type="button"
-                onClick={handleOpenFullPoster}
-                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1 px-3 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700 transition"
-              >
-                <Eye className="h-3.5 w-3.5" />
-                <span>Zoom</span>
-              </button>
-
+            <div className="flex items-center gap-2.5 w-full sm:w-auto">
               <Link
                 to="/literary-publications/submit?campaign=art-dreams-fusion-vol-1"
                 onClick={handleClose}
-                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 transition shadow-md shadow-emerald-950/20"
+                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-[#071a8c] hover:bg-[#050f55] transition-colors shadow-sm"
               >
-                <span>Submit Work (₹0 Free)</span>
-                <ArrowRight className="h-3.5 w-3.5" />
+                <span>Submit Manuscript (Free)</span>
+                <ArrowRight className="h-4 w-4" />
               </Link>
+
+              <button
+                type="button"
+                onClick={handleOpenFullPoster}
+                className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-slate-50 text-slate-700 hover:text-slate-900 hover:bg-slate-100 border border-slate-300 transition-colors"
+                title="Open zoomable full-screen viewer"
+              >
+                <Maximize2 className="h-3.5 w-3.5 text-slate-600" />
+                <span className="hidden sm:inline">Inspect</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleClose}
+                className="text-xs text-slate-500 hover:text-slate-800 font-medium px-2 py-1 transition-colors"
+              >
+                Continue to Site
+              </button>
             </div>
           </div>
         </div>
