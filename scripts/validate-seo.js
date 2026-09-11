@@ -111,6 +111,37 @@ check(
 check('robots.txt protects /admin', robotsTxt.includes('Disallow: /admin'));
 
 
+// 2b. Validate llms.txt
+console.log('\n2b. Checking llms.txt:');
+const llmsPath = path.join(rootDir, 'public', 'llms.txt');
+const llmsExists = fs.existsSync(llmsPath);
+check('llms.txt exists in public directory', llmsExists);
+if (llmsExists) {
+  const llmsContent = fs.readFileSync(llmsPath, 'utf-8');
+  check(
+    'llms.txt starts with markdown H1 "# Academic Development Forum (ADF)"',
+    llmsContent.trimStart().startsWith('# Academic Development Forum (ADF)')
+  );
+  check(
+    'llms.txt does NOT contain HTML tags (<h1, <html, etc.)',
+    !llmsContent.match(/<\/?(h1|html|head|body|p|div|span)[^>]*>/i)
+  );
+  check(
+    'llms.txt contains only preferred canonical www.adf.ijeae.com URLs',
+    !llmsContent.match(/https?:\/\/adf\.ijeae\.com/i) && llmsContent.includes('https://www.adf.ijeae.com/')
+  );
+  check(
+    'llms.txt does NOT expose private or admin endpoints',
+    !llmsContent.includes('/admin') && !llmsContent.includes('/api')
+  );
+  const markdownLinks = llmsContent.match(/\[([^\]]+)\]\((https:\/\/www\.adf\.ijeae\.com[^\)]*)\)/g) || [];
+  check(
+    `llms.txt contains structured Markdown links (found: ${markdownLinks.length})`,
+    markdownLinks.length >= 10
+  );
+}
+
+
 // 3. Validate sitemap.xml
 console.log('\n3. Checking sitemap.xml:');
 const sitemapPath = path.join(rootDir, 'public', 'sitemap.xml');

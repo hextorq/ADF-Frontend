@@ -1,0 +1,34 @@
+# Academic Development Forum (ADF)
+
+> Academic Development Forum (ADF) is an international scholarly publication house dedicated to peer-reviewed academic journals, edited book chapters, creative literary works, and faculty development programmes. ADF operates under open-access principles (CC BY 4.0) with double-blind peer review and international ISBN/DOI registration.
+
+## Core Information & About
+
+- [About ADF](https://www.adf.ijeae.com/about): Institutional mission, editorial standards, academic governance, and open-access publishing framework.
+- [Editorial Board](https://www.adf.ijeae.com/editorial-board): International panel of editors, academic advisors, and subject-matter peer reviewers.
+- [Announcements & CFP](https://www.adf.ijeae.com/announcements): Official calls for papers (CFP), volume deadlines, conference notices, and journal updates.
+- [Contact Editorial Office](https://www.adf.ijeae.com/contact): Inquiries for manuscript submissions, editorial proposals, and institutional partnerships.
+
+## Academic & Scholarly Publications
+
+- [Academic Journals](https://www.adf.ijeae.com/journals): Peer-reviewed scholarly journals, featuring the International Journal of English for Academic Excellence (IJEAE, ISSN: 3049-2912).
+- [Book Chapter Publications](https://www.adf.ijeae.com/chapter-publications): The ADF Convergence Series: Multidisciplinary Perspectives in Contemporary Research with ISBN registration and DOI assignment.
+- [Submit Book Chapter](https://www.adf.ijeae.com/chapter-publications/submit): Online manuscript submission portal and instructions for book chapter authors.
+- [Academic Programmes & FDP](https://www.adf.ijeae.com/academic-programmes): International faculty development programmes, research workshops, capacity-building seminars, and scholarly training.
+- [Academic Bookstore](https://www.adf.ijeae.com/bookstore): Catalog of published academic monographs, edited research volumes, conference proceedings, and scholarly books.
+
+## Literary & Creative Publishing
+
+- [Literary Publications](https://www.adf.ijeae.com/literary-publications): Publication of poetry collections, novels, creative monographs, and literary anthologies with ISBN assignment and global distribution.
+- [Submit Literary Manuscript](https://www.adf.ijeae.com/literary-publications/submit): Submission guidelines and manuscript intake for creative writers, poets, and novelists.
+
+## Publishing Guidelines & Editorial Workflow
+
+- [Publishing Guidelines Directory](https://www.adf.ijeae.com/guidelines): Central hub for submission criteria, editorial standards, and double-blind peer review workflows.
+- [Author Guidelines](https://www.adf.ijeae.com/guidelines/author): Complete manuscript preparation checklist, APA 7th edition formatting, and submission requirements.
+- [Editor Guidelines](https://www.adf.ijeae.com/guidelines/editor): Roles, responsibilities, decision workflows, and ethical requirements for ADF editors.
+- [Reviewer Guidelines](https://www.adf.ijeae.com/guidelines/reviewer): Instructions and evaluation criteria for independent double-blind peer review.
+
+## Publication Ethics & Governance
+
+- [Publication Ethics & Policies](https://www.adf.ijeae.com/policies): COPE-aligned publication ethics, CC BY 4.0 open access licensing, copyright retention, anti-plagiarism standards, and retraction policy.
