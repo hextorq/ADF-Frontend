@@ -5,10 +5,11 @@
     "type":  "module",
     "scripts":  {
                     "dev":  "vite",
-                    "build":  "node scripts/generate-sitemap.js \u0026\u0026 tsc -b \u0026\u0026 vite build",
+                    "build":  "node scripts/generate-sitemap.js && tsc -b && vite build",
                     "preview":  "vite preview",
                     "lint":  "eslint .",
-                    "sitemap":  "node scripts/generate-sitemap.js"
+                    "sitemap":  "node scripts/generate-sitemap.js",
+                    "test:seo": "node scripts/validate-seo.js"
                 },
     "dependencies":  {
                          "@hookform/resolvers":  "^5.2.2",

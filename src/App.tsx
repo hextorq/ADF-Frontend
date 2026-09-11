@@ -1,4 +1,4 @@
-import { Component, type ErrorInfo, type ReactNode, useEffect } from "react";
+import { Component, type ErrorInfo, type ReactNode, useEffect, lazy, Suspense } from "react";
 import { Link, Route, Routes, useLocation } from "react-router-dom";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
@@ -7,9 +7,6 @@ import About from "@/routes/about";
 import AcademicProgrammes from "@/routes/academic-programmes";
 import Announcements from "@/routes/announcements";
 import ChapterPublications from "@/routes/chapter-publications";
-import ChapterSubmit from "@/routes/chapter-publications/submit";
-import LiteraryPublications from "@/routes/literary-publications";
-import LiterarySubmit from "@/routes/literary-publications/submit";
 import Contact from "@/routes/contact";
 import EditorialBoard from "@/routes/editorial-board";
 import AuthorGuidelines from "@/routes/guidelines.author";
@@ -21,18 +18,21 @@ import BookSearch from "@/routes/bookstore/search";
 import Policies from "@/routes/policies";
 import Search from "@/routes/search";
 
-// Admin
-import AdminLayout from "@/routes/admin/AdminLayout";
-import AdminDashboard from "@/routes/admin/index";
-import AdminLogin from "@/routes/admin/login";
-import RequireAdmin from "@/routes/admin/RequireAdmin";
-import AdminBookManagement from "@/routes/admin/bookstore/books";
-import AdminAuthorManagement from "@/routes/admin/bookstore/authors";
-import AdminOrderManagement from "@/routes/admin/bookstore/orders";
-import AdminChapterPublications from "@/routes/admin/publications/chapters";
-import AdminLiteraryPublications from "@/routes/admin/publications/literary";
-import AdminManuscriptFormatter from "@/routes/admin/publications/AdminManuscriptFormatter";
-import AdminProgrammes from "@/routes/admin/programmes/index";
+// Lazy-loaded heavy and admin routes for code-splitting & performance
+const ChapterSubmit = lazy(() => import("@/routes/chapter-publications/submit"));
+const LiteraryPublications = lazy(() => import("@/routes/literary-publications"));
+const LiterarySubmit = lazy(() => import("@/routes/literary-publications/submit"));
+const AdminLayout = lazy(() => import("@/routes/admin/AdminLayout"));
+const AdminDashboard = lazy(() => import("@/routes/admin/index"));
+const AdminLogin = lazy(() => import("@/routes/admin/login"));
+const RequireAdmin = lazy(() => import("@/routes/admin/RequireAdmin"));
+const AdminBookManagement = lazy(() => import("@/routes/admin/bookstore/books"));
+const AdminAuthorManagement = lazy(() => import("@/routes/admin/bookstore/authors"));
+const AdminOrderManagement = lazy(() => import("@/routes/admin/bookstore/orders"));
+const AdminChapterPublications = lazy(() => import("@/routes/admin/publications/chapters"));
+const AdminLiteraryPublications = lazy(() => import("@/routes/admin/publications/literary"));
+const AdminManuscriptFormatter = lazy(() => import("@/routes/admin/publications/AdminManuscriptFormatter"));
+const AdminProgrammes = lazy(() => import("@/routes/admin/programmes/index"));
 import { Toaster } from "@/components/ui/sonner";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useContentStore } from "@/store/useContentStore";
@@ -40,6 +40,11 @@ import { AdminLiveToolbar } from "@/components/cms/AdminLiveToolbar";
 import { InteractiveSidePoster } from "@/components/campaign/InteractiveSidePoster";
 import { SITE_CONFIG, buildCanonicalUrl, buildBreadcrumbSchema } from "@/lib/seo";
 
+const PageFallback = () => (
+  <div className="flex min-h-[40vh] items-center justify-center" aria-busy="true">
+    <div className="h-8 w-8 animate-spin rounded-full border-4 border-[var(--primary)] border-t-transparent" />
+  </div>
+);
 
 interface PageSEO {
   title: string;
@@ -54,125 +59,125 @@ interface PageSEO {
 
 const PAGE_SEO: Record<string, PageSEO> = {
   "/": {
-    title: "Academic Development Forum (ADF) — International Research, Journals & Book Publications",
-    description: "Academic Development Forum (ADF) is an international publication house publishing peer-reviewed journals, edited book chapters, literary works, and academic development programmes — open access and globally accessible.",
+    title: "Academic Development Forum | Academic Publishing",
+    description: "Academic Development Forum (ADF) supports academic publishing through journals, book chapters, literary publications and academic programmes.",
     keywords: "Academic Development Forum, ADF, peer-reviewed journals, open access, academic research, book chapters, literary publications",
     type: "website",
   },
   "/about": {
-    title: "About Us — Academic Development Forum (ADF) | Mission & Vision",
+    title: "About Us | Academic Development Forum",
     description: "Learn about Academic Development Forum (ADF), our global mission, editorial standards, and commitment to open-access scholarly dissemination.",
     keywords: "about ADF, Academic Development Forum, publishing mission, academic forum, scholarly dissemination",
     crumbs: [{ name: "About Us", path: "/about" }],
   },
   "/academic-programmes": {
-    title: "Academic Programmes & Faculty Development (FDP) — ADF",
-    description: "International faculty development programmes, research workshops, capacity building seminars, and academic training by ADF.",
+    title: "Academic Programmes & FDP | ADF",
+    description: "International faculty development programmes, research workshops, capacity building seminars, and academic training by Academic Development Forum.",
     keywords: "academic programmes, faculty development programme, FDP, academic workshops, research seminars",
     crumbs: [{ name: "Academic Programmes", path: "/academic-programmes" }],
   },
   "/announcements": {
-    title: "Announcements & Call for Papers (CFP) — Academic Development Forum",
-    description: "Latest academic announcements, calls for papers, chapter submissions, journal releases, and event updates from ADF.",
+    title: "Announcements & CFP | Academic Development Forum",
+    description: "Explore academic announcements, calls for papers, book chapter submissions, journal releases, and event updates from Academic Development Forum.",
     keywords: "call for papers, CFP, academic announcements, submission deadlines, journal CFP",
     crumbs: [{ name: "Announcements", path: "/announcements" }],
   },
   "/chapter-publications": {
-    title: "Book Chapter Publications — Convergence Series | ADF",
-    description: "Submit your book chapter to ADF Convergence Series. Peer-reviewed edited volumes with ISBN, DOI, and international indexing.",
+    title: "Book Chapter Publications | Convergence Series | ADF",
+    description: "Submit your research to the ADF Convergence Series. Peer-reviewed edited volumes with ISBN, DOI assignment, and international scholarly indexing.",
     keywords: "book chapter publication, edited volume, call for chapters, ISBN book chapter, convergence series",
     crumbs: [{ name: "Chapter Publications", path: "/chapter-publications" }],
   },
   "/chapter-publications/submit": {
-    title: "Submit Book Chapter Manuscript — ADF Convergence Series",
+    title: "Submit Book Chapter | ADF Convergence Series",
     description: "Online manuscript submission portal for book chapters under the ADF Convergence Series. Review guidelines and submit your chapter.",
     keywords: "submit book chapter, chapter manuscript submission, call for chapters submission, convergence series submit",
     crumbs: [{ name: "Chapter Publications", path: "/chapter-publications" }, { name: "Submit Chapter", path: "/chapter-publications/submit" }],
   },
   "/literary-publications": {
-    title: "Literary Publications & Creative Publishing — ADF",
+    title: "Literary Publications & Creative Books | ADF",
     description: "Submit and publish literary works, poetry collections, novels, and creative monographs with international distribution through ADF.",
     keywords: "literary publications, poetry publishing, book publishing, creative writing, author publishing",
     crumbs: [{ name: "Literary Publications", path: "/literary-publications" }],
   },
   "/literary-publications/submit": {
-    title: "Submit Literary Manuscript — ADF Creative Publishing",
+    title: "Submit Literary Manuscript | ADF Publishing",
     description: "Submit your poetry collection, novel, or creative manuscript for professional review, editing, ISBN assignment, and global publishing with ADF.",
     keywords: "submit literary manuscript, poetry manuscript submission, publish novel, creative writing submission",
     crumbs: [{ name: "Literary Publications", path: "/literary-publications" }, { name: "Submit Manuscript", path: "/literary-publications/submit" }],
   },
   "/contact": {
-    title: "Contact ADF — Academic Development Forum Editorial Office",
+    title: "Contact Us | Academic Development Forum",
     description: "Get in touch with Academic Development Forum for publication inquiries, journal submissions, editorial board applications, and support.",
     keywords: "contact ADF, academic publishing inquiry, editorial office contact, journal submission help",
     crumbs: [{ name: "Contact Us", path: "/contact" }],
   },
   "/editorial-board": {
-    title: "Editorial Board & Reviewers — Academic Development Forum",
-    description: "Distinguished international editorial board members, subject experts, and peer reviewers at Academic Development Forum.",
+    title: "Editorial Board & Reviewers | ADF",
+    description: "Distinguished international editorial board members, subject matter experts, and peer reviewers guiding publications at Academic Development Forum.",
     keywords: "editorial board, academic editors, peer review panel, journal editors, international editorial board",
     crumbs: [{ name: "Editorial Board", path: "/editorial-board" }],
   },
   "/guidelines/author": {
-    title: "Author Submission Guidelines & Manuscript Template — ADF",
-    description: "Complete author guidelines, manuscript preparation instructions, reference formatting, and checklist for submissions to ADF.",
+    title: "Author Submission Guidelines | ADF",
+    description: "Complete author guidelines, manuscript preparation instructions, reference formatting, and checklist for submissions to Academic Development Forum.",
     keywords: "author guidelines, manuscript preparation, submission checklist, referencing style, academic publishing guidelines",
     crumbs: [{ name: "Author Guidelines", path: "/guidelines/author" }],
   },
   "/guidelines/editor": {
-    title: "Editor Guidelines & Responsibilities — Academic Development Forum",
-    description: "Roles, responsibilities, and ethical standards for editors managing peer review and volume curation at ADF.",
+    title: "Editor Guidelines & Responsibilities | ADF",
+    description: "Editorial roles, responsibilities, and COPE-aligned ethical standards for editors managing peer review and volume curation at Academic Development Forum.",
     keywords: "editor guidelines, editorial responsibilities, peer review ethics, COPE guidelines",
     crumbs: [{ name: "Editor Guidelines", path: "/guidelines/editor" }],
   },
   "/guidelines/reviewer": {
-    title: "Peer Reviewer Guidelines & Evaluation Criteria — ADF",
-    description: "Evaluation checklist, ethical principles, and double-blind peer review instructions for reviewers at ADF.",
+    title: "Reviewer Guidelines & Evaluation Criteria | ADF",
+    description: "Evaluation checklist, ethical principles, and double-blind peer review instructions for academic reviewers at Academic Development Forum.",
     keywords: "reviewer guidelines, peer review criteria, manuscript evaluation, referee instructions",
     crumbs: [{ name: "Reviewer Guidelines", path: "/guidelines/reviewer" }],
   },
   "/journals": {
-    title: "Peer-Reviewed Open Access Journals — International Journal of English for Academic Excellence (IJEAE)",
-    description: "Discover open-access, double-blind peer-reviewed journals published by ADF, including the International Journal of English for Academic Excellence (IJEAE). Submit online.",
+    title: "Academic Journals | IJEAE | Academic Development Forum",
+    description: "Discover open-access, peer-reviewed journals published by ADF, including the International Journal of English for Academic Excellence (IJEAE).",
     keywords: "academic journals, peer-reviewed journal, IJEAE, applied linguistics journal, ELT research, open access journal",
     crumbs: [{ name: "Journals", path: "/journals" }],
   },
   "/bookstore": {
-    title: "Bookstore & Published Volumes — Academic Development Forum",
-    description: "Browse and order peer-reviewed academic books, edited volumes, monographs, and conference proceedings published by ADF.",
+    title: "Bookstore & Published Volumes | ADF",
+    description: "Browse and order peer-reviewed academic books, edited volumes, literary works, and conference proceedings published by Academic Development Forum.",
     keywords: "academic bookstore, published books, academic monographs, buy academic books",
     crumbs: [{ name: "Bookstore", path: "/bookstore" }],
   },
   "/bookstore/search": {
-    title: "Search Bookstore — Academic Development Forum",
-    description: "Search across ADF's published books, edited volumes, author monographs, and academic series.",
+    title: "Search Bookstore | Academic Development Forum",
+    description: "Search across published academic books, edited volumes, monographs, and literary works available from Academic Development Forum.",
     keywords: "search bookstore, search academic books",
     noindex: true,
     nofollow: false,
     crumbs: [{ name: "Bookstore", path: "/bookstore" }, { name: "Search", path: "/bookstore/search" }],
   },
   "/policies": {
-    title: "Publication Ethics, Open Access & Plagiarism Policies — ADF",
+    title: "Publication Ethics & Policies | ADF",
     description: "ADF publication ethics, COPE compliance, open-access policy, CC BY 4.0 licensing, retraction guidelines, and plagiarism criteria.",
     keywords: "publication ethics, COPE compliance, open access policy, plagiarism policy, retraction policy",
     crumbs: [{ name: "Policies", path: "/policies" }],
   },
   "/search": {
-    title: "Search Publications & Journals — Academic Development Forum",
-    description: "Search research articles, book chapters, literary works, and academic programmes across ADF publications.",
+    title: "Search Publications | Academic Development Forum",
+    description: "Search research articles, book chapters, literary works, and academic programmes across Academic Development Forum publications.",
     keywords: "search publications, research search, journal search",
     noindex: true,
     nofollow: false,
     crumbs: [{ name: "Search", path: "/search" }],
   },
   "/admin/login": {
-    title: "Admin Portal Login — Academic Development Forum",
+    title: "Admin Portal Login | ADF",
     description: "Administrative access portal for ADF management and editorial staff.",
     noindex: true,
     nofollow: true,
   },
   "/admin": {
-    title: "Admin Dashboard — Academic Development Forum",
+    title: "Admin Dashboard | ADF",
     description: "Administrative management control center for ADF publications, bookstore, and programmes.",
     noindex: true,
     nofollow: true,
@@ -341,45 +346,47 @@ export default function App() {
         <Toaster />
         <AdminLiveToolbar />
         <InteractiveSidePoster />
-        <Routes>
+        <Suspense fallback={<PageFallback />}>
+          <Routes>
 
-          {/* Public routes */}
-          <Route path="/" element={<><SiteHeader /><main className="flex-1"><Home /></main><SiteFooter /></>} />
-          <Route path="/about" element={<><SiteHeader /><main className="flex-1"><About /></main><SiteFooter /></>} />
-          <Route path="/academic-programmes" element={<><SiteHeader /><main className="flex-1"><AcademicProgrammes /></main><SiteFooter /></>} />
-          <Route path="/announcements" element={<><SiteHeader /><main className="flex-1"><Announcements /></main><SiteFooter /></>} />
-          <Route path="/chapter-publications" element={<><SiteHeader /><main className="flex-1"><ChapterPublications /></main><SiteFooter /></>} />
-          <Route path="/chapter-publications/submit" element={<><SiteHeader /><main className="flex-1"><ChapterSubmit /></main><SiteFooter /></>} />
-          <Route path="/literary-publications" element={<><SiteHeader /><main className="flex-1"><LiteraryPublications /></main><SiteFooter /></>} />
-          <Route path="/literary-publications/submit" element={<><SiteHeader /><main className="flex-1"><LiterarySubmit /></main><SiteFooter /></>} />
-          <Route path="/contact" element={<><SiteHeader /><main className="flex-1"><Contact /></main><SiteFooter /></>} />
-          <Route path="/editorial-board" element={<><SiteHeader /><main className="flex-1"><EditorialBoard /></main><SiteFooter /></>} />
-          <Route path="/guidelines/author" element={<><SiteHeader /><main className="flex-1"><AuthorGuidelines /></main><SiteFooter /></>} />
-          <Route path="/guidelines/editor" element={<><SiteHeader /><main className="flex-1"><EditorGuidelines /></main><SiteFooter /></>} />
-          <Route path="/guidelines/reviewer" element={<><SiteHeader /><main className="flex-1"><ReviewerGuidelines /></main><SiteFooter /></>} />
-          <Route path="/journals" element={<><SiteHeader /><main className="flex-1"><Journals /></main><SiteFooter /></>} />
-          <Route path="/bookstore" element={<><SiteHeader /><main className="flex-1"><BookStore /></main><SiteFooter /></>} />
-          <Route path="/bookstore/search" element={<><SiteHeader /><main className="flex-1"><BookSearch /></main><SiteFooter /></>} />
-          <Route path="/policies" element={<><SiteHeader /><main className="flex-1"><Policies /></main><SiteFooter /></>} />
-          <Route path="/search" element={<><SiteHeader /><main className="flex-1"><Search /></main><SiteFooter /></>} />
-          
-          {/* Admin routes */}
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin" element={<RequireAdmin />}>
-            <Route element={<AdminLayout />}>
-              <Route index element={<AdminDashboard />} />
-              <Route path="books" element={<AdminBookManagement />} />
-              <Route path="authors" element={<AdminAuthorManagement />} />
-              <Route path="orders" element={<AdminOrderManagement />} />
-              <Route path="publications/chapters" element={<AdminChapterPublications />} />
-              <Route path="publications/literary" element={<AdminLiteraryPublications />} />
-              <Route path="manuscript-formatter" element={<AdminManuscriptFormatter />} />
-              <Route path="programmes" element={<AdminProgrammes />} />
+            {/* Public routes */}
+            <Route path="/" element={<><SiteHeader /><main className="flex-1"><Home /></main><SiteFooter /></>} />
+            <Route path="/about" element={<><SiteHeader /><main className="flex-1"><About /></main><SiteFooter /></>} />
+            <Route path="/academic-programmes" element={<><SiteHeader /><main className="flex-1"><AcademicProgrammes /></main><SiteFooter /></>} />
+            <Route path="/announcements" element={<><SiteHeader /><main className="flex-1"><Announcements /></main><SiteFooter /></>} />
+            <Route path="/chapter-publications" element={<><SiteHeader /><main className="flex-1"><ChapterPublications /></main><SiteFooter /></>} />
+            <Route path="/chapter-publications/submit" element={<><SiteHeader /><main className="flex-1"><ChapterSubmit /></main><SiteFooter /></>} />
+            <Route path="/literary-publications" element={<><SiteHeader /><main className="flex-1"><LiteraryPublications /></main><SiteFooter /></>} />
+            <Route path="/literary-publications/submit" element={<><SiteHeader /><main className="flex-1"><LiterarySubmit /></main><SiteFooter /></>} />
+            <Route path="/contact" element={<><SiteHeader /><main className="flex-1"><Contact /></main><SiteFooter /></>} />
+            <Route path="/editorial-board" element={<><SiteHeader /><main className="flex-1"><EditorialBoard /></main><SiteFooter /></>} />
+            <Route path="/guidelines/author" element={<><SiteHeader /><main className="flex-1"><AuthorGuidelines /></main><SiteFooter /></>} />
+            <Route path="/guidelines/editor" element={<><SiteHeader /><main className="flex-1"><EditorGuidelines /></main><SiteFooter /></>} />
+            <Route path="/guidelines/reviewer" element={<><SiteHeader /><main className="flex-1"><ReviewerGuidelines /></main><SiteFooter /></>} />
+            <Route path="/journals" element={<><SiteHeader /><main className="flex-1"><Journals /></main><SiteFooter /></>} />
+            <Route path="/bookstore" element={<><SiteHeader /><main className="flex-1"><BookStore /></main><SiteFooter /></>} />
+            <Route path="/bookstore/search" element={<><SiteHeader /><main className="flex-1"><BookSearch /></main><SiteFooter /></>} />
+            <Route path="/policies" element={<><SiteHeader /><main className="flex-1"><Policies /></main><SiteFooter /></>} />
+            <Route path="/search" element={<><SiteHeader /><main className="flex-1"><Search /></main><SiteFooter /></>} />
+            
+            {/* Admin routes */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin" element={<RequireAdmin />}>
+              <Route element={<AdminLayout />}>
+                <Route index element={<AdminDashboard />} />
+                <Route path="books" element={<AdminBookManagement />} />
+                <Route path="authors" element={<AdminAuthorManagement />} />
+                <Route path="orders" element={<AdminOrderManagement />} />
+                <Route path="publications/chapters" element={<AdminChapterPublications />} />
+                <Route path="publications/literary" element={<AdminLiteraryPublications />} />
+                <Route path="manuscript-formatter" element={<AdminManuscriptFormatter />} />
+                <Route path="programmes" element={<AdminProgrammes />} />
+              </Route>
             </Route>
-          </Route>
 
-          <Route path="*" element={<><SiteHeader /><main className="flex-1"><NotFound /></main><SiteFooter /></>} />
-        </Routes>
+            <Route path="*" element={<><SiteHeader /><main className="flex-1"><NotFound /></main><SiteFooter /></>} />
+          </Routes>
+        </Suspense>
       </div>
     </ErrorBoundary>
   );

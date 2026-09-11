@@ -1,4 +1,4 @@
-﻿import { Link, NavLink as RouterNavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink as RouterNavLink, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Menu, Search, X, Youtube, Linkedin, Instagram, ShoppingCart, Heart, Trash2, MessageCircle } from "lucide-react";
 import { EditableImage, EditableText } from "@/components/cms/EditableText";
@@ -46,6 +46,8 @@ function navLabelKey(key: string) {
 }
 
 export function SiteHeader() {
+  const { pathname } = useLocation();
+  const isHome = pathname === "/";
   const [scrolled, setScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -98,9 +100,15 @@ export function SiteHeader() {
               <Logo />
             </div>
             <div className="flex flex-col">
-              <div className="font-serif font-bold text-[11px] sm:text-sm md:text-xl text-[var(--ink)] tracking-tight leading-tight max-w-[110px] sm:max-w-none">
-                <EditableText contentKey="header.brand.name" fallback="Academic Development Forum" as="span" label="Header brand" />
-              </div>
+              {isHome ? (
+                <h1 className="m-0 p-0 font-serif font-bold text-[11px] sm:text-sm md:text-xl text-[var(--ink)] tracking-tight leading-tight max-w-[110px] sm:max-w-none">
+                  <EditableText contentKey="header.brand.name" fallback="Academic Development Forum" as="span" label="Header brand" />
+                </h1>
+              ) : (
+                <div className="font-serif font-bold text-[11px] sm:text-sm md:text-xl text-[var(--ink)] tracking-tight leading-tight max-w-[110px] sm:max-w-none">
+                  <EditableText contentKey="header.brand.name" fallback="Academic Development Forum" as="span" label="Header brand" />
+                </div>
+              )}
               <div className="hidden sm:block text-[0.55rem] md:text-[0.7rem] uppercase tracking-[0.18em] text-[var(--ink-soft)] mt-0.5">
                 <EditableText contentKey="header.brand.tagline" fallback="Attitude Defines Future" as="span" label="Header tagline" />
               </div>

@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { Link } from "react-router-dom";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
@@ -115,7 +115,7 @@ export function HeroSlider() {
                   <EditableText
                     contentKey={`home.hero.slide.${s.key}.title`}
                     fallback={s.title}
-                    as={i === 0 ? "h1" : "h2"}
+                    as="h2"
                     className="mt-4 font-serif text-4xl md:text-6xl font-bold leading-[1.05]"
                     label="Slide Title"
                   />
