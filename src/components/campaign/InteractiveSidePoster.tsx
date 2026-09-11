@@ -81,64 +81,41 @@ export function InteractiveSidePoster() {
         }`}
       >
         {!isMinimized ? (
-          /* THE VISUAL POSTER POP-UP (CROSS / ANGLED VIEW) */
+          /* THE VISUAL POSTER POP-UP (PURE POSTER, NO HEADER OR FOOTER) */
           <div className="relative group mr-0">
             <div
               onClick={() => setIsExpanded(true)}
-              className="relative cursor-pointer w-[145px] sm:w-[175px] bg-white rounded-2xl border-2 border-white/95 shadow-2xl shadow-slate-950/40 overflow-hidden transition-all duration-500 ease-out origin-bottom-right -rotate-[13deg] translate-x-[46%] hover:rotate-0 hover:translate-x-[-10px] hover:shadow-indigo-950/50"
+              className="relative cursor-pointer w-[145px] sm:w-[175px] bg-white rounded-2xl border-2 border-white shadow-2xl shadow-slate-950/40 overflow-hidden transition-all duration-500 ease-out origin-bottom-right -rotate-[13deg] translate-x-[46%] hover:rotate-0 hover:translate-x-[-10px] hover:shadow-indigo-950/50"
               title="Click to expand full poster in site"
             >
-              {/* Interactive Teaser Badge on the protruding top-left corner */}
-              <div className="absolute top-2 left-2 z-20 flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#071a8c]/95 text-white text-[9px] font-bold border border-white/30 shadow-md transition-all group-hover:scale-105">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                <span>Open</span>
-              </div>
+              {/* Subtle Floating Minimize Button */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsMinimized(true);
+                }}
+                className="absolute top-2 right-2 z-20 p-1 rounded-full bg-slate-900/60 hover:bg-slate-900 text-white shadow-md transition-colors"
+                title="Minimize poster"
+              >
+                <X className="h-3 w-3" />
+              </button>
 
-              {/* Top Institutional Header */}
-              <div className="flex items-center justify-between pl-14 pr-2 py-1.5 bg-[#071a8c] text-white border-b border-indigo-900/40">
-                <span className="text-[8px] font-bold px-1 rounded bg-emerald-500/30 text-emerald-200">
-                  ₹0 Free
-                </span>
-
-                {/* Minimize Button */}
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsMinimized(true);
-                  }}
-                  className="p-0.5 rounded text-blue-200 hover:text-white hover:bg-white/20 transition-colors"
-                  title="Minimize poster"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </div>
-
-              {/* The Actual Poster Image (Vertical Portrait) */}
+              {/* Pure Poster Image (Edge-to-Edge) */}
               <div className="relative bg-slate-100 overflow-hidden">
                 <img
                   src={campaign.posterUrl}
                   alt="Art, Dreams & Fusion Official Poster"
-                  className="w-full h-[205px] sm:h-[245px] object-contain object-top transition-transform duration-300 group-hover:scale-[1.02]"
+                  className="w-full h-auto object-contain block transition-transform duration-300 group-hover:scale-[1.02]"
                 />
 
                 {/* Hover overlay hint */}
                 <div className="absolute inset-0 bg-slate-950/25 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-white/95 text-[11px] font-bold text-slate-900 shadow-md">
-                    <Maximize2 className="h-3 w-3 text-blue-700" />
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/95 text-xs font-bold text-slate-900 shadow-lg">
+                    <Maximize2 className="h-3.5 w-3.5 text-blue-700" />
                     Expand Full
                   </span>
                 </div>
-              </div>
-
-              {/* Bottom Caption Bar */}
-              <div className="px-2.5 py-1.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-[10px]">
-                <span className="font-semibold text-slate-800 truncate max-w-[95px]">
-                  Vol. I Anthology
-                </span>
-                <span className="text-blue-700 font-bold flex items-center gap-0.5 group-hover:underline">
-                  Expand ↗
-                </span>
               </div>
             </div>
           </div>
