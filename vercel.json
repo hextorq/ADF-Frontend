@@ -1,7 +1,13 @@
 {
   "redirects": [
     {
-      "source": "/booksto(.*)",
+      "source": "/booksto",
+      "destination": "https://www.adf.ijeae.com/bookstore",
+      "permanent": true
+    },
+    {
+      "source": "/booksto/",
+
       "destination": "https://www.adf.ijeae.com/bookstore",
       "permanent": true
     },
