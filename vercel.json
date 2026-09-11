@@ -1,14 +1,30 @@
 {
   "redirects": [
     {
-      "source": "/:path*",
+      "source": "/booksto(.*)",
+      "destination": "https://www.adf.ijeae.com/bookstore",
+      "permanent": true
+    },
+    {
+      "source": "/",
       "has": [
         {
           "type": "host",
           "value": "adf.ijeae.com"
         }
       ],
-      "destination": "https://www.adf.ijeae.com/:path*",
+      "destination": "https://www.adf.ijeae.com/",
+      "permanent": true
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "adf.ijeae.com"
+        }
+      ],
+      "destination": "https://www.adf.ijeae.com/$1",
       "permanent": true
     }
   ],
