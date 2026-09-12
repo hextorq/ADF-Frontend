@@ -165,14 +165,14 @@ export default function Page() {
 
       {/* 2. Submit a Chapter CTA */}
       <section className="pt-4 pb-16 bg-[var(--surface)]">
-        <div className="container-academic surface-card p-6 sm:p-8 md:p-12 hero-gradient text-white border-transparent">
-          <EditableText contentKey="page.chapter-publications.cta.title" fallback="Submit a Chapter to Convergence Vol. IV" as="h3" className="font-serif text-xl sm:text-2xl font-bold" label="CTA title" />
-          <EditableText contentKey="page.chapter-publications.cta.description" fallback="Open call - Closes 15 Sep 2026. Themes across sciences, humanities, social sciences, education, and management." as="p" multiline className="mt-2 text-sm sm:text-base text-white/80 max-w-2xl" label="CTA description" />
-          <div className="mt-5 flex flex-col xs:flex-row flex-wrap gap-3">
-            <Link to="/chapter-publications/submit" className="w-full xs:w-auto text-center justify-center inline-flex items-center gap-2 rounded-md bg-[var(--mint)] px-5 py-3 text-sm font-semibold text-[var(--deep)] hover:bg-white transition">
+        <div className="container-academic surface-card p-8 md:p-12 hero-gradient text-white border-transparent">
+          <EditableText contentKey="page.chapter-publications.cta.title" fallback="Submit a Chapter to Convergence Vol. IV" as="h3" className="font-serif text-2xl font-bold" label="CTA title" />
+          <EditableText contentKey="page.chapter-publications.cta.description" fallback="Open call - Closes 15 Sep 2026. Themes across sciences, humanities, social sciences, education, and management." as="p" multiline className="mt-2 text-white/80 max-w-2xl" label="CTA description" />
+          <div className="mt-5 flex flex-wrap gap-3">
+            <Link to="/chapter-publications/submit" className="inline-flex items-center gap-2 rounded-md bg-[var(--mint)] px-5 py-3 text-sm font-semibold text-[var(--deep)] hover:bg-white transition">
               Submit your chapter
             </Link>
-            <Link to="/contact" className="w-full xs:w-auto text-center justify-center inline-flex items-center gap-2 rounded-md border border-white/30 px-5 py-3 text-sm font-semibold hover:bg-white/10 transition">
+            <Link to="/contact" className="inline-flex items-center gap-2 rounded-md border border-white/30 px-5 py-3 text-sm font-semibold hover:bg-white/10 transition">
               Contact editor
             </Link>
           </div>

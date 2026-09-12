@@ -79,7 +79,7 @@ export function AdfFirstCallCampaign() {
       <div className="container-academic">
 
         {/* Main Highlighted Card: Blends with ADF Royal & Mint palette */}
-        <div className="relative rounded-2xl bg-gradient-to-br from-[#eef2ff] via-[#f7f9ff] to-[#f0fdf4] border-2 border-indigo-200/90 shadow-lg shadow-indigo-950/5 p-4 sm:p-8 overflow-hidden">
+        <div className="relative rounded-2xl bg-gradient-to-br from-[#eef2ff] via-[#f7f9ff] to-[#f0fdf4] border-2 border-indigo-200/90 shadow-lg shadow-indigo-950/5 p-6 sm:p-8 overflow-hidden">
 
           {/* Top Decorative Brand Gradient Stripe */}
           <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[var(--primary)] via-[#22c55e] to-[var(--primary)]" />
@@ -136,7 +136,7 @@ export function AdfFirstCallCampaign() {
                       <button
                         key={cat.name}
                         onClick={() => setActiveCategory(cat.name)}
-                        className={`text-left p-2.5 sm:p-3 rounded-xl border transition-all text-xs flex flex-col justify-between cursor-pointer ${isActive
+                        className={`text-left p-3 rounded-xl border transition-all text-xs flex flex-col justify-between cursor-pointer ${isActive
                             ? "bg-[var(--primary)] border-[var(--primary)] shadow-sm text-white ring-2 ring-[var(--primary)]/20"
                             : "bg-white/95 border-indigo-100/90 hover:border-indigo-300 text-slate-800 shadow-xs hover:bg-white"
                           }`}
@@ -182,8 +182,8 @@ export function AdfFirstCallCampaign() {
               </div>
 
               {/* Countdown & Action Buttons */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-3 border-t border-indigo-100/80">
-                <div className="flex flex-wrap items-center gap-2">
+              <div className="flex flex-wrap items-center justify-between gap-4 pt-3 border-t border-indigo-100/80">
+                <div className="flex items-center gap-2">
                   <span className="text-xs text-slate-600 uppercase font-bold flex items-center gap-1">
                     <Clock className="h-3.5 w-3.5 text-amber-600" /> Deadline in:
                   </span>
@@ -204,10 +204,10 @@ export function AdfFirstCallCampaign() {
                   )}
                 </div>
 
-                <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2.5 w-full sm:w-auto">
+                <div className="flex items-center gap-2.5">
                   <Link
                     to={`/literary-publications/submit?campaign=art-dreams-fusion-vol-1&category=${encodeURIComponent(activeCategory)}`}
-                    className="btn-primary flex items-center justify-center gap-1.5 text-xs sm:text-sm font-bold py-2.5 px-5 rounded-xl shadow-sm text-center"
+                    className="btn-primary flex items-center gap-1.5 text-xs sm:text-sm font-bold py-2.5 px-5 rounded-xl shadow-sm"
                   >
                     <span>Submit {activeCategory} (Free)</span>
                     <ArrowRight className="h-3.5 w-3.5" />
@@ -216,7 +216,7 @@ export function AdfFirstCallCampaign() {
                     variant="outline"
                     size="sm"
                     onClick={() => setIsPosterModalOpen(true)}
-                    className="bg-white text-slate-800 hover:text-[var(--primary)] hover:border-indigo-300 text-xs flex items-center justify-center gap-1 h-9 rounded-xl border-slate-200 shadow-xs"
+                    className="bg-white text-slate-800 hover:text-[var(--primary)] hover:border-indigo-300 text-xs flex items-center gap-1 h-9 rounded-xl border-slate-200 shadow-xs"
                   >
                     <Eye className="h-3.5 w-3.5" />
                     <span>View Poster</span>

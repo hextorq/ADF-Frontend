@@ -161,19 +161,19 @@ function AnnouncementHubInner() {
               label="Hub description"
             />
           </div>
-          <div className="flex items-center gap-3 flex-wrap w-full sm:w-auto">
-            <a href="https://whatsapp.com/channel/0029Vb81bKK2v1IytFrFwr3E" target="_blank" rel="noopener noreferrer" className="btn-primary !bg-[#25D366] hover:!bg-[#128C7E] border-transparent flex items-center justify-center gap-2 w-full sm:w-auto">
+          <div className="flex items-center gap-3 flex-wrap">
+            <a href="https://whatsapp.com/channel/0029Vb81bKK2v1IytFrFwr3E" target="_blank" rel="noopener noreferrer" className="btn-primary !bg-[#25D366] hover:!bg-[#128C7E] border-transparent flex items-center gap-2">
               <MessageCircle className="h-4 w-4" />
               <span>Get Instant Updates</span>
             </a>
-            <Link to="/announcements" className="btn-outline w-full sm:w-auto justify-center">
+            <Link to="/announcements" className="btn-outline">
               <EditableText contentKey="home.hub.viewAll" fallback="View all updates" as="span" label="View all updates" /> <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>
 
-        <div className="mt-8 border-b border-border overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-          <div className="flex gap-1 min-w-max pb-0.5">
+        <div className="mt-8 border-b border-border overflow-x-auto">
+          <div className="flex gap-1 min-w-max">
             {TABS.map((t) => (
               <div
                 key={t}
@@ -181,7 +181,7 @@ function AnnouncementHubInner() {
                 tabIndex={0}
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setTab(t); } }}
                 onClick={() => setTab(t)}
-                className={`px-3.5 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium whitespace-nowrap border-b-2 transition cursor-pointer ${
+                className={`px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition cursor-pointer ${
                   tab === t
                     ? "border-[var(--primary)] text-[var(--primary)] bg-white"
                     : "border-transparent text-[var(--ink-soft)] hover:text-[var(--ink)] hover:bg-slate-100/50"

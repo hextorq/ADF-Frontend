@@ -375,7 +375,7 @@ export default function Policies() {
         <div className="bg-white rounded-3xl shadow-2xl shadow-[var(--primary)]/5 border border-black/5 overflow-hidden flex flex-col md:flex-row min-h-[600px]">
           
           {/* Sidebar Navigation */}
-          <div className="w-full md:w-80 bg-[#f8f9fc] border-b md:border-b-0 md:border-r border-black/5 p-3 sm:p-4 flex flex-col gap-1 overflow-y-auto shrink-0 max-h-[220px] md:max-h-[800px]">
+          <div className="w-full md:w-80 bg-[#f8f9fc] border-r border-black/5 p-4 flex flex-col gap-1 overflow-y-auto shrink-0 max-h-[400px] md:max-h-[800px]">
             {POLICIES.map((policy) => {
               const Icon = policy.icon;
               const isActive = activeId === policy.id;
@@ -385,7 +385,7 @@ export default function Policies() {
                   key={policy.id}
                   onClick={() => setActiveId(policy.id)}
                   className={`
-                    w-full flex items-center justify-between px-3.5 py-2.5 sm:px-4 sm:py-3.5 rounded-xl transition-all duration-300 text-left group
+                    w-full flex items-center justify-between px-4 py-3.5 rounded-xl transition-all duration-300 text-left group
                     ${isActive 
                       ? "bg-white shadow-sm border border-black/5" 
                       : "hover:bg-black/[0.02] border border-transparent"
@@ -418,16 +418,16 @@ export default function Policies() {
           </div>
 
           {/* Content Area */}
-          <div className="flex-1 p-4 sm:p-8 md:p-12 lg:p-16 bg-white overflow-y-auto relative">
+          <div className="flex-1 p-6 md:p-12 lg:p-16 bg-white overflow-y-auto relative">
             <div 
               key={activePolicy.id} 
               className="animate-in fade-in slide-in-from-bottom-4 duration-500 ease-out fill-mode-both"
             >
-              <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8 pb-4 sm:pb-6 border-b border-black/5">
-                <div className="h-11 w-11 sm:h-14 sm:w-14 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[var(--primary)] to-[var(--deep)] text-white flex items-center justify-center shadow-lg shadow-[var(--primary)]/20 shrink-0">
-                  <activePolicy.icon className="h-5 w-5 sm:h-6 sm:w-6" />
+              <div className="flex items-center gap-4 mb-8 pb-6 border-b border-black/5">
+                <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-[var(--primary)] to-[var(--deep)] text-white flex items-center justify-center shadow-lg shadow-[var(--primary)]/20">
+                  <activePolicy.icon className="h-6 w-6" />
                 </div>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-serif text-[var(--ink)] tracking-tight">
+                <h2 className="text-3xl md:text-4xl font-bold font-serif text-[var(--ink)] tracking-tight">
                   <E k={`title.${activePolicy.id}`} fallback={activePolicy.title} />
                 </h2>
               </div>

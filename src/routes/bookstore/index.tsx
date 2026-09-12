@@ -204,60 +204,60 @@ export default function BookStore() {
                 </h2>
               </div>
               
-              <div className="bg-white rounded-2xl sm:rounded-[2rem] p-5 sm:p-10 lg:p-20 text-center shadow-[0_8px_40px_rgb(0,0,0,0.06)] border border-slate-100 flex flex-col items-center overflow-hidden relative">
+              <div className="bg-white rounded-[2rem] p-10 lg:p-20 text-center shadow-[0_8px_40px_rgb(0,0,0,0.06)] border border-slate-100 flex flex-col items-center overflow-hidden relative">
 
-                <BookOpen className="w-10 h-10 sm:w-12 sm:h-12 text-[#1e3a8a] mb-4 sm:mb-6" />
-                <div className="text-xs sm:text-sm font-bold text-[#1e3a8a] tracking-[0.25em] uppercase mb-3 sm:mb-4">ADF Bookstore</div>
-                <h3 className="text-2xl xs:text-3xl sm:text-4xl md:text-[3.5rem] leading-tight font-serif font-bold text-slate-900 mb-4 sm:mb-6">
+                <BookOpen className="w-12 h-12 text-[#1e3a8a] mb-6" />
+                <div className="text-sm font-bold text-[#1e3a8a] tracking-[0.25em] uppercase mb-4">ADF Bookstore</div>
+                <h3 className="text-4xl md:text-[3.5rem] leading-none font-serif font-bold text-slate-900 mb-6">
                   Your book could be <span className="text-[#1d4ed8]">here.</span>
                 </h3>
                 
-                <p className="text-sm sm:text-lg text-slate-600 max-w-2xl mx-auto mb-10 sm:mb-16 leading-relaxed">
+                <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-20 leading-relaxed">
                   The ADF Bookstore is launching soon.<br className="hidden sm:block" />
                   We're currently accepting manuscripts for our first collection of authors and ideas.
                 </p>
                 
                 {/* Bookshelf */}
-                <div className="relative w-full max-w-4xl mx-auto mb-12 sm:mb-20 px-1 sm:px-12">
+                <div className="relative w-full max-w-4xl mx-auto mb-24 px-4 sm:px-12">
                   <div className="flex justify-center items-end gap-2 sm:gap-6 md:gap-8 relative z-10">
                     
                     {/* Book 1 */}
-                    <div className="w-20 h-32 sm:w-32 sm:h-48 md:w-40 md:h-56 bg-[#172554] rounded-r-lg rounded-l-sm shadow-xl flex flex-col items-center justify-center p-2.5 sm:p-5 border-l-[3px] border-black/20 text-white relative group">
+                    <div className="w-24 h-36 sm:w-32 sm:h-48 md:w-40 md:h-56 bg-[#172554] rounded-r-lg rounded-l-sm shadow-xl flex flex-col items-center justify-center p-3 sm:p-5 border-l-[3px] border-black/20 text-white relative group">
                       <div className="absolute top-2 bottom-2 left-1.5 border-l border-white/10"></div>
                       <div className="absolute top-2 bottom-2 right-2 border-r border-white/10"></div>
-                      <Leaf className="w-5 h-5 sm:w-8 sm:h-8 mb-2 sm:mb-4 text-[#eab308] opacity-80 stroke-[1.5]" />
-                      <div className="text-[9px] sm:text-xs font-serif font-bold text-[#eab308] tracking-widest mb-1 text-center">IDEAS</div>
-                      <div className="text-[6px] sm:text-[9px] font-sans text-white/70 tracking-widest text-center uppercase">That Inspire</div>
-                      <div className="w-6 sm:w-8 h-[1px] bg-white/20 mt-3 sm:mt-6"></div>
+                      <Leaf className="w-6 h-6 sm:w-8 sm:h-8 mb-3 sm:mb-4 text-[#eab308] opacity-80 stroke-[1.5]" />
+                      <div className="text-[10px] sm:text-xs font-serif font-bold text-[#eab308] tracking-widest mb-1 text-center">IDEAS</div>
+                      <div className="text-[7px] sm:text-[9px] font-sans text-white/70 tracking-widest text-center uppercase">That Inspire</div>
+                      <div className="w-8 h-[1px] bg-white/20 mt-4 sm:mt-6"></div>
                     </div>
 
                     {/* Book 2 */}
-                    <div className="w-20 h-32 sm:w-32 sm:h-48 md:w-40 md:h-56 bg-[#14532d] rounded-r-lg rounded-l-sm shadow-xl flex flex-col items-center justify-center p-2.5 sm:p-5 border-l-[3px] border-black/20 text-white relative group">
+                    <div className="w-24 h-36 sm:w-32 sm:h-48 md:w-40 md:h-56 bg-[#14532d] rounded-r-lg rounded-l-sm shadow-xl flex flex-col items-center justify-center p-3 sm:p-5 border-l-[3px] border-black/20 text-white relative group">
                       <div className="absolute top-2 bottom-2 left-1.5 border-l border-white/10"></div>
                       <div className="absolute top-2 bottom-2 right-2 border-r border-white/10"></div>
-                      <Lightbulb className="w-5 h-5 sm:w-8 sm:h-8 mb-2 sm:mb-4 text-[#fcd34d] opacity-80 stroke-[1.5]" />
-                      <div className="text-[9px] sm:text-xs font-serif font-bold text-[#fcd34d] tracking-widest mb-1 text-center">KNOWLEDGE</div>
-                      <div className="text-[6px] sm:text-[9px] font-sans text-white/70 tracking-widest text-center uppercase">That Empowers</div>
-                      <div className="w-6 sm:w-8 h-[1px] bg-white/20 mt-3 sm:mt-6"></div>
+                      <Lightbulb className="w-6 h-6 sm:w-8 sm:h-8 mb-3 sm:mb-4 text-[#fcd34d] opacity-80 stroke-[1.5]" />
+                      <div className="text-[10px] sm:text-xs font-serif font-bold text-[#fcd34d] tracking-widest mb-1 text-center">KNOWLEDGE</div>
+                      <div className="text-[7px] sm:text-[9px] font-sans text-white/70 tracking-widest text-center uppercase">That Empowers</div>
+                      <div className="w-8 h-[1px] bg-white/20 mt-4 sm:mt-6"></div>
                     </div>
 
                     {/* Book 3 */}
-                    <div className="w-20 h-32 sm:w-32 sm:h-48 md:w-40 md:h-56 bg-[#78350f] rounded-r-lg rounded-l-sm shadow-xl flex flex-col items-center justify-center p-2.5 sm:p-5 border-l-[3px] border-black/20 text-white relative group hidden xs:flex">
+                    <div className="w-24 h-36 sm:w-32 sm:h-48 md:w-40 md:h-56 bg-[#78350f] rounded-r-lg rounded-l-sm shadow-xl flex flex-col items-center justify-center p-3 sm:p-5 border-l-[3px] border-black/20 text-white relative group hidden xs:flex">
                       <div className="absolute top-2 bottom-2 left-1.5 border-l border-white/10"></div>
                       <div className="absolute top-2 bottom-2 right-2 border-r border-white/10"></div>
-                      <Globe className="w-5 h-5 sm:w-8 sm:h-8 mb-2 sm:mb-4 text-[#fdba74] opacity-80 stroke-[1.5]" />
-                      <div className="text-[9px] sm:text-xs font-serif font-bold text-[#fdba74] tracking-widest mb-1 text-center">STORIES</div>
-                      <div className="text-[6px] sm:text-[9px] font-sans text-white/70 tracking-widest text-center uppercase">That Connect</div>
-                      <div className="w-6 sm:w-8 h-[1px] bg-white/20 mt-3 sm:mt-6"></div>
+                      <Globe className="w-6 h-6 sm:w-8 sm:h-8 mb-3 sm:mb-4 text-[#fdba74] opacity-80 stroke-[1.5]" />
+                      <div className="text-[10px] sm:text-xs font-serif font-bold text-[#fdba74] tracking-widest mb-1 text-center">STORIES</div>
+                      <div className="text-[7px] sm:text-[9px] font-sans text-white/70 tracking-widest text-center uppercase">That Connect</div>
+                      <div className="w-8 h-[1px] bg-white/20 mt-4 sm:mt-6"></div>
                     </div>
 
                     {/* Book 4 (Empty State) */}
-                    <Link to="/literary-publications" className="w-20 h-32 sm:w-32 sm:h-48 md:w-40 md:h-56 bg-white rounded-r-lg rounded-l-sm flex flex-col items-center justify-center p-2.5 sm:p-5 border-2 border-dashed border-[#93c5fd] text-[#1e40af] hover:bg-blue-50 transition-colors shadow-sm relative group cursor-pointer">
-                      <div className="w-8 h-8 sm:w-12 sm:h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-2 sm:mb-4 group-hover:scale-110 transition-transform">
-                        <Plus className="w-4 h-4 sm:w-6 sm:h-6" />
+                    <Link to="/literary-publications" className="w-24 h-36 sm:w-32 sm:h-48 md:w-40 md:h-56 bg-white rounded-r-lg rounded-l-sm flex flex-col items-center justify-center p-3 sm:p-5 border-2 border-dashed border-[#93c5fd] text-[#1e40af] hover:bg-blue-50 transition-colors shadow-sm relative group cursor-pointer">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform">
+                        <Plus className="w-5 h-5 sm:w-6 sm:h-6" />
                       </div>
-                      <div className="text-[10px] sm:text-xs font-bold tracking-wider text-center uppercase">Your Book</div>
-                      <div className="text-[8px] sm:text-[9px] text-blue-400 mt-1 uppercase tracking-widest font-semibold">Publish Today</div>
+                      <div className="text-xs font-bold tracking-wider text-center uppercase">Your Book</div>
+                      <div className="text-[9px] text-blue-400 mt-1 uppercase tracking-widest font-semibold">Publish Today</div>
                     </Link>
                   </div>
                   
@@ -268,19 +268,19 @@ export default function BookStore() {
                 </div>
 
                 {/* Submissions Open Banner */}
-                <div className="w-full max-w-3xl bg-slate-50 border border-slate-200 rounded-2xl p-4 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6 text-left">
+                <div className="w-full max-w-3xl bg-slate-50 border border-slate-200 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 text-left">
                   <div>
                     <div className="inline-block bg-emerald-100 text-emerald-800 text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full mb-2">
                       Submissions Open
                     </div>
-                    <div className="font-serif font-bold text-lg sm:text-xl text-slate-900 mb-1">
+                    <div className="font-serif font-bold text-xl text-slate-900 mb-1">
                       Are you an author, researcher, or poet?
                     </div>
-                    <div className="text-xs sm:text-sm text-slate-600">
+                    <div className="text-sm text-slate-600">
                       We offer ISBN assignment, professional cover design, and international distribution.
                     </div>
                   </div>
-                  <Link to="/literary-publications/submit" className="w-full sm:w-auto text-center justify-center whitespace-nowrap btn-primary px-6 py-3 font-semibold text-sm shadow-md hover:shadow-lg transition-all">
+                  <Link to="/literary-publications/submit" className="whitespace-nowrap btn-primary px-6 py-3 font-semibold text-sm shadow-md hover:shadow-lg transition-all">
                     Submit Manuscript
                   </Link>
                 </div>
