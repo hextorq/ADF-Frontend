@@ -150,11 +150,11 @@ export function SiteFooter() {
         <div className="mt-8 sm:mt-12 flex flex-col gap-4 border-t border-white/10 pt-4 sm:pt-6 md:flex-row md:items-center md:justify-between text-xs text-white/60">
           <div className="flex items-center gap-4">
             <Globe2 className="h-4 w-4 shrink-0" />
-            <span>Â© {new Date().getFullYear()} Academic Development Forum. All rights reserved.</span>
+            <span>© {new Date().getFullYear()} Academic Development Forum. All rights reserved.</span>
           </div>
           <div className="flex items-center flex-wrap gap-x-5 gap-y-3">
-            <a href="mailto:academicdevelopmentforum24@gmail.com" className="inline-flex items-center gap-1.5 hover:text-white transition-colors">
-              <Mail className="h-3.5 w-3.5" /> academicdevelopmentforum24@gmail.com
+            <a href="mailto:academicdevelopmentforum24@gmail.com" className="inline-flex items-center gap-1.5 hover:text-white transition-colors break-all">
+              <Mail className="h-3.5 w-3.5 shrink-0" /> academicdevelopmentforum24@gmail.com
             </a>
 
             <div className="h-3 w-px bg-white/20 hidden sm:block" />

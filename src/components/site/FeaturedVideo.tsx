@@ -102,13 +102,13 @@ export function FeaturedVideo() {
             </div>
             
             {/* Quick feature list */}
-            <div className="mt-8 pt-8 border-t border-border grid grid-cols-2 gap-4">
+            <div className="mt-8 pt-8 border-t border-border grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div className="flex items-start gap-2 text-sm text-[var(--ink-soft)]">
-                <PlayCircle className="h-5 w-5 text-[var(--primary)] shrink-0" />
+                <PlayCircle className="h-5 w-5 text-[var(--primary)] shrink-0 mt-0.5" />
                 <EditableText contentKey="home.video.feature.1" fallback="Step-by-step submission guides" as="span" label="Video feature" />
               </div>
               <div className="flex items-start gap-2 text-sm text-[var(--ink-soft)]">
-                <PlayCircle className="h-5 w-5 text-[var(--primary)] shrink-0" />
+                <PlayCircle className="h-5 w-5 text-[var(--primary)] shrink-0 mt-0.5" />
                 <EditableText contentKey="home.video.feature.2" fallback="Expert webinar recordings" as="span" label="Video feature" />
               </div>
             </div>

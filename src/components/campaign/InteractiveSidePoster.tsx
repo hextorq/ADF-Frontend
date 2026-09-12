@@ -21,7 +21,12 @@ export function InteractiveSidePoster() {
   const location = useLocation();
 
   const [isVisible, setIsVisible] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(() => {
+    if (typeof window !== "undefined") {
+      return window.innerWidth < 768;
+    }
+    return false;
+  });
   const [isExpanded, setIsExpanded] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
 
@@ -85,7 +90,7 @@ export function InteractiveSidePoster() {
           <div className="relative group mr-0">
             <div
               onClick={() => setIsExpanded(true)}
-              className="relative cursor-pointer w-[145px] sm:w-[175px] bg-white rounded-2xl border-2 border-white shadow-2xl shadow-slate-950/40 overflow-hidden transition-all duration-500 ease-out origin-bottom-right -rotate-[13deg] translate-x-[46%] hover:rotate-0 hover:translate-x-[-10px] hover:shadow-indigo-950/50"
+              className="relative cursor-pointer w-[125px] sm:w-[175px] bg-white rounded-2xl border-2 border-white shadow-2xl shadow-slate-950/40 overflow-hidden transition-all duration-500 ease-out origin-bottom-right -rotate-[13deg] translate-x-[46%] hover:rotate-0 hover:translate-x-[-10px] hover:shadow-indigo-950/50"
               title="Click to expand full poster in site"
             >
               {/* Subtle Floating Minimize Button */}

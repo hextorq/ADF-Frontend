@@ -89,31 +89,33 @@ function UpcomingCalendar() {
             </div>
           </div>
 
-          <div className="mt-5 grid grid-cols-7 gap-px bg-border rounded-lg overflow-hidden text-sm">
-            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
-              <div key={d} className="bg-[var(--secondary)] py-2 text-center text-xs font-semibold uppercase tracking-wider text-[var(--ink-soft)]">
-                {d}
-              </div>
-            ))}
-            {weeks.flat().map((d, i) => {
-              const evs = d ? eventsByDay[d] || [] : [];
-              return (
-                <div key={i} className="bg-white min-h-[92px] p-2 flex flex-col">
-                  <span className="text-xs font-medium text-[var(--ink-soft)]">{d ?? ""}</span>
-                  <div className="mt-1 flex flex-col gap-1">
-                    {evs.map((e, evId) => (
-                      <button
-                        key={`${e.id}-${evId}`}
-                        onClick={() => setOpen(e)}
-                        className="text-left text-[11px] rounded bg-[var(--primary)]/10 text-[var(--primary)] px-1.5 py-1 hover:bg-[var(--primary)] hover:text-white truncate"
-                      >
-                        {e.title}
-                      </button>
-                    ))}
-                  </div>
+          <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
+            <div className="mt-5 min-w-[540px] sm:min-w-0 grid grid-cols-7 gap-px bg-border rounded-lg overflow-hidden text-sm">
+              {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
+                <div key={d} className="bg-[var(--secondary)] py-2 text-center text-xs font-semibold uppercase tracking-wider text-[var(--ink-soft)]">
+                  {d}
                 </div>
-              );
-            })}
+              ))}
+              {weeks.flat().map((d, i) => {
+                const evs = d ? eventsByDay[d] || [] : [];
+                return (
+                  <div key={i} className="bg-white min-h-[92px] p-2 flex flex-col">
+                    <span className="text-xs font-medium text-[var(--ink-soft)]">{d ?? ""}</span>
+                    <div className="mt-1 flex flex-col gap-1">
+                      {evs.map((e, evId) => (
+                        <button
+                          key={`${e.id}-${evId}`}
+                          onClick={() => setOpen(e)}
+                          className="text-left text-[11px] rounded bg-[var(--primary)]/10 text-[var(--primary)] px-1.5 py-1 hover:bg-[var(--primary)] hover:text-white truncate"
+                        >
+                          {e.title}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
 

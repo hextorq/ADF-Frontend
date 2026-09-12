@@ -65,19 +65,22 @@ export function Statistics() {
           />
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-6">
           {stats.map((stat, i) => {
             const Icon = stat.icon;
+            const isLast = i === stats.length - 1;
             return (
               <div
                 key={stat.label}
-                className="group relative surface-card p-6 flex flex-col items-center justify-center text-center transition-colors duration-300 border border-black/5"
+                className={`group relative surface-card p-4 sm:p-6 flex flex-col items-center justify-center text-center transition-colors duration-300 border border-black/5 ${
+                  isLast ? "col-span-2 md:col-span-1" : ""
+                }`}
               >
                 <div className="absolute inset-0 bg-gradient-to-b from-[var(--primary)]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl pointer-events-none"></div>
-                <div className="h-12 w-12 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] flex items-center justify-center mb-4 transition-colors duration-300 shadow-inner">
-                  <Icon className="h-6 w-6" />
+                <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-[var(--primary)]/10 text-[var(--primary)] flex items-center justify-center mb-3 sm:mb-4 transition-colors duration-300 shadow-inner">
+                  <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
                 </div>
-                <div className="text-3xl font-bold text-[var(--ink)] tracking-tight">
+                <div className="text-2xl sm:text-3xl font-bold text-[var(--ink)] tracking-tight">
                   {stat.dynamic ? (
                     <Counter target={stat.value} duration={2500} />
                   ) : (
@@ -85,7 +88,7 @@ export function Statistics() {
                   )}
                   {stat.plus && <span className="text-[var(--primary)] ml-0.5">+</span>}
                 </div>
-                <EditableText contentKey={`home.statistics.${stat.label}.label`} fallback={stat.label} as="div" className="text-sm text-[var(--ink-soft)] mt-2 font-medium" label="Statistic label" />
+                <EditableText contentKey={`home.statistics.${stat.label}.label`} fallback={stat.label} as="div" className="text-xs sm:text-sm text-[var(--ink-soft)] mt-1.5 sm:mt-2 font-medium" label="Statistic label" />
               </div>
             );
           })}

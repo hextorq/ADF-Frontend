@@ -28,9 +28,9 @@ export function BookstoreShowcase() {
 
   if (SHOW_PRE_PUBLICATION) {
     return (
-      <section className="py-20 relative overflow-hidden bg-slate-50/50 border-y border-slate-200/60 font-sans">
-        <div className="container-academic relative z-10 max-w-7xl mx-auto px-4">
-          <div className="bg-[#f4f7fc] rounded-[32px] p-8 md:p-12 lg:p-16 border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden">
+      <section className="py-12 sm:py-16 md:py-20 relative overflow-hidden bg-slate-50/50 border-y border-slate-200/60 font-sans">
+        <div className="container-academic relative z-10 max-w-7xl mx-auto">
+          <div className="bg-[#f4f7fc] rounded-2xl sm:rounded-[32px] p-5 sm:p-8 md:p-12 lg:p-16 border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden">
             
             {/* Background Decor */}
             <div className="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none">
@@ -40,92 +40,89 @@ export function BookstoreShowcase() {
               <div className="absolute top-10 right-[40%] w-32 h-32 opacity-20" style={{ backgroundImage: 'radial-gradient(#1e3a8a 2px, transparent 2px)', backgroundSize: '16px 16px' }} />
             </div>
 
-            <div className="grid lg:grid-cols-[1fr_0.8fr] gap-12 lg:gap-8 items-center relative z-10">
+            <div className="grid lg:grid-cols-[1fr_0.8fr] gap-8 lg:gap-8 items-center relative z-10">
               
               {/* Left Content */}
               <div className="max-w-2xl">
                 {/* Pill */}
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white text-blue-800 text-xs font-bold tracking-wide uppercase border border-blue-100 shadow-sm mb-8">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white text-blue-800 text-xs font-bold tracking-wide uppercase border border-blue-100 shadow-sm mb-6 sm:mb-8">
                   <Feather className="w-3.5 h-3.5 text-blue-600" />
                   <span>ADF Publishing</span>
                 </div>
                 
                 {/* Title */}
-                <h2 className="text-[40px] md:text-[52px] lg:text-[64px] font-serif font-bold text-[#0f172a] leading-[1.1] mb-6">
-                  Publish Your <br/>
-                  <span className="text-[#1e3a8a]">First Book</span> <span className="font-[cursive] text-yellow-500 font-normal text-5xl md:text-6xl -ml-2 italic relative -top-2">with</span> <span className="text-[#1e3a8a]">ADF</span>
+                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-[#0f172a] leading-[1.15] mb-4 sm:mb-6 break-words">
+                  Publish Your <br className="hidden xs:inline" />
+                  <span className="text-[#1e3a8a]">First Book</span> <span className="font-[cursive] text-yellow-500 font-normal text-3xl sm:text-4xl md:text-5xl lg:text-6xl italic relative -top-1 sm:-top-2">with</span> <span className="text-[#1e3a8a]">ADF</span>
                 </h2>
                 
                 {/* Description */}
-                <p className="text-lg text-slate-600 mb-8 max-w-lg leading-relaxed font-medium">
+                <p className="text-base sm:text-lg text-slate-600 mb-6 sm:mb-8 max-w-lg leading-relaxed font-medium">
                   ADF helps authors turn their ideas into impactful books and reach readers around the world.
                 </p>
 
                 {/* Info Banner */}
-                <div className="flex items-center gap-4 bg-[#eff4fa] border border-blue-100/50 p-4 rounded-2xl mb-10 max-w-xl">
-                  <div className="w-12 h-12 rounded-xl bg-white text-blue-600 flex items-center justify-center shrink-0 shadow-sm">
-                    <Gift className="w-6 h-6" />
+                <div className="flex items-center gap-3 sm:gap-4 bg-[#eff4fa] border border-blue-100/50 p-3.5 sm:p-4 rounded-xl sm:rounded-2xl mb-8 sm:mb-10 max-w-xl">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white text-blue-600 flex items-center justify-center shrink-0 shadow-sm">
+                    <Gift className="w-5 h-5 sm:w-6 sm:h-6" />
                   </div>
-                  <p className="text-[15px] text-slate-700 leading-snug">
+                  <p className="text-xs sm:text-[15px] text-slate-700 leading-snug">
                     Be one of our <strong className="text-blue-800">founding authors</strong> and <br className="hidden sm:block" />get featured in our upcoming bookstore.
                   </p>
                 </div>
                 
                 {/* Features Row */}
-                <div className="flex flex-wrap md:flex-nowrap gap-6 md:gap-8 mb-10">
-                  <div className="flex-1 min-w-[120px]">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-8 h-8 rounded-full bg-blue-100/50 text-blue-700 flex items-center justify-center"><Feather className="w-4 h-4"/></div>
-                      <span className="font-bold text-sm text-slate-900 leading-tight">Expert<br/>Guidance</span>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-10">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-100/50 text-blue-700 flex items-center justify-center shrink-0"><Feather className="w-3.5 h-3.5 sm:w-4 sm:h-4"/></div>
+                      <span className="font-bold text-xs sm:text-sm text-slate-900 leading-tight">Expert<br/>Guidance</span>
                     </div>
                     <p className="text-[11px] text-slate-500 leading-relaxed">End-to-end support for authors</p>
                   </div>
-                  <div className="w-px bg-slate-200/60 hidden md:block" />
                   
-                  <div className="flex-1 min-w-[120px]">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-8 h-8 rounded-full bg-blue-100/50 text-blue-700 flex items-center justify-center"><Globe className="w-4 h-4"/></div>
-                      <span className="font-bold text-sm text-slate-900 leading-tight">Global<br/>Visibility</span>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-100/50 text-blue-700 flex items-center justify-center shrink-0"><Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4"/></div>
+                      <span className="font-bold text-xs sm:text-sm text-slate-900 leading-tight">Global<br/>Visibility</span>
                     </div>
                     <p className="text-[11px] text-slate-500 leading-relaxed">Reach readers worldwide</p>
                   </div>
-                  <div className="w-px bg-slate-200/60 hidden md:block" />
                   
-                  <div className="flex-1 min-w-[120px]">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-8 h-8 rounded-full bg-blue-100/50 text-blue-700 flex items-center justify-center"><Medal className="w-4 h-4"/></div>
-                      <span className="font-bold text-sm text-slate-900 leading-tight">Quality<br/>Publishing</span>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-100/50 text-blue-700 flex items-center justify-center shrink-0"><Medal className="w-3.5 h-3.5 sm:w-4 sm:h-4"/></div>
+                      <span className="font-bold text-xs sm:text-sm text-slate-900 leading-tight">Quality<br/>Publishing</span>
                     </div>
                     <p className="text-[11px] text-slate-500 leading-relaxed">Professional editing & publishing</p>
                   </div>
-                  <div className="w-px bg-slate-200/60 hidden md:block" />
                   
-                  <div className="flex-1 min-w-[120px]">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-8 h-8 rounded-full bg-blue-100/50 text-blue-700 flex items-center justify-center"><BarChart3 className="w-4 h-4"/></div>
-                      <span className="font-bold text-sm text-slate-900 leading-tight">Higher<br/>Impact</span>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-100/50 text-blue-700 flex items-center justify-center shrink-0"><BarChart3 className="w-3.5 h-3.5 sm:w-4 sm:h-4"/></div>
+                      <span className="font-bold text-xs sm:text-sm text-slate-900 leading-tight">Higher<br/>Impact</span>
                     </div>
                     <p className="text-[11px] text-slate-500 leading-relaxed">Build your brand as an author</p>
                   </div>
                 </div>
 
                 {/* Buttons & Bottom Info */}
-                <div className="flex flex-wrap lg:flex-nowrap items-center gap-6">
-                  <div className="flex gap-4">
-                    <Link to="/contact" className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-[#0b2169] px-6 text-[15px] font-bold text-white transition hover:bg-blue-900 shadow-lg shadow-blue-900/20 whitespace-nowrap">
+                <div className="flex flex-col sm:flex-row flex-wrap lg:flex-nowrap items-stretch sm:items-center gap-4 sm:gap-6">
+                  <div className="flex flex-col xs:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
+                    <Link to="/contact" className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-[#0b2169] px-5 sm:px-6 text-sm sm:text-[15px] font-bold text-white transition hover:bg-blue-900 shadow-lg shadow-blue-900/20 text-center w-full xs:w-auto">
                       Publish Your First Book
-                      <ArrowRight className="h-4 w-4" />
+                      <ArrowRight className="h-4 w-4 shrink-0" />
                     </Link>
-                    <Link to="/guidelines/author" className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-6 text-[15px] font-bold text-slate-700 transition hover:bg-slate-50 whitespace-nowrap">
+                    <Link to="/guidelines/author" className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-5 sm:px-6 text-sm sm:text-[15px] font-bold text-slate-700 transition hover:bg-slate-50 text-center w-full xs:w-auto">
                       Learn More
                     </Link>
                   </div>
                   
-                  <div className="bg-white border border-slate-200/60 p-4 rounded-2xl flex items-start gap-4 max-w-sm shadow-sm">
-                    <div className="w-8 h-8 rounded-full bg-[#eff4fa] text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
-                      <Lightbulb className="w-4 h-4" />
+                  <div className="bg-white border border-slate-200/60 p-3.5 sm:p-4 rounded-xl sm:rounded-2xl flex items-start gap-3 sm:gap-4 w-full sm:max-w-sm shadow-sm">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#eff4fa] text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
+                      <Lightbulb className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     </div>
-                    <p className="text-[13px] text-slate-600 leading-relaxed">
+                    <p className="text-xs sm:text-[13px] text-slate-600 leading-relaxed">
                       We are currently accepting manuscripts for our upcoming collection. Don't miss your chance to be part of the <strong className="text-blue-800">ADF author community!</strong>
                     </p>
                   </div>
@@ -133,12 +130,12 @@ export function BookstoreShowcase() {
               </div>
 
               {/* Right Interactive Pane - Pseudo 3D Book Stack */}
-              <div className="relative h-[500px] flex items-center justify-center perspective-[2000px] mt-10 lg:mt-0">
-                <div className="relative w-full max-w-[400px] h-[450px] transform-style-3d group">
+              <div className="relative h-[360px] xs:h-[400px] sm:h-[460px] lg:h-[500px] flex items-center justify-center perspective-[2000px] mt-6 lg:mt-0 overflow-hidden lg:overflow-visible">
+                <div className="relative w-full max-w-[400px] h-[420px] sm:h-[450px] transform-style-3d group scale-[0.62] xs:scale-[0.72] sm:scale-[0.85] md:scale-95 lg:scale-100 origin-center transition-transform">
                   
                   {/* The Pedestal Base */}
-                  <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 w-[120%] h-32 bg-white rounded-[100%] shadow-[0_20px_40px_rgba(0,0,0,0.1)] border-b-8 border-slate-100 z-0"></div>
-                  <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-[110%] h-24 bg-slate-50 rounded-[100%] border border-white z-0"></div>
+                  <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 w-[100%] sm:w-[110%] lg:w-[120%] h-32 bg-white rounded-[100%] shadow-[0_20px_40px_rgba(0,0,0,0.1)] border-b-8 border-slate-100 z-0"></div>
+                  <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-[95%] sm:w-[105%] lg:w-[110%] h-24 bg-slate-50 rounded-[100%] border border-white z-0"></div>
 
                   {/* Left Book (White) */}
                   <div 
@@ -271,8 +268,8 @@ export function BookstoreShowcase() {
           </div>
 
           {/* Right Interactive Pane - Pseudo 3D Book Stack */}
-          <div className="relative h-[480px] flex items-center justify-center lg:justify-end perspective-[2000px]">
-            <div className="relative w-full max-w-[360px] h-[450px] transform-style-3d group">
+          <div className="relative h-[360px] xs:h-[400px] sm:h-[450px] lg:h-[480px] flex items-center justify-center lg:justify-end perspective-[2000px] overflow-hidden lg:overflow-visible">
+            <div className="relative w-full max-w-[360px] h-[400px] sm:h-[450px] transform-style-3d group scale-[0.65] xs:scale-[0.75] sm:scale-[0.88] md:scale-95 lg:scale-100 origin-center transition-transform">
               
               {featuredBooks.map((book, index) => {
                 let zIndex = 30;

@@ -116,11 +116,11 @@ export function HeroSlider() {
                     contentKey={`home.hero.slide.${s.key}.title`}
                     fallback={s.title}
                     as="h2"
-                    className="mt-4 font-serif text-4xl md:text-6xl font-bold leading-[1.05]"
+                    className="mt-4 font-serif text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1] break-words"
                     label="Slide Title"
                   />
                   {s.highlight && (
-                    <div className="mt-4 text-lg text-[var(--mint)] font-medium">
+                    <div className="mt-3 sm:mt-4 text-base sm:text-lg text-[var(--mint)] font-medium">
                       <EditableText
                         contentKey={`home.hero.slide.${s.key}.highlight`}
                         fallback={s.highlight}
@@ -134,14 +134,14 @@ export function HeroSlider() {
                     fallback={s.description}
                     as="p"
                     multiline
-                    className="mt-3 max-w-2xl text-lg text-white/80 leading-relaxed"
+                    className="mt-3 max-w-2xl text-sm sm:text-base md:text-lg text-white/80 leading-relaxed"
                     label="Slide Subtitle"
                   />
-                  <div className="mt-5 flex flex-wrap gap-2">
+                  <div className="mt-4 sm:mt-5 flex flex-wrap gap-2">
                     {s.features.map((f) => (
                       <span
                         key={f}
-                        className="rounded-full bg-white/10 border border-white/15 px-3 py-1.5 text-xs font-medium"
+                        className="rounded-full bg-white/10 border border-white/15 px-2.5 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-xs font-medium"
                       >
                         <EditableText
                           contentKey={`home.hero.slide.${s.key}.feature.${f}`}
@@ -152,10 +152,10 @@ export function HeroSlider() {
                       </span>
                     ))}
                   </div>
-                  <div className="mt-6 flex flex-wrap items-center gap-3">
+                  <div className="mt-6 flex flex-col xs:flex-row items-stretch xs:items-center gap-3 w-full sm:w-auto">
                     <Link
                       to={s.to}
-                      className="inline-flex items-center gap-2 rounded-md bg-[var(--mint)] px-5 py-3 text-sm font-semibold text-[var(--deep)] hover:bg-white transition"
+                      className="inline-flex items-center justify-center gap-2 rounded-md bg-[var(--mint)] px-5 py-3 text-sm font-semibold text-[var(--deep)] hover:bg-white transition text-center"
                     >
                       <EditableText
                         contentKey={`home.hero.slide.${s.key}.cta`}
@@ -163,11 +163,11 @@ export function HeroSlider() {
                         as="span"
                         label="Slide CTA"
                       />
-                      <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                      <ArrowRight className="h-4 w-4 shrink-0" aria-hidden="true" />
                     </Link>
                     <Link
                       to="/about"
-                      className="inline-flex items-center gap-2 rounded-md border border-white/30 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10 transition"
+                      className="inline-flex items-center justify-center gap-2 rounded-md border border-white/30 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10 transition text-center"
                     >
                       Learn more
                     </Link>

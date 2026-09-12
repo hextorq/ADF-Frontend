@@ -136,9 +136,9 @@ export function SiteHeader() {
             {/* Global Favourites & Cart Buttons */}
             <Sheet>
               <SheetTrigger asChild>
-                <button className="p-2 text-[var(--ink-soft)] hover:text-[var(--primary)] transition-colors relative cursor-pointer shrink-0" aria-label="Favourites">
+                <button className="p-1.5 sm:p-2 text-[var(--ink-soft)] hover:text-[var(--primary)] transition-colors relative cursor-pointer shrink-0" aria-label="Favourites">
                   <Heart className="h-5 w-5" />
-                  <span className="absolute top-1 right-0 h-4 w-4 bg-[var(--mint)] text-white text-[10px] font-bold rounded-full flex items-center justify-center transform translate-x-1 -translate-y-1 shadow-sm">{wishlist.length}</span>
+                  <span className="absolute top-0.5 right-0 sm:top-1 sm:right-0 h-4 w-4 bg-[var(--mint)] text-white text-[10px] font-bold rounded-full flex items-center justify-center transform translate-x-1 -translate-y-1 shadow-sm">{wishlist.length}</span>
                 </button>
               </SheetTrigger>
               <SheetContent className="w-full sm:max-w-md">
@@ -155,7 +155,7 @@ export function SiteHeader() {
                         <div className="flex-1">
                           <h4 className="font-bold text-sm line-clamp-1">{book.title}</h4>
                           <p className="text-xs text-gray-500 mb-2">{book.author}</p>
-                          <div className="font-bold text-[var(--primary)]">â‚¹{book.price}</div>
+                          <div className="font-bold text-[var(--primary)]">₹{book.price}</div>
                         </div>
                         <button onClick={() => toggleWishlist(book)} className="text-gray-400 hover:text-red-500 p-2">
                           <Trash2 className="w-4 h-4" />
@@ -169,9 +169,9 @@ export function SiteHeader() {
 
             <Sheet>
               <SheetTrigger asChild>
-                <button className="p-2 text-[var(--ink-soft)] hover:text-[var(--primary)] transition-colors relative mr-1 cursor-pointer shrink-0" aria-label="Cart">
+                <button className="p-1.5 sm:p-2 text-[var(--ink-soft)] hover:text-[var(--primary)] transition-colors relative mr-0.5 sm:mr-1 cursor-pointer shrink-0" aria-label="Cart">
                   <ShoppingCart className="h-5 w-5" />
-                  <span className="absolute top-1 right-0 h-4 w-4 bg-[var(--primary)] text-white text-[10px] font-bold rounded-full flex items-center justify-center transform translate-x-1 -translate-y-1 shadow-sm">{cart.length}</span>
+                  <span className="absolute top-0.5 right-0 sm:top-1 sm:right-0 h-4 w-4 bg-[var(--primary)] text-white text-[10px] font-bold rounded-full flex items-center justify-center transform translate-x-1 -translate-y-1 shadow-sm">{cart.length}</span>
                 </button>
               </SheetTrigger>
               <SheetContent className="w-full sm:max-w-md flex flex-col">
@@ -194,7 +194,7 @@ export function SiteHeader() {
                               <span className="px-2 text-sm font-medium">{item.quantity}</span>
                               <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="px-2 py-1 hover:bg-slate-100">+</button>
                             </div>
-                            <div className="font-bold text-[var(--mint)]">â‚¹{item.price * item.quantity}</div>
+                            <div className="font-bold text-[var(--mint)]">₹{item.price * item.quantity}</div>
                           </div>
                         </div>
                         <button onClick={() => removeFromCart(item.id)} className="text-gray-400 hover:text-red-500 p-2 self-start">
@@ -208,7 +208,7 @@ export function SiteHeader() {
                   <div className="border-t border-border pt-4 mt-4">
                     <div className="flex justify-between font-bold text-lg mb-4">
                       <span>Total:</span>
-                      <span>â‚¹{cart.reduce((acc, item) => acc + item.price * item.quantity, 0)}</span>
+                      <span>₹{cart.reduce((acc, item) => acc + item.price * item.quantity, 0)}</span>
                     </div>
                     <button className="w-full btn-primary py-3 cursor-pointer">Proceed to Checkout</button>
                   </div>
@@ -217,7 +217,7 @@ export function SiteHeader() {
             </Sheet>
 
             <button
-              className="lg:hidden inline-flex items-center justify-center rounded-md border border-border p-2 shrink-0 ml-1"
+              className="lg:hidden inline-flex items-center justify-center rounded-md border border-border p-1.5 sm:p-2 shrink-0 ml-0.5 sm:ml-1"
               onClick={() => setMobileOpen((v) => !v)}
               aria-label="Menu"
             >
