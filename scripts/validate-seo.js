@@ -142,6 +142,20 @@ if (llmsExists) {
 }
 
 
+// 2c. Validate Favicons (Google Search Requirements)
+console.log('\n2c. Checking Googlebot Favicons:');
+const faviconIco = path.join(rootDir, 'public', 'favicon.ico');
+const favicon48 = path.join(rootDir, 'public', 'favicon-48x48.png');
+const favicon192 = path.join(rootDir, 'public', 'favicon-192x192.png');
+const webManifest = path.join(rootDir, 'public', 'site.webmanifest');
+check('favicon.ico exists in public/ (resolves /favicon.ico with 200)', fs.existsSync(faviconIco));
+check('favicon-48x48.png exists (Googlebot requirement: multiple of 48px square)', fs.existsSync(favicon48));
+check('favicon-192x192.png exists (Android / high-res icon)', fs.existsSync(favicon192));
+check('site.webmanifest exists in public/', fs.existsSync(webManifest));
+check('index.html links to favicon.ico', indexHtml.includes('href="/favicon.ico"'));
+check('index.html links to favicon-48x48.png', indexHtml.includes('href="/favicon-48x48.png"'));
+
+
 // 3. Validate sitemap.xml
 console.log('\n3. Checking sitemap.xml:');
 const sitemapPath = path.join(rootDir, 'public', 'sitemap.xml');

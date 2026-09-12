@@ -42,8 +42,12 @@
     <meta name="twitter:image" content="https://www.adf.ijeae.com/logo.png" />
 
     <!-- Favicon & Icons -->
-    <link rel="icon" type="image/png" href="/logo.png?v=3" />
-    <link rel="apple-touch-icon" href="/logo.png" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -59,11 +63,13 @@
           "@type": "EducationalOrganization",
           "@id": "https://www.adf.ijeae.com/#organization",
           "name": "Academic Development Forum",
-          "alternateName": "ADF",
+          "alternateName": ["ADF", "Academic Development Forum (ADF)"],
           "url": "https://www.adf.ijeae.com",
           "logo": {
             "@type": "ImageObject",
-            "url": "https://www.adf.ijeae.com/logo.png",
+            "url": "https://www.adf.ijeae.com/favicon-512x512.png",
+            "width": 512,
+            "height": 512,
             "caption": "Academic Development Forum Logo"
           },
           "description": "An international publication house for peer-reviewed journals, edited volumes, literary works, and academic development programmes.",
@@ -80,7 +86,7 @@
           "@id": "https://www.adf.ijeae.com/#website",
           "url": "https://www.adf.ijeae.com",
           "name": "Academic Development Forum",
-          "alternateName": "ADF",
+          "alternateName": ["ADF", "Academic Development Forum (ADF)"],
           "publisher": {
             "@id": "https://www.adf.ijeae.com/#organization"
           },
@@ -94,17 +100,53 @@
           }
         },
         {
-          "@type": "Periodical",
-          "@id": "https://www.adf.ijeae.com/journals#ijeae",
-          "name": "International Journal of English for Academic Excellence",
-          "alternateName": "IJEAE",
-          "issn": "3049-2912",
-          "publisher": {
-            "@id": "https://www.adf.ijeae.com/#organization"
-          },
-          "url": "https://ijeae.com/index.php/ijeae",
-          "isAccessibleForFree": true,
-          "license": "https://creativecommons.org/licenses/by/4.0/"
+          "@type": "ItemList",
+          "@id": "https://www.adf.ijeae.com/#site-navigation",
+          "name": "Primary Navigation",
+          "itemListElement": [
+            {
+              "@type": "SiteNavigationElement",
+              "position": 1,
+              "name": "Academic Journals",
+              "description": "Open-access peer-reviewed scholarly journals published by ADF including IJEAE.",
+              "url": "https://www.adf.ijeae.com/journals"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 2,
+              "name": "Book Chapter Publications",
+              "description": "ADF Convergence Series peer-reviewed edited volumes with ISBN and DOI.",
+              "url": "https://www.adf.ijeae.com/chapter-publications"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 3,
+              "name": "Literary Publications",
+              "description": "Poetry collections, novels, and creative monographs with ISBN assignment.",
+              "url": "https://www.adf.ijeae.com/literary-publications"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 4,
+              "name": "Publishing Guidelines",
+              "description": "Official author, editor, and reviewer submission instructions.",
+              "url": "https://www.adf.ijeae.com/guidelines"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 5,
+              "name": "Academic Bookstore",
+              "description": "Browse and order published academic monographs and edited research volumes.",
+              "url": "https://www.adf.ijeae.com/bookstore"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 6,
+              "name": "About ADF",
+              "description": "Learn about Academic Development Forum mission, governance, and editorial ethics.",
+              "url": "https://www.adf.ijeae.com/about"
+            }
+          ]
         }
       ]
     }
