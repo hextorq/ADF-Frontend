@@ -60,9 +60,9 @@ interface PageSEO {
 
 const PAGE_SEO: Record<string, PageSEO> = {
   "/": {
-    title: "Academic Development Forum | Academic Publishing",
+    title: "ADF - Academic Development Forum | Academic Publishing",
     description: "Academic Development Forum (ADF) supports academic publishing through journals, book chapters, literary publications and academic programmes.",
-    keywords: "Academic Development Forum, ADF, peer-reviewed journals, open access, academic research, book chapters, literary publications",
+    keywords: "ADF, Academic Development Forum, academic publishing, peer-reviewed journals, open access, academic research, book chapters, literary publications",
     type: "website",
   },
   "/about": {

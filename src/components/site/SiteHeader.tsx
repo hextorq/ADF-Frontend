@@ -105,6 +105,7 @@ export function SiteHeader() {
             <div className="flex flex-col">
               {isHome ? (
                 <h1 className="m-0 p-0 font-serif font-bold text-[11px] sm:text-sm md:text-xl text-[var(--ink)] tracking-tight leading-tight max-w-[110px] sm:max-w-none">
+                  <span className="sr-only">ADF - </span>
                   <EditableText contentKey="header.brand.name" fallback="Academic Development Forum" as="span" label="Header brand" />
                 </h1>
               ) : (
