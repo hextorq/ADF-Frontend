@@ -68,7 +68,7 @@ export function FeaturedVideo() {
             />
             <EditableText
               contentKey="home.video.description"
-              fallback="Watch tutorials, publishing guidelines, webinars, author interviews, and research insights from the Academic Development Forum YouTube Channel."
+              fallback="Watch tutorials, publishing guidelines, webinars, author interviews, and research insights from the ADF (Academic Development Forum) YouTube Channel."
               as="p"
               multiline
               className="text-lg text-[var(--ink-soft)] leading-relaxed mb-8"

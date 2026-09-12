@@ -4,8 +4,8 @@
 
 export const SITE_CONFIG = {
   siteUrl: (import.meta.env.VITE_SITE_URL || "https://www.adf.ijeae.com").replace(/\/+$/, ""),
-  siteName: "ADF - Academic Development Forum",
-  alternateName: "ADF",
+  siteName: "ADF",
+  alternateName: "Academic Development Forum",
   defaultTitle: "ADF - Academic Development Forum | Academic Publishing",
   defaultDescription: "Academic Development Forum (ADF) supports academic publishing through journals, book chapters, literary publications and academic programmes.",
   defaultKeywords: "ADF, Academic Development Forum, academic publishing, peer-reviewed journals, International Journal of English for Academic Excellence, IJEAE, call for book chapters, literary publications, academic conferences, scholarly publishing, open access journals, research dissemination",
@@ -88,8 +88,8 @@ export function buildWebsiteSchema() {
     "@type": "WebSite",
     "@id": `${SITE_CONFIG.siteUrl}/#website`,
     "url": `${SITE_CONFIG.siteUrl}/`,
-    "name": SITE_CONFIG.siteName,
-    "alternateName": ["ADF", "Academic Development Forum", "Academic Development Forum (ADF)"],
+    "name": "ADF",
+    "alternateName": ["Academic Development Forum", "ADF - Academic Development Forum", "Academic Development Forum (ADF)"],
     "publisher": {
       "@id": `${SITE_CONFIG.siteUrl}/#organization`
     },
