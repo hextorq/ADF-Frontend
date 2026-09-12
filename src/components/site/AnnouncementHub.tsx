@@ -1,3 +1,4 @@
+import { safeFetchJson } from "@/lib/api";
 import { useState } from "react";
 import { ArrowRight, Calendar, Tag, Activity, BookOpen, FileText, CheckCircle, Video, Trash2, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -123,12 +124,11 @@ function AnnouncementHubInner() {
   
   const [programmes, setProgrammes] = useState<any[]>([]);
   useEffect(() => {
-    fetch("/api/programmes")
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) setProgrammes(data);
-      })
-      .catch(console.error);
+    safeFetchJson<any[]>("/api/programmes", undefined, []).then(({ data, ok }) => {
+      if (ok && Array.isArray(data)) {
+        setProgrammes(data);
+      }
+    });
   }, []);
   
   const hasCampaignAnnouncement = allAnnouncements.some(a => a?.id === "announcement-adf-first-call");
@@ -140,68 +140,10 @@ function AnnouncementHubInner() {
   const hasCampaignActivities = allActivities.some(a => a?.id?.startsWith("act-campaign-"));
   const activitiesList = hasCampaignActivities ? allActivities : [...CAMPAIGN_ACTIVITIES, ...allActivities];
   const activities = activitiesList.filter(a => a?.visible);
-  
-  // Fetch latest published chapters from backend (admin preview only)
-  const [publishedChapters, setPublishedChapters] = useState<any[]>([]);
-  useEffect(() => {
-    if (!isAdmin) return;
-    fetch("/api/publications/chapters/admin")
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) {
-          const published = data.filter(c => c.stage === 'Published');
-          // Sort by updated_at or created_at descending
-          published.sort((a, b) => new Date(b.updated_at || b.created_at).getTime() - new Date(a.updated_at || a.created_at).getTime());
-          setPublishedChapters(published.map(c => ({
-            id: c.id,
-            pubType: 'Book Chapter',
-            category: c.volume_title,
-            title: c.chapter_title,
-            authors: c.authors && c.authors.length > 0 ? c.authors.map((a: any) => a.name).join(', ') : "Unknown",
-            date: new Date(c.updated_at || c.created_at).toLocaleDateString(),
-            to: `/chapter-publications`,
-            pinned: false,
-            visible: true
-          })));
-        }
-      })
-      .catch(console.error);
-  }, [isAdmin]);
-
-  // Fetch latest published literary books from backend (admin preview only)
-  const [publishedBooks, setPublishedBooks] = useState<any[]>([]);
-  useEffect(() => {
-    if (!isAdmin) return;
-    fetch("/api/publications/literary/admin")
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) {
-          const published = data.filter(b => b.current_stage === 'Book Store');
-          // Sort by updated_at or created_at descending
-          published.sort((a, b) => new Date(b.updated_at || b.created_at).getTime() - new Date(a.updated_at || a.created_at).getTime());
-          setPublishedBooks(published.map(b => ({
-            id: b.id,
-            pubType: 'Book',
-            category: b.book_genre,
-            title: b.book_title,
-            authors: b.author_name,
-            date: new Date(b.updated_at || b.created_at).toLocaleDateString(),
-            to: `/bookstore?q=${encodeURIComponent(b.book_title)}`,
-            pinned: false,
-            visible: true
-          })));
-        }
-      })
-      .catch(console.error);
-  }, [isAdmin]);
 
   const displayAnnouncements = announcements;
-  
-  // Use backend data if admin, otherwise CMS fallback publications
-  const recentPubs = publishedBooks.length > 0 ? publishedBooks : publications;
-  
-  // Use backend data if admin, otherwise CMS fallback chapters
-  const chapters = publishedChapters.length > 0 ? publishedChapters : allPublications;
+  const recentPubs = publications;
+  const chapters = allPublications;
   
   return (
     <section className="py-20 bg-slate-50 border-t border-slate-200">

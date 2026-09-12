@@ -110,9 +110,15 @@ export default function LiterarySubmit() {
         body: formData
       });
 
-      const data = await res.json();
+      const text = await res.text();
+      let data: any = {};
+      try {
+        if (text && text.trim()) data = JSON.parse(text);
+      } catch {
+        // ignore parse error
+      }
       if (res.ok) {
-        toast.success(`Submission Successful! ID: ${data.id}`);
+        toast.success(`Submission Successful! ID: ${data.id || ""}`);
         setStep(4); // Success step
       } else {
         const errorMsg = data.error || (data.details && data.details.length > 0 

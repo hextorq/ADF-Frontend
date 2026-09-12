@@ -39,6 +39,53 @@ function authHeaders(headers?: HeadersInit): HeadersInit {
   };
 }
 
+/**
+ * Safe fetch wrapper that handles:
+ * - Non-2xx HTTP responses (4xx, 5xx)
+ * - Empty response bodies (0 bytes)
+ * - Non-JSON content types (e.g. text/html error pages)
+ * - Blocked or aborted requests (e.g. robots.txt or offline)
+ *
+ * Never throws SyntaxError: Unexpected end of JSON input.
+ */
+export async function safeFetchJson<T = any>(
+  url: string,
+  options?: RequestInit,
+  fallback: T = [] as any
+): Promise<{ data: T; ok: boolean; status: number }> {
+  try {
+    const res = await fetch(url, options);
+
+    if (!res.ok) {
+      return { data: fallback, ok: false, status: res.status };
+    }
+
+    if (res.status === 204) {
+      return { data: fallback, ok: true, status: res.status };
+    }
+
+    const contentType = res.headers.get("content-type") || "";
+    const text = await res.text();
+    if (!text || !text.trim()) {
+      return { data: fallback, ok: true, status: res.status };
+    }
+
+    const trimmed = text.trim();
+    if (
+      !contentType.includes("application/json") &&
+      !trimmed.startsWith("{") &&
+      !trimmed.startsWith("[")
+    ) {
+      return { data: fallback, ok: false, status: res.status };
+    }
+
+    const data = JSON.parse(text) as T;
+    return { data, ok: true, status: res.status };
+  } catch {
+    return { data: fallback, ok: false, status: 0 };
+  }
+}
+
 export async function apiFetch<T>(path: string, opts: RequestInit = {}): Promise<T> {
   const res = await fetch(apiUrl(path), {
     credentials: "include",
@@ -46,19 +93,28 @@ export async function apiFetch<T>(path: string, opts: RequestInit = {}): Promise
     ...opts,
   });
 
+  const text = await res.text();
+
   if (!res.ok) {
     let message = res.statusText;
-    try {
-      const body = await res.json();
-      if (body?.error) message = body.error;
-    } catch {
-      // ignore non-JSON error bodies
+    if (text && text.trim()) {
+      try {
+        const body = JSON.parse(text);
+        if (body?.error) message = body.error;
+      } catch {
+        // ignore non-JSON error bodies
+      }
     }
     throw new ApiError(res.status, message);
   }
 
-  if (res.status === 204) return undefined as T;
-  return res.json() as Promise<T>;
+  if (res.status === 204 || !text || !text.trim()) return undefined as T;
+  
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    throw new ApiError(res.status, "Invalid JSON response from server");
+  }
 }
 
 export type AdminUser = { email: string; role: string };

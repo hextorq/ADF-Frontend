@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { useCMSStore } from "@/store/useCMSStore";
 import { ManuscriptFormatter, FormattedManuscriptResult } from "@/components/formatter/ManuscriptFormatter";
+import { safeFetchJson } from "@/lib/api";
 
 interface Volume {
   id: string | number;
@@ -33,14 +34,11 @@ export default function ChapterSubmit() {
   const [volumes, setVolumes] = useState<Volume[]>([]);
   
   useEffect(() => {
-    fetch("/api/publications/chapters/volumes")
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) {
-          setVolumes(data.filter(v => v.status === 'open' || v.status === 'open'));
-        }
-      })
-      .catch(console.error);
+    safeFetchJson<Volume[]>("/api/publications/chapters/volumes", undefined, []).then(({ data, ok }) => {
+      if (ok && Array.isArray(data)) {
+        setVolumes(data.filter(v => v.status === 'open'));
+      }
+    });
   }, []);
 
   const [step, setStep] = useState(1);
@@ -117,10 +115,16 @@ export default function ChapterSubmit() {
         method: "POST",
         body: formData
       });
-      const data = await res.json();
+      const text = await res.text();
+      let data: any = {};
+      try {
+        if (text && text.trim()) data = JSON.parse(text);
+      } catch {
+        // ignore parse error
+      }
       
       if (res.ok) {
-        toast.success(`Submission Successful! ID: ${data.submissionId}`);
+        toast.success(`Submission Successful! ID: ${data.submissionId || ""}`);
         setStep(3); // Success Screen
       } else {
         toast.error(data.error || "Submission failed");

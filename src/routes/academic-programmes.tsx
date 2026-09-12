@@ -4,6 +4,7 @@ import { CalendarDays, Clock, MapPin, User, Users, X, Trash2, Edit } from "lucid
 import { EditableText } from "@/components/cms/EditableText";
 import { useAuthStore } from "@/store/useAuthStore";
 import { Link } from "react-router-dom";
+import { safeFetchJson } from "@/lib/api";
 
 type Event = {
   id: number;
@@ -39,12 +40,11 @@ function UpcomingCalendar() {
   const [open, setOpen] = useState<Event | null>(null);
 
   useEffect(() => {
-    fetch("/api/programmes")
-      .then(r => r.json())
-      .then(data => {
-        if (Array.isArray(data)) setLocalEvents(data);
-      })
-      .catch(console.error);
+    safeFetchJson<Event[]>("/api/programmes", undefined, []).then(({ data, ok }) => {
+      if (ok && Array.isArray(data)) {
+        setLocalEvents(data);
+      }
+    });
   }, []);
 
   const { weeks, eventsByDay } = useMemo(() => {

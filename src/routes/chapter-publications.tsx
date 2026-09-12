@@ -1,9 +1,9 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { PageHeader } from "@/components/site/PageHeader";
 import { CheckCircle2, Download, FileText, BookOpen } from "lucide-react";
 import { EditableText } from "@/components/cms/EditableText";
-import { assetUrl } from "@/lib/api";
+import { assetUrl, safeFetchJson } from "@/lib/api";
 import { SEO } from "@/components/SEO";
 import { buildBreadcrumbSchema } from "@/lib/seo";
 import {
@@ -27,15 +27,12 @@ export default function Page() {
   const [releasedChapters, setReleasedChapters] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch("/api/publications/chapters/volumes")
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) {
-          // Only show published volumes
-          setReleasedChapters(data.filter(v => v.status === 'published'));
-        }
-      })
-      .catch(console.error);
+    safeFetchJson<any[]>("/api/publications/chapters/volumes", undefined, []).then(({ data, ok }) => {
+      if (ok && Array.isArray(data)) {
+        // Only show published volumes
+        setReleasedChapters(data.filter(v => v.status === 'published'));
+      }
+    });
   }, []);
 
   const structuredData = [

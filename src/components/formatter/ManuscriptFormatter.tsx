@@ -191,13 +191,19 @@ export function ManuscriptFormatter({
         body: formData,
       });
 
-      const data = await response.json();
+      const text = await response.text();
+      let data: any = {};
+      try {
+        if (text && text.trim()) data = JSON.parse(text);
+      } catch {
+        // ignore parse error
+      }
 
       clearInterval(interval);
       setProgressIndex(FORMATTING_STEPS.length);
 
       if (!response.ok) {
-        throw new Error(data.error || "Formatting failed");
+        throw new Error(data.error || `Formatting failed (${response.status})`);
       }
 
       setResult(data);
