@@ -151,14 +151,111 @@
       ]
     }
     </script>
+    <style id="adf-critical-css">
+      html, body {
+        margin: 0;
+        padding: 0;
+        background-color: #f8fafc;
+        height: 100%;
+        width: 100%;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      }
+      .adf-initial-shell {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f8fafc;
+        z-index: 99999;
+      }
+      .adf-initial-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 24px;
+      }
+      .adf-initial-logo-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+      .adf-initial-logo {
+        height: 54px;
+        width: auto;
+        max-width: 200px;
+        object-fit: contain;
+        animation: adf-pulse 1.8s ease-in-out infinite;
+      }
+      .adf-initial-spinner {
+        width: 32px;
+        height: 32px;
+        border: 3px solid #e2e8f0;
+        border-top-color: #1e3a8a;
+        border-radius: 50%;
+        animation: adf-spin 0.75s linear infinite;
+        margin-bottom: 14px;
+      }
+      .adf-initial-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: #0f172a;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+      .adf-initial-subtitle {
+        font-size: 12px;
+        color: #64748b;
+        margin-top: 4px;
+        letter-spacing: 0.02em;
+      }
+      @keyframes adf-spin {
+        to { transform: rotate(360deg); }
+      }
+      @keyframes adf-pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.85; transform: scale(0.98); }
+      }
+
+      /* Screen-reader & Search Engine Crawler Semantic Skeleton */
+      .adf-seo-fallback {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        padding: 0 !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        clip: rect(0, 0, 0, 0) !important;
+        white-space: nowrap !important;
+        border: 0 !important;
+      }
+    </style>
   </head>
   <body>
     <div id="root">
+      <!-- Visual branded preloader shown while JS bundle initializes -->
+      <div class="adf-initial-shell" aria-hidden="true">
+        <div class="adf-initial-content">
+          <div class="adf-initial-logo-wrap">
+            <img src="/logo.png" alt="Academic Development Forum" class="adf-initial-logo" width="160" height="48" />
+          </div>
+          <div class="adf-initial-spinner"></div>
+          <div class="adf-initial-title">Academic Development Forum</div>
+          <div class="adf-initial-subtitle">International Scholarly Publishing</div>
+        </div>
+      </div>
+
       <!-- Semantic crawlable HTML skeleton for search engines prior to hydration -->
-      <header>
-        <a href="https://www.adf.ijeae.com/" aria-label="Academic Development Forum Home">
-          <img src="/logo.png" alt="Academic Development Forum (ADF) Logo" width="160" height="48" />
-        </a>
+      <div class="adf-seo-fallback">
+        <header>
+          <a href="https://www.adf.ijeae.com/" aria-label="Academic Development Forum Home">
+            <img src="/logo.png" alt="Academic Development Forum (ADF) Logo" width="160" height="48" />
+          </a>
         <nav aria-label="Main Navigation">
           <ul>
             <li><a href="/about">About Us</a></li>
@@ -260,6 +357,7 @@
           <li><a href="/contact">Contact Editorial Office</a></li>
         </ul>
       </footer>
+      </div>
     </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
