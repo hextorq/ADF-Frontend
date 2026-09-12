@@ -18,12 +18,13 @@ export default function BookStore() {
   const [searchParams, setSearchParams] = useSearchParams();
   const initialCategory = searchParams.get("category") || "All Books";
 
-  const [localBooks, setLocalBooks] = useState<Book[]>([]);
+  const [localBooks, setLocalBooks] = useState<Book[]>(MOCK_BOOKS);
   const [quickViewBook, setQuickViewBook] = useState<Book | null>(null);
   const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
   const [activeCategory, setActiveCategory] = useState(initialCategory);
 
   useEffect(() => {
+    if (!isAdmin) return;
     fetch("/api/publications/literary/admin")
       .then(res => res.json())
       .then(data => {
@@ -50,14 +51,17 @@ export default function BookStore() {
             readers: 0,
             downloads: 0
           }));
-          setLocalBooks(fetchedBooks);
+          setLocalBooks(prev => {
+            const existingIds = new Set(prev.map(p => p.id));
+            const uniqueFetched = fetchedBooks.filter(f => !existingIds.has(f.id));
+            return [...uniqueFetched, ...prev];
+          });
         }
       })
       .catch(err => {
         console.error(err);
-        setLocalBooks([]); // Fallback on error
       });
-  }, []);
+  }, [isAdmin]);
 
   const filteredBooks = useMemo(() => {
     return localBooks.filter(book => {

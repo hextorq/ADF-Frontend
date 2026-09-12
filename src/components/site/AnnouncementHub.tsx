@@ -141,9 +141,10 @@ function AnnouncementHubInner() {
   const activitiesList = hasCampaignActivities ? allActivities : [...CAMPAIGN_ACTIVITIES, ...allActivities];
   const activities = activitiesList.filter(a => a?.visible);
   
-  // Fetch latest published chapters from backend
+  // Fetch latest published chapters from backend (admin preview only)
   const [publishedChapters, setPublishedChapters] = useState<any[]>([]);
   useEffect(() => {
+    if (!isAdmin) return;
     fetch("/api/publications/chapters/admin")
       .then(res => res.json())
       .then(data => {
@@ -165,11 +166,12 @@ function AnnouncementHubInner() {
         }
       })
       .catch(console.error);
-  }, []);
+  }, [isAdmin]);
 
-  // Fetch latest published literary books from backend
+  // Fetch latest published literary books from backend (admin preview only)
   const [publishedBooks, setPublishedBooks] = useState<any[]>([]);
   useEffect(() => {
+    if (!isAdmin) return;
     fetch("/api/publications/literary/admin")
       .then(res => res.json())
       .then(data => {
@@ -191,15 +193,15 @@ function AnnouncementHubInner() {
         }
       })
       .catch(console.error);
-  }, []);
+  }, [isAdmin]);
 
   const displayAnnouncements = announcements;
   
-  // Use real backend data for recent publications
-  const recentPubs = publishedBooks;
+  // Use backend data if admin, otherwise CMS fallback publications
+  const recentPubs = publishedBooks.length > 0 ? publishedBooks : publications;
   
-  // Use backend data for latest chapters
-  const chapters = publishedChapters;
+  // Use backend data if admin, otherwise CMS fallback chapters
+  const chapters = publishedChapters.length > 0 ? publishedChapters : allPublications;
   
   return (
     <section className="py-20 bg-slate-50 border-t border-slate-200">

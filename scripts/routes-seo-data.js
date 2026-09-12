@@ -85,6 +85,38 @@ export const PUBLIC_ROUTES = [
     keywords: "academic programmes, faculty development programme, FDP, academic workshops, research seminars",
     h1: "Academic Programmes & Faculty Development",
     crumbs: [{ name: "Academic Programmes", path: "/academic-programmes" }],
+    contentHtml: `
+          <section>
+            <h2>Faculty Development Programmes (FDP) &amp; Academic Training</h2>
+            <p>Academic Development Forum (ADF) conducts international Faculty Development Programmes (FDP), advanced research methodology workshops, academic writing masterclasses, and publication ethics seminars for university faculty, researchers, and doctoral candidates.</p>
+          </section>
+
+          <section>
+            <h2>Core Academic Programme Disciplines</h2>
+            <ul>
+              <li><strong>Research Methodology &amp; Analytical Frameworks:</strong> Quantitative and qualitative research designs, statistical analysis, survey methodologies, and empirical modeling.</li>
+              <li><strong>Scholarly Writing &amp; Indexed Journal Publishing:</strong> Manuscript structure, abstract refinement, peer-review response workflows, and publication standards for Scopus, Web of Science, and UGC-CARE indexed journals.</li>
+              <li><strong>Publication Ethics &amp; Integrity:</strong> Guidelines on addressing plagiarism, authorship criteria, conflicts of interest, and adherence to COPE (Committee on Publication Ethics) standards.</li>
+              <li><strong>Innovative Academic Pedagogies:</strong> Outcome-based instructional strategies, modern digital curriculum design, and higher education academic leadership.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2>Programme Highlights &amp; Participant Benefits</h2>
+            <ul>
+              <li>Live interactive virtual sessions led by renowned international scholars and university professors.</li>
+              <li>Structured digital course packs, lecture recordings, research templates, and reference materials provided to all participants.</li>
+              <li>Verifiable e-certificates of completion for academic career advancement and institutional API scoring.</li>
+              <li>Direct registration via verified Google Forms with clear enrollment details.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2>Institutional Collaborations &amp; Inquiries</h2>
+            <p>Academic institutions and universities seeking customized departmental FDPs or joint training workshops can connect with the ADF Academic Affairs Directorate.</p>
+            <p><a href="/contact">Inquire About Institutional Programmes</a> | <a href="/guidelines">Read Publishing Guidelines</a></p>
+          </section>
+    `,
   },
   {
     path: "/bookstore",

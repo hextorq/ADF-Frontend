@@ -98,8 +98,11 @@ function generateStaticPages() {
       html = html.replace("</head>", `${schemaScript}\n  </head>`);
     }
 
-    // 5. Customize fallback crawlable article heading for search bots
-    if (route.h1) {
+    // 5. Customize fallback crawlable article heading and content for search bots
+    if (route.contentHtml) {
+      const customArticle = `<article>\n          <h1>${escapeHtml(route.h1)}</h1>\n          <p>${escapeHtml(route.description)}</p>${route.contentHtml}\n        </article>`;
+      html = html.replace(/<article>[\s\S]*?<\/article>/i, customArticle);
+    } else if (route.h1) {
       html = html.replace(/<h1>Academic Development Forum<\/h1>/i, `<h1>${escapeHtml(route.h1)}</h1>`);
       html = html.replace(
         /<p>Academic Development Forum \(ADF\) is an international publishing house[^<]*<\/p>/i,
