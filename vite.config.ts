@@ -13,11 +13,12 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id: string) {
-          if (id.includes("node_modules")) {
-            if (id.includes("react-router-dom") || id.includes("react-dom") || id.includes("/react/")) {
+          const normalized = id.replace(/\\/g, "/");
+          if (normalized.includes("node_modules")) {
+            if (normalized.includes("react-router-dom") || normalized.includes("react-dom") || normalized.includes("/react/")) {
               return "vendor-react";
             }
-            if (id.includes("@radix-ui") || id.includes("lucide-react") || id.includes("clsx") || id.includes("tailwind-merge")) {
+            if (normalized.includes("radix-ui") || normalized.includes("lucide-react") || normalized.includes("clsx") || normalized.includes("tailwind-merge")) {
               return "vendor-ui";
             }
           }
