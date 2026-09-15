@@ -792,6 +792,23 @@ export default function AdminManuscriptFormatter() {
                 </div>
               ) : null}
 
+              {/* Citation Cross-Validation Alerts */}
+              {reportModalSubmission.validation_report?.categories?.references?.citationMismatches &&
+                reportModalSubmission.validation_report.categories.references.citationMismatches.length > 0 && (
+                  <div className="p-4 rounded-xl bg-amber-50 border border-amber-300 text-amber-950 text-xs space-y-1.5">
+                    <div className="font-bold flex items-center gap-1.5 text-amber-900">
+                      <AlertTriangle className="w-4 h-4 text-amber-600" />
+                      In-Text Citations Missing in References (APA 7th Audit)
+                    </div>
+                    <ul className="space-y-0.5 pl-5 list-disc text-amber-900 font-mono text-[11px]">
+                      {reportModalSubmission.validation_report.categories.references.citationMismatches.map((cit: string, idx: number) => (
+                        <li key={idx}>{cit}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+
               {/* Warnings List */}
               {reportModalSubmission.issues && reportModalSubmission.issues.length > 0 && (
                 <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs space-y-2">

@@ -6,7 +6,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { PageHeader } from "@/components/site/PageHeader";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
-import { UploadCloud, CheckCircle2, Download, BookOpen, Image as ImageIcon, Globe2, AlertCircle } from "lucide-react";
+import { UploadCloud, CheckCircle2, Download, BookOpen, Image as ImageIcon, Globe2, AlertCircle, FileCheck } from "lucide-react";
+import { ManuscriptFormatter, FormattedManuscriptResult } from "@/components/formatter/ManuscriptFormatter";
 
 const CAMPAIGN_CATEGORIES = [
   { name: "Short Story", desc: "Up to 5 pages / below 2000 words (A4 | TNR 12 | 1.5)" },
@@ -25,6 +26,8 @@ export default function LiterarySubmit() {
 
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showFormatter, setShowFormatter] = useState(false);
+  const [formattedResult, setFormattedResult] = useState<FormattedManuscriptResult | null>(null);
 
   // Form State
   const [authorName, setAuthorName] = useState("");
@@ -96,6 +99,11 @@ export default function LiterarySubmit() {
       formData.append("transaction_id", "FREE-CAMPAIGN");
     } else {
       formData.append("transaction_id", "FREE-SUBMISSION");
+    }
+
+    if (formattedResult) {
+      formData.append("formatted_url", formattedResult.formattedFileUrl);
+      formData.append("sessionId", formattedResult.sessionId);
     }
 
 
@@ -484,6 +492,47 @@ export default function LiterarySubmit() {
                     </div>
                   )}
                 </label>
+              </div>
+
+              {/* Optional ADF Manuscript Standardization for Literary DOCX */}
+              <div className="pt-2">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-blue-50/70 border border-blue-200">
+                  <div className="flex items-center gap-2.5">
+                    <FileCheck className="w-5 h-5 text-blue-700 shrink-0" />
+                    <div>
+                      <div className="text-xs font-bold text-blue-950">
+                        Official ADF Document Standardization (Optional)
+                      </div>
+                      <div className="text-[11px] text-blue-800/80">
+                        Standardize formatting into the official ADF Master Template (Letter, Times New Roman, running header, 0 content rewriting).
+                      </div>
+                    </div>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowFormatter(!showFormatter)}
+                    className="text-xs font-semibold bg-white border-blue-300 text-blue-800 hover:bg-blue-50 shrink-0 self-start sm:self-center"
+                  >
+                    {showFormatter ? "Hide Formatter" : "Standardize Manuscript"}
+                  </Button>
+                </div>
+
+                {showFormatter && (
+                  <div className="mt-4">
+                    <ManuscriptFormatter
+                      embedded={true}
+                      initialFile={manuscript}
+                      publicationType="Literary Publications"
+                      onFileChange={(f) => setManuscript(f)}
+                      onFormatted={(res) => {
+                        setFormattedResult(res);
+                        toast.success("Literary manuscript formatted according to ADF guidelines!");
+                      }}
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Optional Cover Upload */}
