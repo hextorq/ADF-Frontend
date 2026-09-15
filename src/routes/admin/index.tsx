@@ -361,10 +361,15 @@ export default function AdminDashboard() {
                   <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
                   SMTP Ready &amp; Connected
                 </span>
+              ) : smtpInfo && (smtpInfo.message?.toLowerCase().includes("failed to reach") || smtpInfo.message?.toLowerCase().includes("failed to fetch") || smtpInfo.message?.toLowerCase().includes("network")) ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700 border border-slate-200">
+                  <span className="h-2 w-2 rounded-full bg-slate-400" />
+                  Backend Offline
+                </span>
               ) : (
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-800 border border-amber-200">
                   <span className="h-2 w-2 rounded-full bg-amber-500" />
-                  App Password Recommended
+                  App Password Required
                 </span>
               )}
             </div>
@@ -385,24 +390,39 @@ export default function AdminDashboard() {
             </div>
 
             {smtpInfo && !smtpInfo.ok && (
-              <div className="rounded-xl border border-amber-200 bg-amber-50/70 p-4 text-xs text-amber-900 space-y-1.5">
-                <div className="flex items-center gap-2 font-bold text-amber-900">
-                  <AlertCircle className="h-4 w-4 shrink-0 text-amber-600" />
-                  Gmail App Password Notice
+              smtpInfo.message?.toLowerCase().includes("failed to reach") || smtpInfo.message?.toLowerCase().includes("failed to fetch") || smtpInfo.message?.toLowerCase().includes("network") ? (
+                <div className="rounded-xl border border-slate-200 bg-slate-50/80 p-4 text-xs text-slate-800 space-y-1.5">
+                  <div className="flex items-center gap-2 font-bold text-slate-900">
+                    <AlertCircle className="h-4 w-4 shrink-0 text-slate-500" />
+                    Backend Service Offline
+                  </div>
+                  <p className="text-slate-600 leading-relaxed">
+                    The backend service on port 3001 is currently offline. Start the backend server (<code className="bg-slate-200/70 px-1 py-0.5 rounded font-mono">npm run dev</code> in <code className="bg-slate-200/70 px-1 py-0.5 rounded font-mono">ADF-Backend</code>) to verify live SMTP status.
+                  </p>
+                  <p className="text-[11px] text-slate-500 italic mt-1">
+                    * Note: All Contact Us messages are always 100% saved into the database regardless of email delivery status.
+                  </p>
                 </div>
-                <p className="text-amber-800 leading-relaxed">
-                  Google disables plain passwords for SMTP. To enable direct email sending, generate a 16-character Google App Password in your account:
-                </p>
-                <ol className="list-decimal list-inside pl-1 text-[11px] text-amber-800 space-y-0.5">
-                  <li>Go to <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener noreferrer" className="underline font-bold">Google App Passwords</a>.</li>
-                  <li>Enable 2-Step Verification if not active.</li>
-                  <li>Create an App Password under "Mail / Other".</li>
-                  <li>Set <code className="bg-amber-100/80 px-1 py-0.5 rounded font-mono">SMTP_PASS=xxxx xxxx xxxx xxxx</code> in <code className="bg-amber-100/80 px-1 py-0.5 rounded font-mono">ADF-Backend/.env</code>.</li>
-                </ol>
-                <p className="text-[11px] text-slate-500 italic mt-1">
-                  * Note: All Contact Us messages are always 100% saved into the database regardless of email delivery status.
-                </p>
-              </div>
+              ) : (
+                <div className="rounded-xl border border-amber-200 bg-amber-50/70 p-4 text-xs text-amber-900 space-y-1.5">
+                  <div className="flex items-center gap-2 font-bold text-amber-900">
+                    <AlertCircle className="h-4 w-4 shrink-0 text-amber-600" />
+                    Gmail App Password Notice
+                  </div>
+                  <p className="text-amber-800 leading-relaxed">
+                    Google disables plain passwords for SMTP. To enable direct email sending, generate a 16-character Google App Password in your account:
+                  </p>
+                  <ol className="list-decimal list-inside pl-1 text-[11px] text-amber-800 space-y-0.5">
+                    <li>Go to <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener noreferrer" className="underline font-bold">Google App Passwords</a>.</li>
+                    <li>Enable 2-Step Verification if not active.</li>
+                    <li>Create an App Password under "Mail / Other".</li>
+                    <li>Set <code className="bg-amber-100/80 px-1 py-0.5 rounded font-mono">SMTP_PASS=xxxx xxxx xxxx xxxx</code> in <code className="bg-amber-100/80 px-1 py-0.5 rounded font-mono">ADF-Backend/.env</code>.</li>
+                  </ol>
+                  <p className="text-[11px] text-slate-500 italic mt-1">
+                    * Note: All Contact Us messages are always 100% saved into the database regardless of email delivery status.
+                  </p>
+                </div>
+              )
             )}
           </div>
 
