@@ -53,8 +53,8 @@ export function InteractiveSidePoster() {
     };
   }, [isExpanded]);
 
-  // Don't display on submission routes to keep focus clean
-  if (location.pathname.includes("/submit")) {
+  // Don't display on submission routes or admin panel routes
+  if (location.pathname.includes("/submit") || location.pathname.startsWith("/admin")) {
     return null;
   }
 
