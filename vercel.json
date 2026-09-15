@@ -117,7 +117,7 @@
       "destination": "https://git-pipeline.metatronhost.in/adf/uploads/$1"
     },
     {
-      "source": "/((?!assets/|api/|uploads/|.*\\.[\\w]+$).*)",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]

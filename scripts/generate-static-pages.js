@@ -125,7 +125,41 @@ function generateStaticPages() {
     console.log(`  [OK] Generated canonical static page: ${route.path} -> ${canonicalUrl}`);
   }
 
-  console.log(`\nSuccessfully generated ${generatedCount} static pages with 100% exact canonical alignment.\n`);
+  const ADMIN_ROUTES = [
+    { path: "/admin", title: "Admin Dashboard | Academic Development Forum" },
+    { path: "/admin/login", title: "Admin Login | Academic Development Forum" },
+    { path: "/admin/manuscript-formatter", title: "Manuscript Formatter Admin | Academic Development Forum" },
+    { path: "/admin/books", title: "Book Management | Academic Development Forum" },
+    { path: "/admin/authors", title: "Author Management | Academic Development Forum" },
+    { path: "/admin/orders", title: "Order Management | Academic Development Forum" },
+    { path: "/admin/programmes", title: "Programmes Management | Academic Development Forum" },
+    { path: "/admin/publications/chapters", title: "Chapter Publications Admin | Academic Development Forum" },
+    { path: "/admin/publications/literary", title: "Literary Publications Admin | Academic Development Forum" },
+  ];
+
+  console.log("\n--- Generating Static Admin Routing Pages (noindex, nofollow) ---");
+  for (const adminRoute of ADMIN_ROUTES) {
+    let html = templateHtml;
+    html = html.replace(/<title>[^<]*<\/title>/i, `<title>${escapeHtml(adminRoute.title)}</title>`);
+    html = html.replace(
+      /<head>/i,
+      `<head>\n    <meta name="robots" content="noindex, nofollow" />\n    <meta name="googlebot" content="noindex, nofollow" />`
+    );
+
+    const cleanHtmlPath = path.join(distDir, `${adminRoute.path}.html`);
+    const nestedDirPath = path.join(distDir, adminRoute.path);
+    const nestedHtmlPath = path.join(nestedDirPath, "index.html");
+
+    fs.mkdirSync(path.dirname(cleanHtmlPath), { recursive: true });
+    fs.writeFileSync(cleanHtmlPath, html, "utf-8");
+
+    fs.mkdirSync(nestedDirPath, { recursive: true });
+    fs.writeFileSync(nestedHtmlPath, html, "utf-8");
+
+    console.log(`  [OK] Generated admin static page: ${adminRoute.path}`);
+  }
+
+  console.log(`\nSuccessfully generated ${generatedCount} static public pages + ${ADMIN_ROUTES.length} admin pages with 100% exact canonical alignment.\n`);
 }
 
 generateStaticPages();
