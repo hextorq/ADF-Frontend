@@ -28,5 +28,11 @@ Disallow: /bookstore/search*
 Disallow: /admin
 Disallow: /admin/*
 
+# Googlebot-Image specific directives
+User-agent: Googlebot-Image
+Allow: /logo.png
+Allow: /campaigns/
+Allow: /
+
 # Sitemap Location
 Sitemap: https://www.adf.ijeae.com/sitemap.xml

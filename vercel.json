@@ -64,7 +64,7 @@
       ]
     },
     {
-      "source": "/(logo\\.png|favicon.*|apple-touch-icon.*|site\\.webmanifest)",
+      "source": "/(logo\\.png|favicon.*|apple-touch-icon.*|site\\.webmanifest|campaigns/.*|.*\\.(png|jpg|jpeg|webp|svg|ico))",
       "headers": [
         {
           "key": "Cache-Control",

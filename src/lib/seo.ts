@@ -58,8 +58,11 @@ export function buildOrganizationSchema() {
     "logo": {
       "@type": "ImageObject",
       "url": SITE_CONFIG.defaultImage,
+      "width": 1342,
+      "height": 1172,
       "caption": "Academic Development Forum Logo"
     },
+    "image": SITE_CONFIG.defaultImage,
     "description": SITE_CONFIG.defaultDescription,
     "email": SITE_CONFIG.contactEmail,
     "foundingDate": SITE_CONFIG.foundingDate,
