@@ -64,7 +64,20 @@
       ]
     },
     {
-      "source": "/(logo\\.png|favicon.*|apple-touch-icon.*|site\\.webmanifest|campaigns/.*|.*\\.(png|jpg|jpeg|webp|svg|ico))",
+      "source": "/(logo\\.png|favicon.*|apple-touch-icon.*|site\\.webmanifest)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, stale-while-revalidate=604800"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    },
+    {
+      "source": "/campaigns/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
