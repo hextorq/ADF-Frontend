@@ -3,6 +3,9 @@
 
 User-agent: *
 Allow: /
+Allow: /favicon.ico
+Allow: /favicon.png
+Allow: /logo.png
 
 # Disallow internal search results and query duplicates to preserve crawl budget
 Disallow: /search
@@ -19,6 +22,9 @@ Disallow: /api/*
 # Googlebot specific directives
 User-agent: Googlebot
 Allow: /
+Allow: /favicon.ico
+Allow: /favicon.png
+Allow: /logo.png
 Allow: /api/programmes
 Disallow: /api/*
 Disallow: /search
@@ -30,6 +36,10 @@ Disallow: /admin/*
 
 # Googlebot-Image specific directives
 User-agent: Googlebot-Image
+Allow: /favicon.ico
+Allow: /favicon.png
+Allow: /favicon-*.png
+Allow: /apple-touch-icon.png
 Allow: /logo.png
 Allow: /campaigns/
 Allow: /

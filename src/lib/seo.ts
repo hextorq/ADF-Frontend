@@ -4,9 +4,9 @@
 
 export const SITE_CONFIG = {
   siteUrl: (import.meta.env.VITE_SITE_URL || "https://www.adf.ijeae.com").replace(/\/+$/, ""),
-  siteName: "ADF",
-  alternateName: "Academic Development Forum",
-  defaultTitle: "ADF - Academic Development Forum | Academic Publishing",
+  siteName: "Academic Development Forum",
+  alternateName: "ADF",
+  defaultTitle: "Academic Development Forum (ADF) | Academic Publishing",
   defaultDescription: "Academic Development Forum (ADF) supports academic publishing through journals, book chapters, literary publications and academic programmes.",
   defaultKeywords: "ADF, Academic Development Forum, academic publishing, peer-reviewed journals, International Journal of English for Academic Excellence, IJEAE, call for book chapters, literary publications, academic conferences, scholarly publishing, open access journals, research dissemination",
   defaultImage: "https://www.adf.ijeae.com/logo.png",
@@ -50,18 +50,12 @@ export function buildCanonicalUrl(path: string = "/"): string {
  */
 export function buildOrganizationSchema() {
   return {
-    "@type": "EducationalOrganization",
+    "@type": ["Organization", "EducationalOrganization"],
     "@id": `${SITE_CONFIG.siteUrl}/#organization`,
     "name": "Academic Development Forum",
-    "alternateName": ["ADF", "Academic Development Forum (ADF)"],
+    "alternateName": "ADF",
     "url": `${SITE_CONFIG.siteUrl}/`,
-    "logo": {
-      "@type": "ImageObject",
-      "url": SITE_CONFIG.defaultImage,
-      "width": 1342,
-      "height": 1172,
-      "caption": "Academic Development Forum Logo"
-    },
+    "logo": SITE_CONFIG.defaultImage,
     "image": SITE_CONFIG.defaultImage,
     "description": SITE_CONFIG.defaultDescription,
     "email": SITE_CONFIG.contactEmail,
@@ -91,8 +85,8 @@ export function buildWebsiteSchema() {
     "@type": "WebSite",
     "@id": `${SITE_CONFIG.siteUrl}/#website`,
     "url": `${SITE_CONFIG.siteUrl}/`,
-    "name": "ADF",
-    "alternateName": ["Academic Development Forum", "ADF - Academic Development Forum", "Academic Development Forum (ADF)"],
+    "name": "Academic Development Forum",
+    "alternateName": "ADF",
     "publisher": {
       "@id": `${SITE_CONFIG.siteUrl}/#organization`
     },

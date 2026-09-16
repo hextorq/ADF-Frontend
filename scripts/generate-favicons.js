@@ -82,10 +82,12 @@ async function generateFavicons() {
   fs.writeFileSync(path.resolve(publicDir, 'favicon-512x512.png'), square512);
   console.log('  [OK] favicon-512x512.png');
 
-  // Write 192x192 (Android / PWA standard)
+  // Write 192x192 (Android / PWA standard) & standard favicon.png
   const pwa192 = await sharp(square512).resize(192, 192).png().toBuffer();
   fs.writeFileSync(path.resolve(publicDir, 'favicon-192x192.png'), pwa192);
+  fs.writeFileSync(path.resolve(publicDir, 'favicon.png'), pwa192);
   console.log('  [OK] favicon-192x192.png');
+  console.log('  [OK] favicon.png (192x192 Square PNG for Googlebot & modern browsers)');
 
   // Write 180x180 (Apple Touch Icon)
   const apple180 = await sharp(square512).resize(180, 180).png().toBuffer();

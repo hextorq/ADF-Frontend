@@ -10,10 +10,10 @@ export const PUBLIC_ROUTES = [
     path: "/",
     priority: "1.0",
     changefreq: "daily",
-    title: "ADF - Academic Development Forum | Academic Publishing",
+    title: "Academic Development Forum (ADF) | Academic Publishing",
     description: "Academic Development Forum (ADF) supports academic publishing through journals, book chapters, literary publications and academic programmes.",
     keywords: "ADF, Academic Development Forum, academic publishing, peer-reviewed journals, open access, academic research, book chapters, literary publications",
-    h1: "ADF - Academic Development Forum",
+    h1: "Academic Development Forum (ADF)",
     crumbs: [],
   },
   {
