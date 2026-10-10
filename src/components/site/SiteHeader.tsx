@@ -63,6 +63,16 @@ export function SiteHeader() {
 
   return (
     <>
+      {/* Top Announcement Bar (Kept as comment for next announcement UI) */}
+      {/*
+      <div className="bg-gradient-to-r from-[var(--primary)] via-indigo-600 to-[var(--deep)] text-white text-xs sm:text-sm py-2 px-4 shadow-sm text-center font-medium">
+        <div className="container-academic flex items-center justify-center gap-2">
+          <span>📢 Announcement: Call details coming soon.</span>
+          <Link to="/announcements" className="underline font-semibold hover:text-white/90">View Details</Link>
+        </div>
+      </div>
+      */}
+
       {/* Top utility strip */}
       <div className="hidden md:block bg-[var(--deep)] text-white/80 text-xs">
         <div className="container-academic flex items-center justify-between py-2">

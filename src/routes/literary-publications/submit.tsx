@@ -152,7 +152,8 @@ export default function LiterarySubmit() {
 
       <div className="container-academic max-w-4xl mt-10">
         
-        {/* Campaign Announcement Callout Banner */}
+        {/* Campaign Announcement Callout Banner (Call is over - kept as comment for future announcement UI) */}
+        {/*
         {isCampaign && (
           <div className="mb-8 p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-[#eef2ff] via-[#f7f9ff] to-[#f0fdf4] border-2 border-indigo-200/90 shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-start gap-3.5">
@@ -180,6 +181,7 @@ export default function LiterarySubmit() {
             </div>
           </div>
         )}
+        */}
 
         <div className="bg-white rounded-2xl shadow-sm border p-6 sm:p-10">
           

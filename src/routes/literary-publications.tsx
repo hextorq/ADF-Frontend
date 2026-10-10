@@ -23,7 +23,8 @@ export default function Page() {
         crumbs={[{ label: "Literary Publications" }]}
       />
 
-      {/* Featured Campaign Banner: Art, Dreams & Fusion - Volume I */}
+      {/* Featured Campaign Banner: Art, Dreams & Fusion - Volume I (Call is over - kept as comment for future announcement UI) */}
+      {/*
       <section className="bg-gradient-to-r from-[#eef2ff] via-[#f7f9ff] to-[#f0fdf4] border-y border-indigo-200 py-6">
         <div className="container-academic flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-start gap-3.5">
@@ -56,6 +57,7 @@ export default function Page() {
           </div>
         </div>
       </section>
+      */}
 
       <section className="py-16 bg-white">
         <div className="container-academic">

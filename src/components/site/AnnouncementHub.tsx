@@ -48,6 +48,8 @@ class HubErrorBoundary extends React.Component<{children: React.ReactNode}, {has
   }
 }
 
+// Call announcement template (Call is over - commented out; keep for next announcement UI)
+/*
 const CAMPAIGN_ANNOUNCEMENT: Announcement & { badgeText?: string } = {
   id: "announcement-adf-first-call",
   title: "Art, Dreams & Fusion: An Anthology Celebrating Everyday Voices — Volume I",
@@ -94,6 +96,7 @@ const CAMPAIGN_ACTIVITIES: ActivityType[] = [
     visible: true
   }
 ];
+*/
 
 const TABS = [
   "Announcements",
@@ -131,14 +134,17 @@ function AnnouncementHubInner() {
     });
   }, []);
   
-  const hasCampaignAnnouncement = allAnnouncements.some(a => a?.id === "announcement-adf-first-call");
-  const announcementsList = hasCampaignAnnouncement ? allAnnouncements : [CAMPAIGN_ANNOUNCEMENT, ...allAnnouncements];
+  // Campaign announcement injection (Call is over - commented out; keep for next announcement UI)
+  // const hasCampaignAnnouncement = allAnnouncements.some(a => a?.id === "announcement-adf-first-call");
+  // const announcementsList = hasCampaignAnnouncement ? allAnnouncements : [CAMPAIGN_ANNOUNCEMENT, ...allAnnouncements];
+  const announcementsList = allAnnouncements;
   const announcements = announcementsList.filter(a => a?.visible);
   
   const publications = allPublications.filter(p => p?.visible);
   
-  const hasCampaignActivities = allActivities.some(a => a?.id?.startsWith("act-campaign-"));
-  const activitiesList = hasCampaignActivities ? allActivities : [...CAMPAIGN_ACTIVITIES, ...allActivities];
+  // const hasCampaignActivities = allActivities.some(a => a?.id?.startsWith("act-campaign-"));
+  // const activitiesList = hasCampaignActivities ? allActivities : [...CAMPAIGN_ACTIVITIES, ...allActivities];
+  const activitiesList = allActivities;
   const activities = activitiesList.filter(a => a?.visible);
 
   const displayAnnouncements = announcements;

@@ -1,5 +1,5 @@
 import { HeroSlider } from "@/components/site/HeroSlider";
-import { AdfFirstCallCampaign } from "@/components/campaign/AdfFirstCallCampaign";
+// import { AdfFirstCallCampaign } from "@/components/campaign/AdfFirstCallCampaign";
 import { AnnouncementHub } from "@/components/site/AnnouncementHub";
 import { WhyChooseADF } from "@/components/site/WhyChooseADF";
 import { BookstoreShowcase } from "@/components/site/BookstoreShowcase";
@@ -12,7 +12,8 @@ export default function Index() {
   return (
     <>
       <HeroSlider />
-      <AdfFirstCallCampaign />
+      {/* Call announcement section (Call is over - kept as comment for future announcement UI) */}
+      {/* <AdfFirstCallCampaign /> */}
       <AnnouncementHub />
       <FeaturedVideo />
       <Statistics />

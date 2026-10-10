@@ -38,7 +38,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useContentStore } from "@/store/useContentStore";
 import { AdminLiveToolbar } from "@/components/cms/AdminLiveToolbar";
-import { InteractiveSidePoster } from "@/components/campaign/InteractiveSidePoster";
+// import { InteractiveSidePoster } from "@/components/campaign/InteractiveSidePoster";
 import { SITE_CONFIG, buildCanonicalUrl, buildBreadcrumbSchema } from "@/lib/seo";
 
 const PageFallback = () => (
@@ -352,7 +352,8 @@ export default function App() {
         <AppBootstrap />
         <Toaster />
         <AdminLiveToolbar />
-        <InteractiveSidePoster />
+        {/* Campaign side poster announcement (Call is over - kept as comment for future announcement UI) */}
+        {/* <InteractiveSidePoster /> */}
         <Suspense fallback={<PageFallback />}>
           <Routes>
 
