@@ -24,7 +24,7 @@ const SLIDES: Slide[] = [
       "Submit your original research abstract across 15 disciplines for publication in our Multidisciplinary E-Book with ISBN, registered DOI, and individual author e-certificates.",
     highlight: "Emerging Trends in Research, Innovation, and Sustainable Development",
     features: ["ISBN and Registered DOI", "₹50 Processing Fee", "15 Research Tracks", "Individual E-Certificate"],
-    cta: "Submit Abstract (₹50)",
+    cta: "Submit Abstract",
     to: "/call-for-abstracts",
   },
   {
@@ -218,9 +218,8 @@ export function HeroSlider() {
               aria-label={`Go to slide ${i + 1}`}
               role="tab"
               aria-selected={i === index}
-              className={`h-1.5 rounded-full transition-all ${
-                i === index ? "w-10 bg-[var(--mint)]" : "w-5 bg-white/30 hover:bg-white/60"
-              }`}
+              className={`h-1.5 rounded-full transition-all ${i === index ? "w-10 bg-[var(--mint)]" : "w-5 bg-white/30 hover:bg-white/60"
+                }`}
             />
           ))}
         </div>
