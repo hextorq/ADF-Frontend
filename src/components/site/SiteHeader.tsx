@@ -77,7 +77,7 @@ export function SiteHeader() {
             to="/call-for-abstracts"
             className="underline font-bold text-amber-300 hover:text-white transition-colors ml-1"
           >
-            Submit Abstract (₹50) →
+            Submit Abstract
           </Link>
         </div>
       </div>
