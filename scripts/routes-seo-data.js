@@ -129,6 +129,16 @@ export const PUBLIC_ROUTES = [
     crumbs: [{ name: "Bookstore", path: "/bookstore" }],
   },
   {
+    path: "/call-for-abstracts",
+    priority: "0.95",
+    changefreq: "weekly",
+    title: "Call for Abstract Submission 2026 | Interdisciplinary Horizons | ADF",
+    description: "Submit original research abstracts to Interdisciplinary Horizons: Emerging Trends in Research, Innovation, and Sustainable Development. Multidisciplinary E-Book with ISBN, DOI & E-Certificate.",
+    keywords: "call for abstracts, abstract submission, multidisciplinary research, interdisciplinary horizons, e-book of abstracts, academic development forum, CFP 2026",
+    h1: "Call for Abstract Submission — Interdisciplinary Horizons",
+    crumbs: [{ name: "Publications", path: "/chapter-publications" }, { name: "Call for Abstracts", path: "/call-for-abstracts" }],
+  },
+  {
     path: "/announcements",
     priority: "0.8",
     changefreq: "daily",

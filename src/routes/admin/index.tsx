@@ -26,6 +26,14 @@ import { fetchRecentContentEdits, checkSmtpStatus, sendTestEmailApi, type Conten
 
 const QUICK_ACTIONS = [
   {
+    title: "Call for Abstracts",
+    description: "Review and manage abstract submissions for Interdisciplinary Horizons 2026.",
+    to: "/admin/publications/abstracts",
+    icon: FileText,
+    tone: "bg-[#f0fdfa] text-[#0d9488]",
+    iconTone: "bg-[#ccfbf1] text-[#0f766e]",
+  },
+  {
     title: "Edit live website",
     description: "Open the public site and use hover pencils on text and images.",
     to: "/",
@@ -237,6 +245,45 @@ export default function AdminDashboard() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Active Call for Abstracts Feature Widget */}
+      <section className="bg-gradient-to-r from-[#002147] via-[#0b3b6f] to-[#043d3b] text-white p-6 sm:p-7 rounded-2xl border border-teal-500/20 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-amber-400 text-slate-950">
+              Active Call
+            </span>
+            <span className="text-xs text-teal-200 font-medium">
+              Opens 5 Nov · Deadline 30 Nov 2026 · ₹50 Fee
+            </span>
+          </div>
+          <h3 className="text-lg sm:text-xl font-bold tracking-tight text-white">
+            Interdisciplinary Horizons 2026 — Multidisciplinary E-Book
+          </h3>
+          <p className="text-xs sm:text-sm text-slate-300 max-w-2xl">
+            Accepting 200–300 word research abstracts across 15 disciplines. Review, evaluate, and manage submitted abstracts.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3 flex-shrink-0">
+          <Link
+            to="/admin/publications/abstracts"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-600 text-slate-950 font-bold text-xs sm:text-sm transition-colors shadow-sm"
+          >
+            Manage Abstract Submissions
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+          <Link
+            to="/call-for-abstracts"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors"
+            title="View Live Author Portal"
+          >
+            <Eye className="h-4 w-4" />
+          </Link>
         </div>
       </section>
 

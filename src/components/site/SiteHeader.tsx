@@ -20,6 +20,7 @@ const NAV: NavItem[] = [
     key: "publications",
     label: "Publications",
     children: [
+      { key: "call-for-abstracts", label: "Call for Abstracts", to: "/call-for-abstracts" },
       { key: "journals", label: "Journals", to: "/journals" },
       { key: "chapter-publications", label: "Chapter Publications", to: "/chapter-publications" },
       { key: "literary-publications", label: "Literary Publications", to: "/literary-publications" },
@@ -63,15 +64,23 @@ export function SiteHeader() {
 
   return (
     <>
-      {/* Top Announcement Bar (Kept as comment for next announcement UI) */}
-      {/*
-      <div className="bg-gradient-to-r from-[var(--primary)] via-indigo-600 to-[var(--deep)] text-white text-xs sm:text-sm py-2 px-4 shadow-sm text-center font-medium">
-        <div className="container-academic flex items-center justify-center gap-2">
-          <span>📢 Announcement: Call details coming soon.</span>
-          <Link to="/announcements" className="underline font-semibold hover:text-white/90">View Details</Link>
+      {/* Top Announcement Bar */}
+      <div className="bg-gradient-to-r from-[#002147] via-[#0b3b6f] to-[#0D9488] text-white text-xs sm:text-sm py-2 px-4 shadow-sm text-center font-medium border-b border-teal-500/20">
+        <div className="container-academic flex items-center justify-center gap-2 flex-wrap">
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wide shadow-xs">
+            New Call
+          </span>
+          <span className="font-semibold text-white/95">
+            Call for Abstract Submission: <span className="text-teal-200">Interdisciplinary Horizons</span> (Multidisciplinary E-Book) — Opens 5 Nov · Deadline 30 Nov 2026
+          </span>
+          <Link
+            to="/call-for-abstracts"
+            className="underline font-bold text-amber-300 hover:text-white transition-colors ml-1"
+          >
+            Submit Abstract (₹50) →
+          </Link>
         </div>
       </div>
-      */}
 
       {/* Top utility strip */}
       <div className="hidden md:block bg-[var(--deep)] text-white/80 text-xs">

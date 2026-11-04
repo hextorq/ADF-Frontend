@@ -98,6 +98,54 @@ const CAMPAIGN_ACTIVITIES: ActivityType[] = [
 ];
 */
 
+// Active Featured Call for Abstract Submission
+const INTERDISCIPLINARY_HORIZONS_ANNOUNCEMENT: Announcement & { badgeText?: string } = {
+  id: "announcement-interdisciplinary-horizons-2026",
+  title: "Interdisciplinary Horizons: Emerging Trends in Research, Innovation, and Sustainable Development",
+  excerpt: "Call for Abstract Submission for our Multidisciplinary E-Book of Abstracts! Accepting submissions across 15 research disciplines. ISBN, DOI registration, and individual e-certificate included. Submission fee: ₹50. Open to scholars, faculty & students.",
+  category: "Call for Abstracts",
+  priority: "High",
+  badgeText: "NEW CALL FOR ABSTRACTS",
+  date: "Opens 5 Nov · Deadline 30 Nov 2026",
+  to: "/call-for-abstracts",
+  pinned: true,
+  visible: true,
+  type: "Announcement",
+};
+
+const ABSTRACT_CALL_ACTIVITIES: ActivityType[] = [
+  {
+    id: "act-abstract-1",
+    title: "Call for Abstracts Announced",
+    description: "Interdisciplinary Horizons: Multidisciplinary E-Book of Abstracts now accepting submissions across 15 research disciplines.",
+    time: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
+    category: "Call for Abstracts",
+    iconName: "FileText",
+    pinned: true,
+    visible: true,
+  },
+  {
+    id: "act-abstract-2",
+    title: "Submission Guidelines Released",
+    description: "Abstract limit: 200–300 words, 4–6 keywords, TNR 12pt, single author. Nominal fee: ₹50.",
+    time: new Date(Date.now() - 1000 * 60 * 90).toISOString(),
+    category: "Guidelines",
+    iconName: "BookOpen",
+    pinned: true,
+    visible: true,
+  },
+  {
+    id: "act-abstract-3",
+    title: "ISBN & DOI Registration",
+    description: "All accepted abstracts will be published in the international e-book with individual e-certificates.",
+    time: new Date(Date.now() - 1000 * 60 * 240).toISOString(),
+    category: "Publications",
+    iconName: "CheckCircle",
+    pinned: false,
+    visible: true,
+  },
+];
+
 const TABS = [
   "Announcements",
   "Recent Publications",
@@ -137,14 +185,14 @@ function AnnouncementHubInner() {
   // Campaign announcement injection (Call is over - commented out; keep for next announcement UI)
   // const hasCampaignAnnouncement = allAnnouncements.some(a => a?.id === "announcement-adf-first-call");
   // const announcementsList = hasCampaignAnnouncement ? allAnnouncements : [CAMPAIGN_ANNOUNCEMENT, ...allAnnouncements];
-  const announcementsList = allAnnouncements;
+  const hasCampaignAnnouncement = allAnnouncements.some(a => a?.id === "announcement-interdisciplinary-horizons-2026");
+  const announcementsList = hasCampaignAnnouncement ? allAnnouncements : [INTERDISCIPLINARY_HORIZONS_ANNOUNCEMENT, ...allAnnouncements];
   const announcements = announcementsList.filter(a => a?.visible);
   
   const publications = allPublications.filter(p => p?.visible);
   
-  // const hasCampaignActivities = allActivities.some(a => a?.id?.startsWith("act-campaign-"));
-  // const activitiesList = hasCampaignActivities ? allActivities : [...CAMPAIGN_ACTIVITIES, ...allActivities];
-  const activitiesList = allActivities;
+  const hasCampaignActivities = allActivities.some(a => a?.id?.startsWith("act-abstract-"));
+  const activitiesList = hasCampaignActivities ? allActivities : [...ABSTRACT_CALL_ACTIVITIES, ...allActivities];
   const activities = activitiesList.filter(a => a?.visible);
 
   const displayAnnouncements = announcements;

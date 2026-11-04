@@ -20,6 +20,7 @@ import Policies from "@/routes/policies";
 import Search from "@/routes/search";
 
 // Lazy-loaded heavy and admin routes for code-splitting & performance
+const CallForAbstractsPage = lazy(() => import("@/routes/call-for-abstracts"));
 const ChapterSubmit = lazy(() => import("@/routes/chapter-publications/submit"));
 const LiteraryPublications = lazy(() => import("@/routes/literary-publications"));
 const LiterarySubmit = lazy(() => import("@/routes/literary-publications/submit"));
@@ -32,13 +33,14 @@ const AdminAuthorManagement = lazy(() => import("@/routes/admin/bookstore/author
 const AdminOrderManagement = lazy(() => import("@/routes/admin/bookstore/orders"));
 const AdminChapterPublications = lazy(() => import("@/routes/admin/publications/chapters"));
 const AdminLiteraryPublications = lazy(() => import("@/routes/admin/publications/literary"));
+const AdminAbstractPublications = lazy(() => import("@/routes/admin/publications/abstracts"));
 const AdminManuscriptFormatter = lazy(() => import("@/routes/admin/publications/AdminManuscriptFormatter"));
 const AdminProgrammes = lazy(() => import("@/routes/admin/programmes/index"));
 import { Toaster } from "@/components/ui/sonner";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useContentStore } from "@/store/useContentStore";
 import { AdminLiveToolbar } from "@/components/cms/AdminLiveToolbar";
-// import { InteractiveSidePoster } from "@/components/campaign/InteractiveSidePoster";
+import { InteractiveSidePoster } from "@/components/campaign/InteractiveSidePoster";
 import { SITE_CONFIG, buildCanonicalUrl, buildBreadcrumbSchema } from "@/lib/seo";
 
 const PageFallback = () => (
@@ -76,6 +78,12 @@ const PAGE_SEO: Record<string, PageSEO> = {
     description: "International faculty development programmes, research workshops, capacity building seminars, and academic training by Academic Development Forum.",
     keywords: "academic programmes, faculty development programme, FDP, academic workshops, research seminars",
     crumbs: [{ name: "Academic Programmes", path: "/academic-programmes" }],
+  },
+  "/call-for-abstracts": {
+    title: "Call for Abstract Submission 2026 | Interdisciplinary Horizons | ADF",
+    description: "Submit original research abstracts to Interdisciplinary Horizons: Emerging Trends in Research, Innovation, and Sustainable Development. Multidisciplinary E-Book with ISBN, DOI & E-Certificate.",
+    keywords: "call for abstracts, abstract submission, multidisciplinary research, interdisciplinary horizons, e-book of abstracts, academic development forum, CFP 2026",
+    crumbs: [{ name: "Publications", path: "/chapter-publications" }, { name: "Call for Abstracts", path: "/call-for-abstracts" }],
   },
   "/announcements": {
     title: "Announcements & CFP | Academic Development Forum",
@@ -352,8 +360,8 @@ export default function App() {
         <AppBootstrap />
         <Toaster />
         <AdminLiveToolbar />
-        {/* Campaign side poster announcement (Call is over - kept as comment for future announcement UI) */}
-        {/* <InteractiveSidePoster /> */}
+        {/* Interactive Call for Abstracts Side Poster Slider */}
+        <InteractiveSidePoster />
         <Suspense fallback={<PageFallback />}>
           <Routes>
 
@@ -361,6 +369,7 @@ export default function App() {
             <Route path="/" element={<><SiteHeader /><main className="flex-1"><Home /></main><SiteFooter /></>} />
             <Route path="/about" element={<><SiteHeader /><main className="flex-1"><About /></main><SiteFooter /></>} />
             <Route path="/academic-programmes" element={<><SiteHeader /><main className="flex-1"><AcademicProgrammes /></main><SiteFooter /></>} />
+            <Route path="/call-for-abstracts" element={<><SiteHeader /><main className="flex-1"><CallForAbstractsPage /></main><SiteFooter /></>} />
             <Route path="/announcements" element={<><SiteHeader /><main className="flex-1"><Announcements /></main><SiteFooter /></>} />
             <Route path="/chapter-publications" element={<><SiteHeader /><main className="flex-1"><ChapterPublications /></main><SiteFooter /></>} />
             <Route path="/chapter-publications/submit" element={<><SiteHeader /><main className="flex-1"><ChapterSubmit /></main><SiteFooter /></>} />
@@ -388,6 +397,7 @@ export default function App() {
                 <Route path="orders" element={<AdminOrderManagement />} />
                 <Route path="publications/chapters" element={<AdminChapterPublications />} />
                 <Route path="publications/literary" element={<AdminLiteraryPublications />} />
+                <Route path="publications/abstracts" element={<AdminAbstractPublications />} />
                 <Route path="manuscript-formatter" element={<AdminManuscriptFormatter />} />
                 <Route path="programmes" element={<AdminProgrammes />} />
               </Route>

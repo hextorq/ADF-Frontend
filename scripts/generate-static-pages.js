@@ -135,6 +135,7 @@ function generateStaticPages() {
     { path: "/admin/programmes", title: "Programmes Management | Academic Development Forum" },
     { path: "/admin/publications/chapters", title: "Chapter Publications Admin | Academic Development Forum" },
     { path: "/admin/publications/literary", title: "Literary Publications Admin | Academic Development Forum" },
+    { path: "/admin/publications/abstracts", title: "Call for Abstracts Admin | Academic Development Forum" },
   ];
 
   console.log("\n--- Generating Static Admin Routing Pages (noindex, nofollow) ---");

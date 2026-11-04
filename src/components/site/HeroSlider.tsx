@@ -17,6 +17,17 @@ type Slide = {
 
 const SLIDES: Slide[] = [
   {
+    key: "abstracts",
+    eyebrow: "Call for Abstract Submission 2026",
+    title: "Interdisciplinary Horizons",
+    description:
+      "Submit your original research abstract across 15 disciplines for publication in our Multidisciplinary E-Book with ISBN, registered DOI, and individual author e-certificates.",
+    highlight: "Emerging Trends in Research, Innovation, and Sustainable Development",
+    features: ["ISBN and Registered DOI", "₹50 Processing Fee", "15 Research Tracks", "Individual E-Certificate"],
+    cta: "Submit Abstract (₹50)",
+    to: "/call-for-abstracts",
+  },
+  {
     key: "1",
     eyebrow: "Call for Chapters",
     title: "Shape the Future of Research",
