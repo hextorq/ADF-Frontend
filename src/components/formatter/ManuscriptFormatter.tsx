@@ -151,15 +151,42 @@ const PUBLICATION_TYPES = [
   { id: "Other", label: "Other Manuscript Category" },
 ];
 
+export const FORMATTING_PROFILES = [
+  {
+    id: "adf-academic",
+    name: "ADF Academic Manuscript (Official Template + APA 7th)",
+    badge: "ADF Official",
+    desc: "A4 paper size, official ADF running header with logo, first-page affiliation footer, APA 7 5-level headings, tables, figures, and references.",
+  },
+  {
+    id: "apa-7-student",
+    name: "APA 7th Edition — Student Paper",
+    badge: "APA 7 Student",
+    desc: "1-inch margins, double-spacing, ragged right, student title page (course, instructor, due date), and top-right page numbering.",
+  },
+  {
+    id: "apa-7-professional",
+    name: "APA 7th Edition — Professional Paper",
+    badge: "APA 7 Professional",
+    desc: "Running head header, professional title page with author note, 1-inch margins, double-spacing, 5 heading levels, and APA reference list.",
+  },
+  {
+    id: "adf-literary",
+    name: "ADF Literary Publication",
+    badge: "Literary Work",
+    desc: "Preserves creative layout, stanzas, and literary narrative structure without enforcing scientific research sections.",
+  },
+];
+
 const FORMATTING_STEPS = [
-  "Detecting manuscript structure & title",
+  "Detecting manuscript structure & document profile",
+  "Resolving APA 7th / ADF layout rules & margins",
   "Extracting authors, affiliations & correspondence",
-  "Validating abstract word count (250–300 words)",
-  "Verifying keywords & heading hierarchy",
-  "Applying ADF typography (Times New Roman)",
-  "Validating APA 7th references & in-text citations",
-  "Standardizing table captions above & figure captions below",
-  "Generating official ADF formatted DOCX with running header",
+  "Recognizing APA 7th 5-level heading hierarchy",
+  "Standardizing APA table captions (above) & figure captions (below)",
+  "Validating 30+ APA 7th reference source types & DOIs",
+  "Cross-matching in-text citations & detecting missing/uncited entries",
+  "Injecting top-right Word page numbering field & generating formatted DOCX",
 ];
 
 export function ManuscriptFormatter({
@@ -174,6 +201,9 @@ export function ManuscriptFormatter({
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [file, setFile] = useState<File | null>(initialFile || null);
   const [selectedPubType, setSelectedPubType] = useState<string>(publicationType);
+  const [selectedProfile, setSelectedProfile] = useState<string>(
+    publicationType.toLowerCase().includes("literary") ? "adf-literary" : "adf-academic"
+  );
   const [previewTab, setPreviewTab] = useState<"formatted" | "original" | "split">("formatted");
   const [validationTab, setValidationTab] = useState<"overview" | "structure" | "tables" | "references" | "typography">("overview");
   const [zoomLevel, setZoomLevel] = useState<number>(100);
@@ -237,6 +267,7 @@ export function ManuscriptFormatter({
       const formData = new FormData();
       formData.append("manuscript", file);
       formData.append("publicationType", selectedPubType);
+      formData.append("profile", selectedProfile);
 
       const response = await fetch("/api/formatter/process", {
         method: "POST",
@@ -393,26 +424,56 @@ export function ManuscriptFormatter({
             </p>
           </div>
 
-          {/* Publication Type Selector */}
-          <div className="max-w-xl mx-auto bg-slate-50 p-4 rounded-xl border border-slate-200">
-            <label className="text-xs font-bold text-slate-700 block mb-1.5 uppercase tracking-wider">
-              Publication Profile
-            </label>
-            <Select value={selectedPubType} onValueChange={setSelectedPubType}>
-              <SelectTrigger className="bg-white border-slate-300 h-10 text-xs">
-                <SelectValue placeholder="Select publication type" />
-              </SelectTrigger>
-              <SelectContent>
-                {PUBLICATION_TYPES.map((type) => (
-                  <SelectItem key={type.id} value={type.id} className="text-xs">
-                    {type.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <p className="text-[11px] text-slate-500 mt-1.5">
-              Structural requirements adapt according to your category (e.g. Literary works never require methodology or scientific results).
-            </p>
+          {/* Publication Category & Formatting Profile Selectors */}
+          <div className="max-w-xl mx-auto space-y-4">
+            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <label className="text-xs font-bold text-slate-700 block mb-1.5 uppercase tracking-wider">
+                Publication Category
+              </label>
+              <Select value={selectedPubType} onValueChange={setSelectedPubType}>
+                <SelectTrigger className="bg-white border-slate-300 h-10 text-xs">
+                  <SelectValue placeholder="Select publication category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {PUBLICATION_TYPES.map((type) => (
+                    <SelectItem key={type.id} value={type.id} className="text-xs">
+                      {type.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-[11px] text-slate-500 mt-1.5">
+                Structural requirements adapt according to category (e.g. Literary works do not require research sections).
+              </p>
+            </div>
+
+            {/* APA 7th / ADF Formatting Profile Selector */}
+            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                  <Sliders className="w-3.5 h-3.5 text-blue-600" />
+                  Formatting Profile (APA 7th Edition & ADF Rules)
+                </label>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-800">
+                  {FORMATTING_PROFILES.find((p) => p.id === selectedProfile)?.badge || "APA 7th"}
+                </span>
+              </div>
+              <Select value={selectedProfile} onValueChange={setSelectedProfile}>
+                <SelectTrigger className="bg-white border-slate-300 h-10 text-xs">
+                  <SelectValue placeholder="Select formatting profile" />
+                </SelectTrigger>
+                <SelectContent>
+                  {FORMATTING_PROFILES.map((prof) => (
+                    <SelectItem key={prof.id} value={prof.id} className="text-xs">
+                      <div className="font-semibold text-slate-800">{prof.name}</div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed">
+                {FORMATTING_PROFILES.find((p) => p.id === selectedProfile)?.desc}
+              </p>
+            </div>
           </div>
 
           {/* Upload Box */}
