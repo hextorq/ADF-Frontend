@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Trash2, Edit, Plus, BookOpen, Globe, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
-import { apiFetch, uploadImage } from "@/lib/api";
+import { apiFetch, uploadFile } from "@/lib/api";
 
 type Book = {
   id: number;
@@ -133,7 +133,7 @@ export default function BookManagement() {
       let finalCoverUrl = formData.cover_url;
       if (coverFile) {
         toast.info("Uploading cover...");
-        const res = await uploadImage(coverFile);
+        const res = await uploadFile(coverFile, "books");
         finalCoverUrl = res.url;
       }
 

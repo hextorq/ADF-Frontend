@@ -185,10 +185,43 @@ export function submitBoardApplication(data: {
   });
 }
 
-export async function uploadImage(file: File) {
+export type UploadFolder =
+  | "manuscripts"
+  | "chapters"
+  | "covers"
+  | "author-photos"
+  | "payments"
+  | "publications"
+  | "books"
+  | "authors"
+  | "cms"
+  | "templates";
+
+export interface UploadResult {
+  /** Public URL to store in the database. */
+  url: string;
+  /** Server path relative to the backend root, e.g. uploads/books/cover-123.png */
+  path: string;
+  folder: UploadFolder;
+  filename: string;
+  size: number;
+  mimetype: string;
+}
+
+/**
+ * Single upload entry point.
+ * The folder decides where the file lands on the server (uploads/<folder>/),
+ * the allowed extensions and whether an admin token is required.
+ */
+export async function uploadFile(
+  file: File,
+  folder: UploadFolder,
+  fieldName = "file"
+): Promise<UploadResult> {
   const body = new FormData();
-  body.append("image", file);
-  const res = await fetch(apiUrl("/uploads/image"), {
+  body.append(fieldName, file);
+
+  const res = await fetch(apiUrl(`/uploads/${folder}`), {
     method: "POST",
     credentials: "include",
     headers: authHeaders(),
@@ -206,8 +239,13 @@ export async function uploadImage(file: File) {
     throw new ApiError(res.status, message);
   }
 
-  const parsed = (await res.json()) as { url: string };
-  return { url: assetUrl(parsed.url) };
+  const parsed = (await res.json()) as UploadResult;
+  return { ...parsed, url: assetUrl(parsed.url) };
+}
+
+/** Backwards-compatible helper for CMS images. */
+export async function uploadImage(file: File) {
+  return uploadFile(file, "cms", "image");
 }
 
 export function checkSmtpStatus() {

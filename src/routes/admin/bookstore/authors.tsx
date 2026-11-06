@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Trash2, Edit, Plus, Image as ImageIcon } from "lucide-react";
-import { apiFetch, uploadImage } from "@/lib/api";
+import { apiFetch, uploadFile } from "@/lib/api";
 
 type Author = {
   id: number;
@@ -67,7 +67,7 @@ export default function AuthorManagement() {
       let finalPhotoUrl = formData.photo_url;
       if (photoFile) {
         toast.info("Uploading photo...");
-        const res = await uploadImage(photoFile);
+        const res = await uploadFile(photoFile, "authors");
         finalPhotoUrl = res.url;
       }
 
