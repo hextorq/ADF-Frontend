@@ -153,11 +153,14 @@ export default function CallForAbstractsPage() {
                 </Button>
 
                 <a
-                  href="#official-poster"
+                  href={data.posterUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="px-4 py-2.5 rounded-xl bg-amber-400/20 hover:bg-amber-400/30 text-amber-300 font-bold text-sm flex items-center gap-1.5 border border-amber-400/30 transition-colors"
+                  title="View / Download Official Poster"
                 >
                   <Sparkles className="h-4 w-4 text-amber-300" />
-                  View Visual Poster
+                  Official Poster
                 </a>
 
                 <a
@@ -174,56 +177,6 @@ export default function CallForAbstractsPage() {
           </div>
         </div>
 
-        {/* Showcase: Official Figma Pro Designer Poster */}
-        <section id="official-poster" className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-teal-100 text-teal-800">
-                  <Sparkles className="h-3 w-3 text-teal-600" />
-                  Official Call Document &amp; Poster
-                </span>
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800">
-                  Extended to 15 Dec 2026
-                </span>
-              </div>
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-                Official Visual Call for Abstracts Poster
-              </h2>
-              <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-                New Gen Figma UI/UX Designer Edition · Multidisciplinary E-Book Series 2026
-              </p>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2.5">
-              <a
-                href={data.posterUrl}
-                download="ADF-Call-For-Abstracts-2026.jpg"
-                className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs sm:text-sm flex items-center gap-2 border border-slate-300 transition-colors cursor-pointer"
-                title="Download high-resolution official poster"
-              >
-                <Printer className="h-4 w-4 text-slate-600" />
-                <span>Download Poster</span>
-              </a>
-              <Button
-                onClick={() => handleOpenModal()}
-                className="bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 text-slate-950 font-extrabold text-xs sm:text-sm px-5 py-2.5 rounded-xl shadow-md flex items-center gap-2 cursor-pointer"
-              >
-                <Send className="h-4 w-4 text-slate-950" />
-                Submit Abstract (₹50)
-              </Button>
-            </div>
-          </div>
-
-          {/* Visual Poster Display */}
-          <div className="max-w-3xl mx-auto shadow-2xl rounded-2xl overflow-hidden border border-slate-200 bg-slate-50">
-            <img
-              src={data.posterUrl}
-              alt="Interdisciplinary Horizons Official Call for Abstracts Poster"
-              className="w-full h-auto object-contain block"
-            />
-          </div>
-        </section>
 
         {/* Section 1: Submission Guidelines & Policy */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -545,8 +498,12 @@ export default function CallForAbstractsPage() {
 
       {/* Modal */}
       <AbstractSubmissionModal
+        key={selectedAreaId || "default"}
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedAreaId(undefined);
+        }}
         defaultAreaId={selectedAreaId}
       />
     </div>

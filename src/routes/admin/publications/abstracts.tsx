@@ -943,14 +943,26 @@ export default function AdminAbstractPublications() {
 
                       <a
                         href={`https://wa.me/${sub.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
-                          `Greetings ${sub.authorName}! Academic Development Forum (ADF) is happy to collaborate with you. Regarding your abstract submission (ID: ${sub.id}) for "Interdisciplinary Horizons" titled "${sub.abstractTitle}": `
+                          `Greetings ${sub.authorName}! Academic Development Forum (ADF) is happy to collaborate with you. We are pleased to confirm that your payment has been received successfully and your abstract (ID: ${sub.id}) titled "${sub.abstractTitle}" has been ACCEPTED for publication in "Interdisciplinary Horizons" (Multidisciplinary E-Book of Abstracts with ISBN & DOI). Congratulations and thank you for collaborating with ADF!`
                         )}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="p-1.5 rounded-lg text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 transition-colors inline-block"
-                        title="Message Author on WhatsApp"
+                        title="Send Acceptance & Payment Received message to Author on WhatsApp"
                       >
                         <MessageCircle className="h-4 w-4" />
+                      </a>
+
+                      <a
+                        href={`mailto:${sub.email}?subject=${encodeURIComponent(
+                          `[ADF Accepted] Payment Received & Abstract Accepted: "${sub.abstractTitle}" [ID: ${sub.id}]`
+                        )}&body=${encodeURIComponent(
+                          `Dear ${sub.authorName},\n\nGreetings from Academic Development Forum (ADF)! We are happy to collaborate with you.\n\nWe are pleased to inform you that your payment has been received successfully and your abstract (ID: ${sub.id}) titled "${sub.abstractTitle}" has been ACCEPTED for publication in "Interdisciplinary Horizons: Emerging Trends in Research, Innovation, and Sustainable Development" (Multidisciplinary E-Book with ISBN & DOI assignment).\n\nSubmission Details:\n- Tracking ID: ${sub.id}\n- Author Name: ${sub.authorName}\n- Abstract Title: ${sub.abstractTitle}\n- Research Track: ${sub.researchAreaName || "Interdisciplinary Studies"}\n- Payment Status: Payment Received & Verified (₹50)\n- Payment / UTR Reference: ${sub.paymentRef}\n- Review Status: Accepted for Publication\n\nBenefits Included:\n1. Publication in multidisciplinary e-book\n2. ISBN and DOI registration\n3. Individual verifiable e-Certificate\n4. Free digital copy of the published volume\n\nContact & Support:\nEmail: academicdevelopmentforum24@gmail.com\nWhatsApp: +91 75023 98680\nOfficial Website: https://www.adf.ijeae.com\n\nWarm regards and congratulations,\nEditorial & Publication Board\nAcademic Development Forum (ADF)`
+                        )}`}
+                        className="p-1.5 rounded-lg text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition-colors inline-block"
+                        title="Send Acceptance & Payment Confirmation Email to Author"
+                      >
+                        <Mail className="h-4 w-4" />
                       </a>
 
                       <button
@@ -1255,7 +1267,9 @@ export default function AdminAbstractPublications() {
 
               <a
                 href={`https://wa.me/${selectedSub.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
-                  `Greetings ${selectedSub.authorName}! Academic Development Forum (ADF) is happy to collaborate with you. Regarding your abstract submission (ID: ${selectedSub.id}) for "Interdisciplinary Horizons" titled "${selectedSub.abstractTitle}": your review status is currently "${selectedSub.reviewStatus}". Thank you for collaborating with ADF!`
+                  selectedSub.reviewStatus === "Accepted"
+                    ? `Greetings ${selectedSub.authorName}! Academic Development Forum (ADF) is happy to collaborate with you. We are pleased to confirm that your payment has been received successfully and your abstract (ID: ${selectedSub.id}) titled "${selectedSub.abstractTitle}" has been ACCEPTED for publication in "Interdisciplinary Horizons" (Multidisciplinary E-Book with ISBN & DOI). Congratulations and thank you for collaborating with ADF!`
+                    : `Greetings ${selectedSub.authorName}! Academic Development Forum (ADF) is happy to collaborate with you. Your payment has been received successfully. Regarding your abstract submission (ID: ${selectedSub.id}) titled "${selectedSub.abstractTitle}" for "Interdisciplinary Horizons", your current review status is: "${selectedSub.reviewStatus}". Thank you for collaborating with ADF!`
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -1263,6 +1277,19 @@ export default function AdminAbstractPublications() {
               >
                 <MessageCircle className="h-3.5 w-3.5" />
                 Notify on WhatsApp
+              </a>
+
+              <a
+                href={`mailto:${selectedSub.email}?subject=${encodeURIComponent(
+                  `[ADF Accepted] Payment Received & Abstract Accepted: "${selectedSub.abstractTitle}" [ID: ${selectedSub.id}]`
+                )}&body=${encodeURIComponent(
+                  `Dear ${selectedSub.authorName},\n\nGreetings from Academic Development Forum (ADF)! We are happy to collaborate with you.\n\nWe are pleased to inform you that your payment has been received successfully and your abstract (ID: ${selectedSub.id}) titled "${selectedSub.abstractTitle}" has been ACCEPTED for publication in "Interdisciplinary Horizons: Emerging Trends in Research, Innovation, and Sustainable Development" (Multidisciplinary E-Book with ISBN & DOI assignment).\n\nSubmission Details:\n- Tracking ID: ${selectedSub.id}\n- Author Name: ${selectedSub.authorName}\n- Abstract Title: ${selectedSub.abstractTitle}\n- Research Track: ${selectedSub.researchAreaName || "Interdisciplinary Studies"}\n- Payment Status: Payment Received & Verified (₹50)\n- Payment / UTR Reference: ${selectedSub.paymentRef}\n- Review Status: Accepted for Publication\n\nBenefits Included:\n1. Publication in multidisciplinary e-book\n2. ISBN and DOI registration\n3. Individual verifiable e-Certificate\n4. Free digital copy of the published volume\n\nContact & Support:\nEmail: academicdevelopmentforum24@gmail.com\nWhatsApp: +91 75023 98680\nOfficial Website: https://www.adf.ijeae.com\n\nWarm regards and congratulations,\nEditorial & Publication Board\nAcademic Development Forum (ADF)`
+                )}`}
+                className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 text-white text-xs font-bold hover:bg-blue-700 transition-colors"
+                title="Send Acceptance & Payment Confirmation Email"
+              >
+                <Mail className="h-3.5 w-3.5" />
+                Email Confirmation
               </a>
 
               <Button variant="outline" size="sm" onClick={() => setSelectedSub(null)}>

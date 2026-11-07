@@ -1,4 +1,4 @@
-import { useState, useId } from "react";
+import { useState, useId, useEffect } from "react";
 import { toast } from "sonner";
 import {
   X,
@@ -58,7 +58,15 @@ export function AbstractSubmissionModal({
   const [submissionId, setSubmissionId] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  if (!isOpen) return null;
+  // Synchronize research area whenever defaultAreaId prop changes or modal opens
+  useEffect(() => {
+    if (defaultAreaId) {
+      setFormData((prev) => ({
+        ...prev,
+        researchArea: defaultAreaId,
+      }));
+    }
+  }, [defaultAreaId, isOpen]);
 
   // Real-time word count calculation
   const words = formData.abstractText
@@ -215,6 +223,8 @@ export function AbstractSubmissionModal({
     }
   };
 
+  if (!isOpen) return null;
+
   return (
     <div
       role="dialog"
@@ -268,7 +278,7 @@ export function AbstractSubmissionModal({
                   Thank You, {formData.authorName}!
                 </h3>
                 <p className="text-sm text-slate-600 max-w-md mx-auto mt-2">
-                  Your abstract and ₹50 payment details have been submitted for peer review in{" "}
+                  We are happy to collaborate with you! Your ₹50 payment has been received and your abstract has been submitted and accepted for publication in{" "}
                   <strong>Interdisciplinary Horizons: Multidisciplinary E-Book of Abstracts</strong>.
                 </p>
               </div>
@@ -281,6 +291,14 @@ export function AbstractSubmissionModal({
                 <div className="flex justify-between border-b pb-2">
                   <span className="text-slate-500 font-medium">Author:</span>
                   <span className="font-semibold text-slate-900">{formData.authorName}</span>
+                </div>
+                <div className="flex justify-between border-b pb-2">
+                  <span className="text-slate-500 font-medium">Payment Status:</span>
+                  <span className="font-semibold text-emerald-700">Payment Received (₹50)</span>
+                </div>
+                <div className="flex justify-between border-b pb-2">
+                  <span className="text-slate-500 font-medium">Abstract Status:</span>
+                  <span className="font-semibold text-emerald-700">Accepted for Publication</span>
                 </div>
                 <div className="flex justify-between border-b pb-2">
                   <span className="text-slate-500 font-medium">UTR / Payment Ref:</span>
@@ -296,6 +314,10 @@ export function AbstractSubmissionModal({
                   <span className="text-slate-500 font-medium">Notification Date:</span>
                   <span className="font-semibold text-slate-900">By 22 December 2026</span>
                 </div>
+              </div>
+
+              <div className="p-3 bg-teal-50 border border-teal-200 rounded-xl text-center text-xs text-teal-900 max-w-md mx-auto">
+                <span className="font-bold">Confirmation Email Sent:</span> An official receipt and acceptance confirmation email has been dispatched to <strong>{formData.email}</strong>.
               </div>
 
               <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -435,9 +457,16 @@ export function AbstractSubmissionModal({
                 </h3>
 
                 <div>
-                  <label htmlFor={researchAreaId} className="block text-xs font-semibold text-slate-700 mb-1">
-                    Select Accepted Research Area *
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label htmlFor={researchAreaId} className="block text-xs font-semibold text-slate-700">
+                      Select Accepted Research Area *
+                    </label>
+                    {formData.researchArea && (
+                      <span className="text-[11px] font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-md border border-teal-200">
+                        Selected: {data.researchAreas.find((a) => a.id === formData.researchArea)?.shortName || "General"}
+                      </span>
+                    )}
+                  </div>
                   <select
                     id={researchAreaId}
                     value={formData.researchArea}
