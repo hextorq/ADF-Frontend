@@ -300,7 +300,9 @@ export function AbstractSubmissionModal({
 
               <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
                 <a
-                  href={`https://wa.me/917502398680?text=Hello%20ADF,%20I%20have%20submitted%20my%20abstract%20(ID:%20${submissionId},%20UTR:%20${encodeURIComponent(formData.paymentRef)})%20titled%20"${encodeURIComponent(formData.abstractTitle)}".`}
+                  href={`https://wa.me/917502398680?text=${encodeURIComponent(
+                    `Hello Academic Development Forum (ADF), I am happy to collaborate with you! I have submitted my abstract (ID: ${submissionId}, Payment/UTR: ${formData.paymentRef}) titled "${formData.abstractTitle}" for Interdisciplinary Horizons. Kindly confirm receipt.`
+                  )}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm transition-colors shadow-sm"

@@ -942,9 +942,9 @@ export default function AdminAbstractPublications() {
                       </button>
 
                       <a
-                        href={`https://wa.me/${sub.phone.replace(/[^0-9]/g, "")}?text=Hello%20${encodeURIComponent(
-                          sub.authorName
-                        )},%20regarding%20your%20abstract%20submission%20(ID:%20${sub.id})%20for%20Interdisciplinary%20Horizons...`}
+                        href={`https://wa.me/${sub.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
+                          `Greetings ${sub.authorName}! Academic Development Forum (ADF) is happy to collaborate with you. Regarding your abstract submission (ID: ${sub.id}) for "Interdisciplinary Horizons" titled "${sub.abstractTitle}": `
+                        )}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="p-1.5 rounded-lg text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 transition-colors inline-block"
@@ -1254,11 +1254,9 @@ export default function AdminAbstractPublications() {
               </div>
 
               <a
-                href={`https://wa.me/${selectedSub.phone.replace(/[^0-9]/g, "")}?text=Hello%20${encodeURIComponent(
-                  selectedSub.authorName
-                )},%20your%20abstract%20(ID:%20${selectedSub.id})%20for%20Interdisciplinary%20Horizons%20has%20been%20updated%20to:%20${
-                  selectedSub.reviewStatus
-                }.`}
+                href={`https://wa.me/${selectedSub.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
+                  `Greetings ${selectedSub.authorName}! Academic Development Forum (ADF) is happy to collaborate with you. Regarding your abstract submission (ID: ${selectedSub.id}) for "Interdisciplinary Horizons" titled "${selectedSub.abstractTitle}": your review status is currently "${selectedSub.reviewStatus}". Thank you for collaborating with ADF!`
+                )}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700"

@@ -154,7 +154,7 @@ export const INTERDISCIPLINARY_HORIZONS_CALL: CallForAbstractData = {
   contact: {
     phone: "+91 75023 98680",
     phoneFormatted: "+91 75023 98680",
-    whatsappUrl: "https://wa.me/917502398680?text=Hello%20Academic%20Development%20Forum,%20I%20am%20inquiring%20about%20the%20Call%20for%20Abstract%20Submission%20-%20Interdisciplinary%20Horizons%202026.",
+    whatsappUrl: "https://wa.me/917502398680?text=Hello%20Academic%20Development%20Forum,%20I%20am%20happy%20to%20collaborate%20and%20inquiring%20about%20the%20Call%20for%20Abstract%20Submission%20-%20Interdisciplinary%20Horizons%202026.",
     email: "academicdevelopmentforum24@gmail.com",
     website: "https://www.adf.ijeae.com",
   },
