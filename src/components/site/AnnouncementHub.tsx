@@ -106,7 +106,7 @@ const INTERDISCIPLINARY_HORIZONS_ANNOUNCEMENT: Announcement & { badgeText?: stri
   category: "Call for Abstracts",
   priority: "High",
   badgeText: "NEW CALL FOR ABSTRACTS",
-  date: "Opens 5 Nov · Deadline 30 Nov 2026",
+  date: "Opens 5 Nov · Deadline 15 Dec 2026",
   to: "/call-for-abstracts",
   pinned: true,
   visible: true,

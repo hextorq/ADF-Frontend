@@ -279,7 +279,7 @@ export function InteractiveSidePoster() {
             <div className="px-4 sm:px-6 py-3.5 bg-white border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
               <div className="text-xs text-slate-600 text-center sm:text-left">
                 <span className="font-bold text-slate-900 block sm:inline mr-2">
-                  Opens 5 Nov 2026 · Deadline 30 Nov 2026
+                  Opens 5 Nov 2026 · Deadline 15 Dec 2026
                 </span>
                 <span className="text-slate-500">
                   Multidisciplinary E-Book (ISBN &amp; DOI) · ₹50 per abstract · 15 Research Tracks

@@ -82,8 +82,8 @@ export const INTERDISCIPLINARY_HORIZONS_CALL: CallForAbstractData = {
   dates: {
     opensDate: "5 November 2026",
     opensDateIso: "2026-11-05T00:00:00+05:30",
-    deadlineDate: "30 November 2026",
-    deadlineIso: "2026-11-30T23:59:59+05:30",
+    deadlineDate: "15 December 2026",
+    deadlineIso: "2026-12-15T23:59:59+05:30",
   },
   fees: {
     amount: 50,
@@ -106,7 +106,7 @@ export const INTERDISCIPLINARY_HORIZONS_CALL: CallForAbstractData = {
       label: "4–6 keywords",
     },
     language: "English",
-    format: "Microsoft Word (.docx)",
+    format: "PDF (.pdf) or Word (.docx / .doc)",
     font: "Times New Roman, 12 pt",
     lineSpacing: "1.5 line spacing",
     authorRule: "One author per abstract; co-authorship is not permitted.",

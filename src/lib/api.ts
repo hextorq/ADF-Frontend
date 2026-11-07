@@ -11,10 +11,34 @@ const API_PREFIX = API_BASE_URL ? `${API_BASE_URL}/api` : "/api";
 const AUTH_TOKEN_KEY = "adf_admin_token";
 
 function apiUrl(path: string) {
+  if (typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")) {
+    return `/api${path.startsWith("/") ? "" : "/"}${path}`;
+  }
   return `${API_PREFIX}${path}`;
 }
 
 export function assetUrl(url: string) {
+  if (!url) return "";
+  if (url.startsWith("data:") || url.startsWith("blob:")) {
+    return url;
+  }
+
+  const isLocalhost =
+    typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1" ||
+      window.location.hostname === "");
+
+  if (isLocalhost) {
+    const match = url.match(/\/uploads\/.+$/);
+    const localPath = match ? match[0] : (url.startsWith("/") ? url : `/${url}`);
+    return `http://localhost:5174${localPath}`;
+  }
+
+  if (url.startsWith("http://") || url.startsWith("https://")) {
+    return url;
+  }
+
   if (!API_BASE_URL || !url.startsWith("/uploads/")) return url;
   return `${API_BASE_URL}${url}`;
 }

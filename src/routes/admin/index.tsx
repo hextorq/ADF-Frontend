@@ -256,7 +256,7 @@ export default function AdminDashboard() {
               Active Call
             </span>
             <span className="text-xs text-teal-200 font-medium">
-              Opens 5 Nov · Deadline 30 Nov 2026 · ₹50 Fee
+              Opens 5 Nov · Deadline 15 Dec 2026 · ₹50 Fee
             </span>
           </div>
           <h3 className="text-lg sm:text-xl font-bold tracking-tight text-white">

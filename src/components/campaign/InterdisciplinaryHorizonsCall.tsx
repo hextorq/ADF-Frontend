@@ -28,7 +28,7 @@ export function InterdisciplinaryHorizonsCall() {
                 </span>
                 <span className="inline-flex items-center gap-1 text-[11px] text-teal-200 font-medium">
                   <Calendar className="h-3 w-3 text-teal-400" />
-                  Opens 5 Nov · Deadline 30 Nov 2026
+                  Opens 5 Nov · Deadline 15 Dec 2026
                 </span>
               </div>
 

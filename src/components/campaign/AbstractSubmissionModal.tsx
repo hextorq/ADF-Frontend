@@ -91,7 +91,7 @@ export function AbstractSubmissionModal({
     }
 
     if (!isWordCountValid && !selectedFile) {
-      setError("Your abstract must be between 200 and 300 words (or upload a .docx file).");
+      setError("Your abstract must be between 200 and 300 words (or upload a PDF or Word document).");
       return;
     }
 
@@ -103,16 +103,81 @@ export function AbstractSubmissionModal({
     setSubmitting(true);
 
     try {
-      // Create unique submission ID
-      const newSubId = `ADF-ABS-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
+      let assignedId = `ADF-ABS-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
+      const matchedArea = data.researchAreas.find((a) => a.id === formData.researchArea);
+      const researchAreaName = matchedArea ? matchedArea.name : "Interdisciplinary Studies";
 
-      // Save into local admin abstract storage so it displays in admin dashboard immediately
+      // Read files as base64 Data URLs so they are durable in local preview
+      const fileToDataUrl = (file: File | null): Promise<string | null> => {
+        if (!file) return Promise.resolve(null);
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = () => resolve(null);
+          reader.readAsDataURL(file);
+        });
+      };
+
+      const [localDocUrl, localProofUrl] = await Promise.all([
+        fileToDataUrl(selectedFile),
+        fileToDataUrl(paymentScreenshot),
+      ]);
+
+      let backendManuscriptUrl: string | null = null;
+      let backendPaymentScreenshotUrl: string | null = null;
+
+      // 1. Send FormData to backend endpoint
+      try {
+        const bodyFormData = new FormData();
+        bodyFormData.append("author_name", formData.authorName);
+        bodyFormData.append("author_type", formData.authorType);
+        bodyFormData.append("department", formData.department);
+        bodyFormData.append("institution", formData.institution);
+        bodyFormData.append("email", formData.email);
+        bodyFormData.append("phone", formData.phone);
+        bodyFormData.append("research_area_id", formData.researchArea);
+        bodyFormData.append("research_area_name", researchAreaName);
+        bodyFormData.append("abstract_title", formData.abstractTitle);
+        bodyFormData.append("abstract_text", formData.abstractText);
+        bodyFormData.append("keywords", formData.keywords);
+        bodyFormData.append("is_sole_author", "true");
+        bodyFormData.append("payment_status", "Paid");
+        bodyFormData.append("payment_ref", formData.paymentRef);
+
+        if (selectedFile) {
+          bodyFormData.append("manuscript", selectedFile);
+        }
+        if (paymentScreenshot) {
+          bodyFormData.append("payment_screenshot", paymentScreenshot);
+        }
+
+        const res = await fetch("/api/publications/abstracts/submit", {
+          method: "POST",
+          body: bodyFormData,
+        });
+
+        if (res.ok) {
+          const resData = await res.json();
+          if (resData?.submission?.id) {
+            assignedId = resData.submission.id;
+          }
+          if (resData?.submission?.manuscript_url) {
+            backendManuscriptUrl = resData.submission.manuscript_url;
+          }
+          if (resData?.submission?.payment_screenshot_url) {
+            backendPaymentScreenshotUrl = resData.submission.payment_screenshot_url;
+          }
+        }
+      } catch (backendErr) {
+        console.warn("Backend submission fallback:", backendErr);
+      }
+
+      // 2. Also save into local storage cache so it's guaranteed visible immediately
       try {
         const stored = localStorage.getItem("adf_admin_abstract_submissions");
         const list = stored ? JSON.parse(stored) : [];
-        const matchedArea = data.researchAreas.find((a) => a.id === formData.researchArea);
         const newRecord = {
-          id: newSubId,
+          id: assignedId,
           authorName: formData.authorName,
           authorType: formData.authorType,
           department: formData.department,
@@ -120,7 +185,7 @@ export function AbstractSubmissionModal({
           email: formData.email,
           phone: formData.phone,
           researchAreaId: formData.researchArea,
-          researchAreaName: matchedArea ? matchedArea.name : "Interdisciplinary Studies",
+          researchAreaName: researchAreaName,
           abstractTitle: formData.abstractTitle,
           abstractText: formData.abstractText,
           wordCount: wordCount,
@@ -130,6 +195,9 @@ export function AbstractSubmissionModal({
           paymentRef: formData.paymentRef,
           reviewStatus: "Pending Review",
           submittedAt: new Date().toISOString(),
+          manuscriptUrl: backendManuscriptUrl || localDocUrl || null,
+          manuscriptFilename: selectedFile ? selectedFile.name : null,
+          paymentScreenshotUrl: backendPaymentScreenshotUrl || localProofUrl || null,
         };
         list.unshift(newRecord);
         localStorage.setItem("adf_admin_abstract_submissions", JSON.stringify(list));
@@ -137,25 +205,7 @@ export function AbstractSubmissionModal({
         console.warn("Storage sync error", e);
       }
 
-      // Try sending to backend if available
-      try {
-        await fetch("/api/forms/contact", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: formData.authorName,
-            email: formData.email,
-            phone: formData.phone,
-            subject: `[Abstract Submission - ₹50 Paid] ${formData.abstractTitle}`,
-            message: `Submission ID: ${newSubId}\nAuthor Type: ${formData.authorType}\nDepartment: ${formData.department}\nInstitution: ${formData.institution}\nResearch Area: ${formData.researchArea}\nKeywords: ${formData.keywords}\nPayment UTR / Ref: ${formData.paymentRef}\n\nAbstract:\n${formData.abstractText}`,
-          }),
-        });
-      } catch (err) {
-        // Backend failure shouldn't block author confirmation
-        console.warn("Contact fallback logged:", err);
-      }
-
-      setSubmissionId(newSubId);
+      setSubmissionId(assignedId);
       setSubmitted(true);
       toast.success("Abstract submitted successfully!");
     } catch (err: any) {
@@ -244,7 +294,7 @@ export function AbstractSubmissionModal({
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500 font-medium">Notification Date:</span>
-                  <span className="font-semibold text-slate-900">By 5 December 2026</span>
+                  <span className="font-semibold text-slate-900">By 22 December 2026</span>
                 </div>
               </div>
 
@@ -494,15 +544,15 @@ export function AbstractSubmissionModal({
                 {/* Optional DOCX upload */}
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Attach Word Document (.docx, optional if pasted above)
+                    Attach Abstract Document (PDF or Word .docx / .doc, optional if typed above)
                   </label>
                   <div className="flex items-center gap-3">
                     <label className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-700 transition-colors">
                       <Upload className="h-4 w-4 text-[var(--primary)]" />
-                      <span>{selectedFile ? selectedFile.name : "Choose .docx file"}</span>
+                      <span>{selectedFile ? selectedFile.name : "Choose PDF or Word (.docx / .doc) file"}</span>
                       <input
                         type="file"
-                        accept=".docx,.doc"
+                        accept=".pdf,.docx,.doc,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                         onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
                         className="hidden"
                       />
@@ -644,7 +694,7 @@ export function AbstractSubmissionModal({
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
                 <div className="text-xs text-slate-500">
-                  Opens <strong>5 Nov 2026</strong> · Deadline <strong>30 Nov 2026</strong>
+                  Opens <strong>5 Nov 2026</strong> · Deadline <strong>15 Dec 2026</strong>
                 </div>
 
                 <div className="flex items-center gap-3 w-full sm:w-auto">

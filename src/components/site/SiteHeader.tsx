@@ -71,7 +71,7 @@ export function SiteHeader() {
             New Call
           </span>
           <span className="font-semibold text-white/95">
-            Call for Abstract Submission: <span className="text-teal-200">Interdisciplinary Horizons</span> (Multidisciplinary E-Book) — Opens 5 Nov · Deadline 30 Nov 2026
+            Call for Abstract Submission: <span className="text-teal-200">Interdisciplinary Horizons</span> (Multidisciplinary E-Book) — Opens 5 Nov · Deadline 15 Dec 2026
           </span>
           <Link
             to="/call-for-abstracts"

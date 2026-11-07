@@ -11,6 +11,7 @@ import {
   XCircle,
   ExternalLink,
   Download,
+  Upload,
   Plus,
   Trash2,
   Eye,
@@ -34,6 +35,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { INTERDISCIPLINARY_HORIZONS_CALL } from "@/data/abstractCallData";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { apiFetch, assetUrl } from "@/lib/api";
 
 export interface AbstractSubmissionRecord {
   id: string;
@@ -54,6 +56,9 @@ export interface AbstractSubmissionRecord {
   paymentRef: string;
   reviewStatus: "Pending Review" | "Accepted" | "Revision Required" | "Rejected";
   submittedAt: string;
+  manuscriptUrl?: string | null;
+  paymentScreenshotUrl?: string | null;
+  adminNotes?: string;
 }
 
 const INITIAL_ABSTRACT_SUBMISSIONS: AbstractSubmissionRecord[] = [
@@ -152,8 +157,53 @@ export default function AdminAbstractPublications() {
     paymentRef: "Admin Entry",
   });
 
-  // Load submissions and call status
-  useEffect(() => {
+  const [loading, setLoading] = useState(false);
+
+  const loadSubmissions = async () => {
+    setLoading(true);
+    try {
+      const remoteSubs = await apiFetch<any[]>("/publications/abstracts/admin");
+      if (Array.isArray(remoteSubs) && remoteSubs.length > 0) {
+        const normalized: AbstractSubmissionRecord[] = remoteSubs.map((r: any) => ({
+          id: r.id,
+          authorName: r.author_name || r.authorName,
+          authorType: r.author_type || r.authorType || "Research Scholar",
+          department: r.department || "",
+          institution: r.institution || "",
+          email: r.email || "",
+          phone: r.phone || "",
+          researchAreaId: r.research_area_id || r.researchAreaId || "",
+          researchAreaName: r.research_area_name || r.researchAreaName || "",
+          abstractTitle: r.abstract_title || r.abstractTitle || "",
+          abstractText: r.abstract_text || r.abstractText || "",
+          wordCount: r.word_count || r.wordCount || 0,
+          keywords: r.keywords || "",
+          isSoleAuthor: r.is_sole_author ?? r.isSoleAuthor ?? true,
+          paymentStatus: r.payment_status || r.paymentStatus || "Pending",
+          paymentRef: r.payment_ref || r.paymentRef || "",
+          paymentScreenshotUrl: r.payment_screenshot_url || r.paymentScreenshotUrl || null,
+          manuscriptUrl: r.manuscript_url || r.manuscriptUrl || null,
+          reviewStatus: r.review_status || r.reviewStatus || "Pending Review",
+          adminNotes: r.admin_notes || r.adminNotes || "",
+          submittedAt: r.created_at || r.submittedAt || new Date().toISOString(),
+        }));
+        const remoteIds = new Set(remoteSubs.map((r: any) => r.id));
+        let storedList: any[] = [];
+        try {
+          const s = localStorage.getItem(LOCAL_STORAGE_KEY);
+          if (s) storedList = JSON.parse(s);
+        } catch {}
+        const localOnly = storedList.filter((l) => !remoteIds.has(l.id));
+        const merged = [...normalized, ...localOnly];
+        setSubmissions(merged);
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(merged));
+        setLoading(false);
+        return;
+      }
+    } catch (err) {
+      console.warn("Backend fetch error, falling back to local storage:", err);
+    }
+
     try {
       const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (stored) {
@@ -162,14 +212,21 @@ export default function AdminAbstractPublications() {
         setSubmissions(INITIAL_ABSTRACT_SUBMISSIONS);
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(INITIAL_ABSTRACT_SUBMISSIONS));
       }
+    } catch {
+      setSubmissions(INITIAL_ABSTRACT_SUBMISSIONS);
+    }
+    setLoading(false);
+  };
 
+  // Load submissions and call status
+  useEffect(() => {
+    loadSubmissions();
+    try {
       const storedCallStatus = localStorage.getItem(CALL_STATUS_KEY);
       if (storedCallStatus !== null) {
         setCallActive(storedCallStatus === "true");
       }
-    } catch {
-      setSubmissions(INITIAL_ABSTRACT_SUBMISSIONS);
-    }
+    } catch {}
   }, []);
 
   const saveSubmissions = (updated: AbstractSubmissionRecord[]) => {
@@ -192,42 +249,131 @@ export default function AdminAbstractPublications() {
     toast.success(nextStatus ? "Call is now OPEN for submissions" : "Call is now PAUSED / CLOSED");
   };
 
-  const handleStatusChange = (id: string, newStatus: AbstractSubmissionRecord["reviewStatus"]) => {
+  const handleStatusChange = async (id: string, newStatus: AbstractSubmissionRecord["reviewStatus"]) => {
     const updated = submissions.map((sub) => (sub.id === id ? { ...sub, reviewStatus: newStatus } : sub));
     saveSubmissions(updated);
+    try {
+      await apiFetch(`/publications/abstracts/admin/${id}/status`, {
+        method: "PATCH",
+        body: JSON.stringify({ review_status: newStatus }),
+      });
+    } catch (err) {
+      console.warn("Failed to sync status to backend:", err);
+    }
     toast.success(`Submission status updated to ${newStatus}`);
     if (selectedSub && selectedSub.id === id) {
       setSelectedSub({ ...selectedSub, reviewStatus: newStatus });
     }
   };
 
-  const handlePaymentToggle = (id: string) => {
+  const handlePaymentToggle = async (id: string) => {
+    let nextStatus: "Paid" | "Pending" = "Paid";
     const updated = submissions.map((sub) => {
       if (sub.id === id) {
-        const nextStatus = sub.paymentStatus === "Paid" ? "Pending" : "Paid";
-        toast.success(`Payment marked as ${nextStatus}`);
-        return { ...sub, paymentStatus: nextStatus as "Paid" | "Pending" };
+        nextStatus = sub.paymentStatus === "Paid" ? "Pending" : "Paid";
+        return { ...sub, paymentStatus: nextStatus };
       }
       return sub;
     });
     saveSubmissions(updated);
+    try {
+      await apiFetch(`/publications/abstracts/admin/${id}/payment`, {
+        method: "PATCH",
+        body: JSON.stringify({ payment_status: nextStatus }),
+      });
+    } catch (err) {
+      console.warn("Failed to sync payment to backend:", err);
+    }
+    toast.success(`Payment marked as ${nextStatus}`);
     if (selectedSub && selectedSub.id === id) {
       setSelectedSub({
         ...selectedSub,
-        paymentStatus: selectedSub.paymentStatus === "Paid" ? "Pending" : "Paid",
+        paymentStatus: nextStatus,
       });
     }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (window.confirm("Are you sure you want to remove this abstract submission?")) {
       const updated = submissions.filter((sub) => sub.id !== id);
       saveSubmissions(updated);
+      try {
+        await apiFetch(`/publications/abstracts/admin/${id}`, {
+          method: "DELETE",
+        });
+      } catch (err) {
+        console.warn("Failed to delete on backend:", err);
+      }
       toast.info("Submission removed");
       if (selectedSub && selectedSub.id === id) {
         setSelectedSub(null);
       }
     }
+  };
+
+  const handleUploadAttachment = async (
+    id: string,
+    file: File,
+    type: "manuscript" | "payment_screenshot"
+  ) => {
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const dataUrl = reader.result as string;
+      const updated = submissions.map((s) => {
+        if (s.id === id) {
+          return {
+            ...s,
+            [type === "manuscript" ? "manuscriptUrl" : "paymentScreenshotUrl"]: dataUrl,
+          };
+        }
+        return s;
+      });
+      saveSubmissions(updated);
+      if (selectedSub && selectedSub.id === id) {
+        setSelectedSub({
+          ...selectedSub,
+          [type === "manuscript" ? "manuscriptUrl" : "paymentScreenshotUrl"]: dataUrl,
+        });
+      }
+
+      // Try syncing to backend
+      try {
+        const formData = new FormData();
+        formData.append(type, file);
+        const res = await fetch(`/api/publications/abstracts/admin/${id}/attachments`, {
+          method: "PATCH",
+          body: formData,
+        });
+        if (res.ok) {
+          const resData = await res.json();
+          if (resData?.submission) {
+            const serverSub = resData.submission;
+            const synced = submissions.map((s) => {
+              if (s.id === id) {
+                return {
+                  ...s,
+                  manuscriptUrl: serverSub.manuscript_url || s.manuscriptUrl,
+                  paymentScreenshotUrl: serverSub.payment_screenshot_url || s.paymentScreenshotUrl,
+                };
+              }
+              return s;
+            });
+            saveSubmissions(synced);
+            if (selectedSub && selectedSub.id === id) {
+              setSelectedSub({
+                ...selectedSub,
+                manuscriptUrl: serverSub.manuscript_url || selectedSub.manuscriptUrl,
+                paymentScreenshotUrl: serverSub.payment_screenshot_url || selectedSub.paymentScreenshotUrl,
+              });
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("Backend sync failed, stored local attachment:", err);
+      }
+      toast.success(`${type === "manuscript" ? "Abstract manuscript" : "Payment proof"} attached successfully!`);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleAddSubmission = (e: React.FormEvent) => {
@@ -281,6 +427,8 @@ export default function AdminAbstractPublications() {
       "PaymentStatus",
       "PaymentRef",
       "ReviewStatus",
+      "ManuscriptAttachment",
+      "PaymentAttachment",
       "Date",
     ];
 
@@ -297,6 +445,8 @@ export default function AdminAbstractPublications() {
       s.paymentStatus,
       `"${s.paymentRef.replace(/"/g, '""')}"`,
       s.reviewStatus,
+      s.manuscriptUrl ? (s.manuscriptUrl.startsWith("data:") ? "Local Attached (.docx)" : s.manuscriptUrl) : "None",
+      s.paymentScreenshotUrl ? (s.paymentScreenshotUrl.startsWith("data:") ? "Local Screenshot Attached" : s.paymentScreenshotUrl) : "None",
       new Date(s.submittedAt).toLocaleDateString(),
     ]);
 
@@ -360,7 +510,7 @@ export default function AdminAbstractPublications() {
             Call for Abstracts: Interdisciplinary Horizons
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Multidisciplinary E-Book of Abstracts · Opens 5 Nov · Deadline 30 Nov 2026 · ₹50 Fee · ISBN &amp; DOI
+            Multidisciplinary E-Book of Abstracts · Opens 5 Nov · Deadline 15 Dec 2026 · ₹50 Fee · ISBN &amp; DOI
           </p>
         </div>
 
@@ -394,6 +544,17 @@ export default function AdminAbstractPublications() {
             <ExternalLink className="h-3.5 w-3.5 text-slate-500" />
             Live Author Portal
           </Link>
+
+          <Button
+            onClick={loadSubmissions}
+            variant="outline"
+            size="sm"
+            disabled={loading}
+            className="text-xs font-semibold rounded-xl flex items-center gap-1.5"
+          >
+            <RefreshCw className={`h-3.5 w-3.5 text-slate-500 ${loading ? "animate-spin" : ""}`} />
+            Refresh
+          </Button>
 
           <Button
             onClick={exportCSV}
@@ -439,7 +600,7 @@ export default function AdminAbstractPublications() {
             <div className="bg-white/5 rounded-xl p-3.5 border border-white/10 space-y-1">
               <div className="font-bold text-teal-300 uppercase tracking-wider text-[10px]">Key Schedule</div>
               <div><strong>Opens:</strong> 5 November 2026</div>
-              <div><strong>Deadline:</strong> 30 November 2026</div>
+              <div><strong>Deadline:</strong> 15 December 2026</div>
               <div><strong>Fee:</strong> ₹50 per abstract</div>
               <div><strong>Target:</strong> Scholars, Students, Faculty, Academicians</div>
             </div>
@@ -448,7 +609,7 @@ export default function AdminAbstractPublications() {
               <div className="font-bold text-teal-300 uppercase tracking-wider text-[10px]">Submission Rules</div>
               <div><strong>Word Count:</strong> 200–300 words</div>
               <div><strong>Keywords:</strong> 4–6 keywords</div>
-              <div><strong>Format:</strong> MS Word (.docx), Times New Roman 12 pt, 1.5 line spacing</div>
+              <div><strong>Format:</strong> Word (.docx) or PDF (.pdf), Times New Roman 12 pt, 1.5 line spacing</div>
               <div><strong className="text-amber-300">Author Policy:</strong> One author per abstract; co-authorship not permitted</div>
             </div>
 
@@ -608,6 +769,7 @@ export default function AdminAbstractPublications() {
                 <th className="py-3.5 px-4">Discipline</th>
                 <th className="py-3.5 px-4">Abstract Title &amp; Length</th>
                 <th className="py-3.5 px-4">Fee (₹50)</th>
+                <th className="py-3.5 px-4">Attachments</th>
                 <th className="py-3.5 px-4">Editorial Decision</th>
                 <th className="py-3.5 px-4 text-right">Actions</th>
               </tr>
@@ -615,7 +777,7 @@ export default function AdminAbstractPublications() {
             <tbody className="divide-y divide-slate-100">
               {filteredSubmissions.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="text-center py-12 text-slate-400">
+                  <td colSpan={8} className="text-center py-12 text-slate-400">
                     <FileText className="h-8 w-8 mx-auto mb-2 opacity-50" />
                     No abstract submissions found matching criteria.
                   </td>
@@ -683,6 +845,68 @@ export default function AdminAbstractPublications() {
                         {sub.paymentStatus === "Paid" ? <Check className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
                         {sub.paymentStatus === "Paid" ? "₹50 Paid" : "Pending"}
                       </button>
+                    </td>
+
+                    {/* Customer Attachments */}
+                    <td className="py-3.5 px-4 align-top">
+                      <div className="flex flex-col gap-1.5 min-w-[125px]">
+                        {sub.manuscriptUrl ? (
+                          <a
+                            href={sub.manuscriptUrl.startsWith("data:") ? sub.manuscriptUrl : assetUrl(sub.manuscriptUrl)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            download={sub.manuscriptUrl.startsWith("data:") ? `${sub.id}_Abstract.docx` : undefined}
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition-colors w-fit"
+                            title="Download / View customer abstract document"
+                          >
+                            <FileText className="h-3.5 w-3.5 text-blue-600 flex-shrink-0" />
+                            <span>{sub.manuscriptUrl && sub.manuscriptUrl.toLowerCase().includes('.pdf') ? 'Abstract PDF' : 'Abstract Doc'}</span>
+                          </a>
+                        ) : (
+                          <label className="inline-flex items-center gap-1 text-[10px] text-slate-400 hover:text-blue-600 cursor-pointer w-fit py-0.5" title="Click to attach .docx abstract file">
+                            <Upload className="h-3 w-3" />
+                            <span>Attach Doc</span>
+                            <input
+                              type="file"
+                              accept=".pdf,.docx,.doc,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                              className="hidden"
+                              onChange={(e) => {
+                                if (e.target.files?.[0]) {
+                                  handleUploadAttachment(sub.id, e.target.files[0], "manuscript");
+                                }
+                              }}
+                            />
+                          </label>
+                        )}
+
+                        {sub.paymentScreenshotUrl ? (
+                          <a
+                            href={sub.paymentScreenshotUrl.startsWith("data:") ? sub.paymentScreenshotUrl : assetUrl(sub.paymentScreenshotUrl)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition-colors w-fit"
+                            title="View UPI / GPay transaction attachment"
+                          >
+                            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 flex-shrink-0" />
+                            <span>Payment Proof</span>
+                          </a>
+                        ) : (
+                          <label className="inline-flex items-center gap-1 text-[10px] text-slate-400 hover:text-emerald-600 cursor-pointer w-fit py-0.5" title="Click to attach payment receipt screenshot">
+                            <Upload className="h-3 w-3" />
+                            <span>Attach Receipt</span>
+                            <input
+                              type="file"
+                              accept="image/*,.pdf"
+                              className="hidden"
+                              onChange={(e) => {
+                                if (e.target.files?.[0]) {
+                                  handleUploadAttachment(sub.id, e.target.files[0], "payment_screenshot");
+                                }
+                              }}
+                            />
+                          </label>
+                        )}
+                      </div>
                     </td>
 
                     {/* Status Select */}
@@ -824,6 +1048,152 @@ export default function AdminAbstractPublications() {
                       {k.trim()}
                     </span>
                   ))}
+                </div>
+              </div>
+
+              {/* Customer Attachments & Transaction Proof */}
+              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-900 text-xs uppercase tracking-wider flex items-center gap-1.5">
+                    <FileText className="h-4 w-4 text-blue-600" />
+                    Customer Attachments &amp; Proofs
+                  </span>
+                  <span className="text-[11px] text-slate-500">
+                    {selectedSub.manuscriptUrl && selectedSub.paymentScreenshotUrl
+                      ? "Both files attached"
+                      : selectedSub.manuscriptUrl || selectedSub.paymentScreenshotUrl
+                      ? "1 file attached"
+                      : "No files uploaded by author"}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  {/* Abstract Manuscript File */}
+                  <div className="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between gap-3 shadow-xs">
+                    <div>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                          <FileText className="h-4 w-4 text-blue-600" />
+                          Abstract Document (PDF / Word .docx)
+                        </span>
+                        {selectedSub.manuscriptUrl ? (
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                            Available
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+                            Not Uploaded
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[11px] text-slate-500 mt-1">
+                        {selectedSub.manuscriptUrl
+                          ? "Original manuscript submitted by author."
+                          : "Author submitted text directly in form."}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100">
+                      {selectedSub.manuscriptUrl ? (
+                        <a
+                          href={selectedSub.manuscriptUrl.startsWith("data:") ? selectedSub.manuscriptUrl : assetUrl(selectedSub.manuscriptUrl)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          download={selectedSub.manuscriptUrl.startsWith("data:") ? `${selectedSub.id}_Abstract.docx` : undefined}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 text-white text-xs font-bold hover:bg-blue-700 transition-colors shadow-xs"
+                        >
+                          <Download className="h-3.5 w-3.5" />
+                          Download Abstract File
+                        </a>
+                      ) : null}
+
+                      <label className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-semibold cursor-pointer transition-colors">
+                        <Upload className="h-3.5 w-3.5 text-slate-500" />
+                        <span>{selectedSub.manuscriptUrl ? "Replace File (PDF/Word)" : "Upload PDF or Word"}</span>
+                        <input
+                          type="file"
+                          accept=".docx,.doc,.pdf"
+                          className="hidden"
+                          onChange={(e) => {
+                            if (e.target.files?.[0]) {
+                              handleUploadAttachment(selectedSub.id, e.target.files[0], "manuscript");
+                            }
+                          }}
+                        />
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Payment Receipt / Transaction Screenshot */}
+                  <div className="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between gap-3 shadow-xs">
+                    <div>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                          <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                          Payment Screenshot / Receipt
+                        </span>
+                        {selectedSub.paymentScreenshotUrl ? (
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                            Verified / Attached
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
+                            Missing Proof
+                          </span>
+                        )}
+                      </div>
+
+                      {/* If screenshot exists, display inline thumbnail */}
+                      {selectedSub.paymentScreenshotUrl && (
+                        <div className="mt-2.5">
+                          <a
+                            href={selectedSub.paymentScreenshotUrl.startsWith("data:") ? selectedSub.paymentScreenshotUrl : assetUrl(selectedSub.paymentScreenshotUrl)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block group relative overflow-hidden rounded-lg border border-slate-200 bg-slate-50 hover:border-emerald-500 transition-colors"
+                          >
+                            <img
+                              src={selectedSub.paymentScreenshotUrl.startsWith("data:") ? selectedSub.paymentScreenshotUrl : assetUrl(selectedSub.paymentScreenshotUrl)}
+                              alt="Payment Screenshot"
+                              className="max-h-36 w-full object-contain mx-auto p-1 group-hover:scale-105 transition-transform"
+                            />
+                            <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-bold transition-opacity">
+                              Click to view full receipt
+                            </div>
+                          </a>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100">
+                      {selectedSub.paymentScreenshotUrl ? (
+                        <a
+                          href={selectedSub.paymentScreenshotUrl.startsWith("data:") ? selectedSub.paymentScreenshotUrl : assetUrl(selectedSub.paymentScreenshotUrl)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition-colors shadow-xs"
+                        >
+                          <ExternalLink className="h-3.5 w-3.5" />
+                          Open Full Image
+                        </a>
+                      ) : null}
+
+                      <label className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-semibold cursor-pointer transition-colors">
+                        <Upload className="h-3.5 w-3.5 text-slate-500" />
+                        <span>{selectedSub.paymentScreenshotUrl ? "Replace Receipt" : "Upload Receipt"}</span>
+                        <input
+                          type="file"
+                          accept="image/*,.pdf"
+                          className="hidden"
+                          onChange={(e) => {
+                            if (e.target.files?.[0]) {
+                              handleUploadAttachment(selectedSub.id, e.target.files[0], "payment_screenshot");
+                            }
+                          }}
+                        />
+                      </label>
+                    </div>
+                  </div>
                 </div>
               </div>
 
